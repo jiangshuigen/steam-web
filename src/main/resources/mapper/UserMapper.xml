@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.UserMapper">
+
+    <resultMap id="userMap" type="com.example.demo.entity.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.example.demo.entity.User">
+        insert into t_user (username, password)
+        values(#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
+    </insert>
+
+    <insert id="batchInsertUser" useGeneratedKeys="true" keyProperty="id">
+        insert into t_user (username, password) values
+        <foreach item="item" collection="list" separator=",">
+            (#{item.username}, #{item.password})
+        </foreach>
+    </insert>
+
+    <delete id="deleteUser" parameterType="java.lang.Integer">
+        delete from t_user
+        where id = #id
+    </delete>
+
+    <update id="updateUser" parameterType="com.example.demo.entity.User">
+        update users
+        <set>
+            <if test="name!=null and name != ''">
+                `name` =#{name},
+            </if>
+            <if test="inviteCode!=null and inviteCode != ''">
+                invite_code =#{inviteCode},
+            </if>
+            <if test="bean!=null and bean != ''">
+                bean =#{bean},
+            </if>
+            <if test="closeGift!=null">
+                close_gift =#{closeGift},
+            </if>
+            <if test="banPickUp!=null">
+                ban_pick_up =#{banPickUp},
+            </if>
+            <if test="anchor!=null">
+                anchor =#{anchor},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectUser" parameterType="java.lang.Integer" resultMap="userMap">
+        select * from t_user
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <select id="selectAllUser" resultMap="userMap">
+        select * from users  limit 100
+    </select>
+    <!--sdmin首页统计-->
+    <select id="getDashboard" resultType="com.example.demo.entity.Dashboard">
+      select
+      (select count(1) from users ) as userCount,
+      (select sum(price) from bean_records where status = 1 and is_pay_api =1) as amount,
+      (select count(1) from box_records where status = 4) as applyCount,
+      (select 0 ) as balance
+      from
+      dual
+    </select>
+    <select id="getUserListByPage" parameterType="com.example.demo.dto.UserQuery"
+            resultType="com.example.demo.entity.User">
+        select
+        ua.id,
+        ua.`name`,
+        ua.mobile,
+        ua.invite_code inviteCode,
+        ua.avatar,
+        ua.inviter_id inviterId,
+        (select u.`name` from users u where u.id = ua.inviter_id) as inviterName,
+        (SELECT SUM(re.bean) FROM `bean_records` as re WHERE re.user_id = ua.id AND re.`status` = '1') as truePay ,
+        (SELECT SUM(res.bean) FROM `bean_records` as res WHERE res.inviter_id = ua.id  AND res.`status` = '1') as subordinatePay,
+        ua.be_invite_number beInviteNumber,
+        ua.email_verified_at emailVerifiedAt,
+        ua.bean,
+        ua.integral,
+        ua.steam_url steamUrl,
+        ua.steam_id steamId,
+        ua.password,
+        ua.remember_token rememberToken,
+        ua.promotion_level promotionLevel,
+        ua.vip_level vipLevel,
+        ua.is_recharge isRecharge,
+        ua.total_recharge totalRecharge,
+        ua.close_gift closeGift,
+        ua.ban_pick_up banPickUp,
+        ua.anchor,
+        ua.new_welfare newWelfare,
+        ua.box_key_total boxKeyTotal,
+        ua.reward_new_user rewardNewUser,
+        ua.is_adult isAdult,
+        ua.real_name realName,
+        ua.id_number idNumber,
+        ua.set_invite_code_num setInviteCodeNum,
+        ua.created_at createdAt,
+        ua.updated_at updatedAt
+        from users ua
+        <where>
+            <if test="id >0 ">
+                and ua.id = #{id}
+            </if>
+            <if test="name !=null and name!='' ">
+                and ua.`name` = #{name}
+            </if>
+            <if test="mobile !=null and mobile !=''">
+                and ua.mobile = #{mobile}
+            </if>
+            <if test="inviteCode!= null and inviteCode !=''">
+                and ua.invite_code = #{inviteCode}
+            </if>
+        </where>
+    </select>
+    <select id="getUserById" resultType="com.example.demo.entity.User" parameterType="java.lang.Integer">
+        select
+         ua.id,
+        ua.`name`,
+        ua.mobile,
+        ua.invite_code inviteCode,
+        ua.avatar,
+        ua.inviter_id inviterId,
+        (select u.`name` from users u where u.id = ua.inviter_id) as inviterName,
+        ua.be_invite_number beInviteNumber,
+        ua.email_verified_at emailVerifiedAt,
+        ua.bean,
+        ua.integral,
+        ua.steam_url steamUrl ,
+        ua.steam_id steamId,
+        ua.password,
+        ua.remember_token rememberToken,
+        ua.promotion_level promotionLevel,
+        ua.vip_level vipLevel,
+        ua.is_recharge isRecharge,
+        ua.total_recharge totalRecharge,
+        ua.close_gift closeGift,
+        ua.ban_pick_up banPickUp,
+        ua.anchor,
+        ua.new_welfare newWelfare,
+        ua.box_key_total boxKeyTotal,
+        ua.reward_new_user rewardNewUser,
+        ua.is_adult isAdult,
+        ua.real_name realName,
+        ua.id_number idNumber,
+        ua.set_invite_code_num setInviteCodeNum,
+        ua.created_at createdAt,
+        ua.updated_at updatedAt
+         from users ua where ua.id = #{id} limit 1
+    </select>
+
+    <select id="getIPList" parameterType="com.example.demo.dto.LoginIpLogQuery"
+            resultType="com.example.demo.dto.LoginIpLog">
+          select
+            id,
+            user_id as userId,
+            ip,
+            created_at as createdAt,
+            updated_at as updatedAt
+            from login_ip_logs
+            where user_id = #{userId}
+
+    </select>
+
+</mapper>

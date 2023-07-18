@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.LuckyBoxMapper">
+
+    <select id="getTypeList" resultType="com.example.demo.entity.AwardTypes">
+        select * from award_types order  by  sort
+    </select>
+    <select id="getTypeById" resultType="com.example.demo.entity.AwardTypes">
+        select * from award_types where id =#{id} limit 1
+    </select>
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete from award_types where id =#{id}
+    </delete>
+    <update id="updateType" parameterType="com.example.demo.entity.AwardTypes">
+        update award_types
+        <set>
+            <if test="name !=null and name != '' ">
+                `name` = #{name},
+            </if>
+            <if test="cover!=null and cover!=''">
+                cover =#{cover},
+            </if>
+            <if test="sort >0">
+                sort =#{sort}
+            </if>
+        </set>
+        <where>
+            id =#{id}
+        </where>
+    </update>
+    <insert id="saveType" parameterType="com.example.demo.entity.AwardTypes">
+        insert into award_types(
+                `name`,
+                cover,
+                sort
+        )values(
+              #{name},
+              #{cover},
+              #{sort}
+        )
+    </insert>
+
+    <select id="getAwardList" resultType="com.example.demo.entity.BoxAwards"
+            parameterType="com.example.demo.dto.BoxAwardsQuery">
+        select id,
+        box_id as boxId,
+        `name`,
+        hash_name as hashName,
+        cover,
+        odds,
+        real_odds as realOdds,
+        anchor_odds as anchorOdds,
+        luck_odds as luckOdds,
+        game_odds as gameOdds,
+        game_anchor_odds as gameAnchorOdds,
+        dura,
+        lv,
+        bean,
+        max_t as maxT,
+        `type`,
+        is_lucky_box as isLuckyBox,
+        luck_interval as luckInterval,
+        luck_interval_anchor as luckIntervalAnchor,
+        is_game as isGame,
+        is_shop as isShop,
+        is_synthesis as isSynthesis,
+        clear_lucky as clearLucky,
+        shop_inventory as shopInventory,
+        created_at as createdAt,
+        updated_at as updatedAt
+        from box_awards
+        <where>
+            <if test="name !=null and name !=''">
+                and `name`= #{name}
+            </if>
+            <if test="boxId>0">
+                and box_id= #{boxId}
+            </if>
+        </where>
+        order by created_at desc
+    </select>
+
+    <update id="updateAward" parameterType="com.example.demo.entity.BoxAwards">
+        update box_awards
+        <set>
+            <if test="type >0">
+                `type` = #{type},
+            </if>
+            <if test="luckInterval !=null and luckInterval !=''">
+                luck_interval =#{luckInterval}
+            </if>
+            <if test="luckIntervalAnchor !=null and luckIntervalAnchor !=''">
+                luck_interval_anchor =#{luckIntervalAnchor}
+            </if>
+            <if test="isLuckyBox >0">
+                is_lucky_box = #{isLuckyBox},
+            </if>
+            <if test="bean >0">
+                bean = #{bean},
+            </if>
+            <if test="shopInventory >0">
+                shop_inventory = #{shopInventory},
+            </if>
+        </set>
+        <where>
+            id =#{id}
+        </where>
+    </update>
+</mapper>

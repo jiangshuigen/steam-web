@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.DeliveryRecordMapper">
+    <select id="getDeliveryRecordList" resultType="com.example.demo.entity.DeliveryRecord"
+            parameterType="com.example.demo.dto.DeliveryRecordQuery">
+        select
+        a.id,
+        a.user_id as userId,
+        u.name as userName,
+        a.record_id as recordId,
+        b.name as recordName,
+        b.cover ,
+        a.record_code as recordCode,
+        a.trade_no as tradeNo,
+        a.price,
+        a.delivery,
+        a.order_id as orderId,
+        a.zbt_status as zbtStatus,
+        a.created_at as createdAt,
+        a.updated_at as updatedAt
+        from delivery_records a
+        left join users u on u.id = a.user_id
+        left join box_records b on b.id =a.record_id
+        <where>
+            <if test="userId>0">
+                and a.user_id = #{userId},
+            </if>
+            <if test="userName !=null and userName !=''">
+                and u.name =#{userName},
+            </if>
+            <if test="name !=null and name !=''">
+                and b,`name` = #{name}
+            </if>
+        </where>
+    </select>
+
+</mapper>

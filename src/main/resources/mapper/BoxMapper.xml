@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.BoxMapper">
+
+    <select id="getBoxList" parameterType="com.example.demo.dto.BoxQuery" resultType="com.example.demo.entity.Box">
+        select
+        `name`,
+        cover,
+        weapon_cover as weaponCover,
+        intact_cover as intactCover,
+        bean,
+        sort,
+        is_putaway as isPutaway,
+        luck_interval as luckInterval,
+        luck_interval_anchor as luckIntervalAnchor,
+        created_at as createdAt,
+        updated_at as updatedAt,
+        game_bean  as gameBean,
+        cate_id    as cateId
+        from boxs
+        <where>
+            <if test="id>0">
+                id = #{id}
+            </if>
+            <if test="name !=null and name !=''">
+                name = #{name}
+            </if>
+        </where>
+    </select>
+
+    <select id="getBoxById" resultType="com.example.demo.entity.Box">
+      select
+          `name`,
+            cover,
+            weapon_cover as weaponCover,
+            intact_cover as intactCover,
+            bean,
+            sort,
+            is_putaway as isPutaway,
+            luck_interval as luckInterval,
+            luck_interval_anchor as luckIntervalAnchor,
+            created_at as createdAt,
+            updated_at as updatedAt,
+            game_bean  as gameBean,
+            cate_id    as cateId
+       from boxs where id  = #{id} limit 1
+    </select>
+
+    <update id="updateBox" parameterType="com.example.demo.entity.Box">
+        update boxs
+        <set>
+            <if test="name !=null and name !=''">
+                `name` =#{name},
+            </if>
+            <if test="intactCover !=null and intactCover !=''">
+                intact_cover =#{intactCover},
+            </if>
+            <if test="weaponCover !=null and weaponCover !=''">
+                weapon_cover =#{weaponCover},
+            </if>
+            <if test="cover !=null and cover !=''">
+                cover =#{cover},
+            </if>
+            <if test="sort !=null and sort !=''">
+                sort =#{sort},
+            </if>
+            <if test="luckInterval !=null and luckInterval !=''">
+                luck_interval =#{luckInterval},
+            </if>
+            <if test="luckIntervalAnchor !=null and luckIntervalAnchor !=''">
+                luck_interval_anchor =#{luckIntervalAnchor},
+            </if>
+            <if test="bean !=null and bean !=''">
+                bean =#{bean},
+            </if>
+            <if test="isPutaway !=null and isPutaway !=''">
+                is_putaway =#{isPutaway},
+            </if>
+            updated_at =now()
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
+    <insert id="saveBox" parameterType="com.example.demo.entity.Box">
+        insert into boxs
+        (
+            `name`,
+            cover,
+            weapon_cover,
+            intact_cover,
+            bean,
+            sort,
+            is_putaway,
+            luck_interval,
+            luck_interval_anchor,
+            created_at
+        )values(
+          #{name},
+          #{cover},
+          #{weaponCover},
+          #{intactCover},
+          #{bean},
+          #{sort},
+          #{isPutaway},
+          #{luckInterval},
+          #{luckIntervalAnchor},
+          now()
+        )
+    </insert>
+</mapper>

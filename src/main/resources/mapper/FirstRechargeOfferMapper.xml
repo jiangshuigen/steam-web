@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.FirstRechargeOfferMapper">
+    <select id="getFirstRechargeList" resultType="com.example.demo.entity.FirstRechargeOffer">
+            select
+            f.id,
+            f.beans_id as beansId,
+            f.ratio,
+            f.description,
+            b.bean ,
+            b.is_putaway as isPutaway,
+             (b.bean+b.bean*f.ratio/100) as price
+            from first_recharge_offers f
+            left  join beans as b  on b.id = f.beans_id
+        </select>
+    <select id="getFirstRechargeById" resultType="com.example.demo.entity.FirstRechargeOffer">
+          select
+            f.id,
+            f.beans_id as beansId,
+            f.ratio,
+            f.description,
+            b.bean
+            from first_recharge_offers f
+            left  join beans as b  on b.id = f.beans_id
+        where f.id =#{id}
+    </select>
+
+    <update id="updateFirstRecharge" parameterType="com.example.demo.entity.FirstRechargeOffer">
+        update first_recharge_offers
+        <set>
+            <if test="beansId >0">
+                beans_id = #{beansId},
+            </if>
+            <if test="price >0">
+                price = #{price},
+            </if>
+            <if test="bean >0">
+                bean = #{bean},
+            </if>
+            <if test="ratio >0">
+                ratio = #{ratio},
+            </if>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+        </set>
+        <where>
+            id =#{id}
+        </where>
+    </update>
+    <insert id="saveFirstRecharge" parameterType="com.example.demo.entity.FirstRechargeOffer">
+        insert into first_recharge_offers(
+        beans_id,
+        ratio,
+        description
+        )values (
+        #{beansId},
+        #{ratio},
+        #{description}
+        )
+    </insert>
+    <delete id="deleteFirstRecharge" parameterType="java.lang.Integer">
+        delete  from first_recharge_offers where id = #{id}
+    </delete>
+</mapper>

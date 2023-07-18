@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.RedKeyMapper">
+
+    <select id="getRedsListByPage" parameterType="com.example.demo.dto.RedKeyQuery"
+            resultType="com.example.demo.entity.RedKey">
+        select red.id,
+        red.code,
+        red.status,
+        red.user_id as userId,
+        red.bean,
+        red.created_at createdAt,
+        red.updated_at updatedAt,
+        u.name as userName from red_keys red
+        left join users u on u.id = red.user_id
+        <where>
+            <if test="userName !=null and userName !=''">
+                and u.name = #{userName}
+            </if>
+            <if test="key !=null and key !=''">
+                and red.code = #{key}
+            </if>
+        </where>
+        order by red.created_at desc
+    </select>
+
+    <insert id="saveRedKey" parameterType="com.example.demo.entity.RedKey">
+          insert into red_keys(
+            code,
+            status,
+            bean,
+            created_at
+          )values (
+            #{code},
+            0,
+            #{bean},
+            now()
+          )
+    </insert>
+
+
+</mapper>

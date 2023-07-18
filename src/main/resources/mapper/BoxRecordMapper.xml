@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.BoxRecordMapper">
+
+    <select id="getBoxRecordList" parameterType="com.example.demo.dto.BoxRecordsQuery"
+            resultType="com.example.demo.entity.BoxRecords">
+        select
+        re.id,
+        re.get_user_id as getUserId,
+        re.user_id as userId,
+        re.box_id as boxId,
+        re.box_name as boxName,
+        re.box_bean as boxBean,
+        re.box_award_id as boxAwardId ,
+        re.`name`,
+        re.hash_name as hashName,
+        re.cover,
+        re.dura,
+        re.lv,
+        re.bean,
+        re.code,
+        re.uuid,
+        re.status,
+        re.back_message as backMessage,
+        re.`type`,
+        re.created_at as createdAt
+        from box_records re
+        left join users u on re.get_user_id = u.id
+        <where>
+            <if test="userId>0">
+                and re.get_user_id =#{userId}
+            </if>
+            <if test="userName !=null and userName!=''">
+                and u.name =#{userName}
+            </if>
+            <if test="phone!=null and phone!=''">
+                and u.mobile =#{phone}
+            </if>
+            <if test="type>0">
+                and re.`type`=#{type}
+            </if>
+        </where>
+        order by re.created_at desc
+    </select>
+
+    <select id="getRecordById" resultType="com.example.demo.entity.BoxRecords" parameterType="java.lang.Integer">
+        select
+            re.id,
+            re.get_user_id as getUserId,
+            re.user_id as userId,
+            re.box_id as boxId,
+            re.box_name as boxName,
+            re.box_bean as boxBean,
+            re.box_award_id as boxAwardId ,
+            re.`name`,
+            re.hash_name as hashName,
+            re.cover,
+            re.dura,
+            re.lv,
+            re.bean,
+            re.code,
+            re.uuid,
+            re.status,
+            re.back_message as backMessage,
+            re.`type`,
+            re.created_at as createdAt
+           from box_records re
+           where re.id =#{ido}
+    </select>
+    <delete id="deleteById" parameterType="java.lang.Integer">
+          delete  from box_records where id =#{id}
+    </delete>
+
+    <select id="getApplyList" parameterType="com.example.demo.dto.ApplyQuery"
+            resultType="com.example.demo.dto.ApplDto">
+        select
+        re.id,
+        re.get_user_id as getUserId,
+        u.name as userName,
+        u.anchor,
+        re.user_id as userId,
+        re.box_id as boxId,
+        re.box_name as boxName,
+        re.box_bean as boxBean,
+        re.box_award_id as boxAwardId ,
+        re.`name`,
+        re.hash_name as hashName,
+        re.cover,
+        re.dura,
+        re.lv,
+        re.bean,
+        re.code,
+        re.uuid,
+        re.status,
+        re.back_message as backMessage,
+        re.`type`,
+        re.created_at as createdAt
+        from box_records re
+        left join users u on re.get_user_id = u.id
+        <where>
+            re.status = 4
+            <if test="userName !=null and userName!=''">
+                and u.name =#{userName}
+            </if>
+
+        </where>
+        order by re.created_at desc
+    </select>
+
+    <update id="updateApply" parameterType="com.example.demo.dto.ApplDto">
+        update box_records
+        <set>
+            <if test="status !=null">
+                status =#{status}
+            </if>
+        </set>
+        where id =#{id}
+    </update>
+</mapper>

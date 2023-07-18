@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.RedRecordsMapper">
+
+    <select id="getRecordsListByPage" parameterType="com.example.demo.dto.RedRecordQuery"
+            resultType="com.example.demo.entity.RedRecords">
+        select cod.*,u.name as userName , rd.title as title ,cod.created_at as createdAt from red_records cod
+        left join users u on u.id = cod.user_id
+        left join reds rd on rd.id = cod.red_id
+        <where>
+            <if test="userName !=null and userName !=''">
+                and u.name = #{userName}
+            </if>
+            <if test="title !=null and title !=''">
+                and rd.title = #{title}
+            </if>
+        </where>
+        order by cod.created_at desc
+    </select>
+
+
+</mapper>

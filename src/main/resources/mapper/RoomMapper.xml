@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.RoomMapper">
+
+    <select id="getRoomsListByPage" resultType="com.example.demo.entity.Room"
+            parameterType="com.example.demo.dto.RoomQuery">
+        select
+        r.id,
+        r.user_id as userId,
+        u.name as userName,
+        r.`name`,
+        r.`describe`,
+        r.end_time as endTime,
+        r.people_number as peopleNumber,
+        r.password,
+        r.pay_start_time as payStartTime,
+        r.min_recharge as minRecharge,
+        r.is_give as isGive ,
+        r.me_inviter as meInviter,
+        r.top,
+        r.created_at as createdAt,
+        r.updated_at as updatedAt,
+        IF
+        (
+        DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ), '2', IF ( DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ) >= DATE_FORMAT( pay_start_time, '%Y-%m-%d %H:%i:%s' ),
+        '0',
+        '1'
+        )
+        )  as status
+        from rooms as r
+        left join users as u on u.id = r.user_id
+        <where>
+            <if test="id>0">
+                and r.id =#{id}
+            </if>
+        </where>
+        order by r.created_at desc
+    </select>
+    <select id="getRoomById" resultType="com.example.demo.entity.Room" parameterType="java.lang.Integer">
+        select
+        r.id,
+        r.user_id as userId,
+        r.`name`,
+        r.`describe`,
+        r.end_time as endTime,
+        r.people_number as peopleNumber,
+        r.password,
+        r.pay_start_time as payStartTime,
+        r.min_recharge as minRecharge,
+        r.is_give as isGive ,
+        r.me_inviter as meInviter,
+        r.top,
+        r.created_at as createdAt,
+        r.updated_at as updatedAt
+        from rooms as r
+        <where>
+            r.id =#{id}
+        </where>
+    </select>
+    <update id="updateRoom" parameterType="com.example.demo.entity.Room">
+        update rooms
+        <set>
+            <if test="userId>0">
+                user_id = #{userId},
+            </if>
+            <if test="name != null and name != ''">
+                `name` =#{name},
+            </if>
+            <if test="describe != null and describe != ''">
+                `describe` = #{describe},
+            </if>
+            <if test="endTime!=null">
+                end_time = #{endTime},
+            </if>
+            <if test="peopleNumber>0">
+                people_number = #{peopleNumber},
+            </if>
+            <if test="password != null and password != ''">
+                password = #{password},
+            </if>
+            <if test="payStartTime!=null">
+                pay_start_time = #{payStartTime},
+            </if>
+            <if test="minRecharge>0">
+                min_recharge = #{minRecharge},
+            </if>
+            <if test="top!=null">
+                top = #{top},
+            </if>
+            updated_at = now()
+        </set>
+        <where>
+            id =#{id}
+        </where>
+    </update>
+    <delete id="deleteRoom" parameterType="java.lang.Integer">
+        delete  from rooms where id =#{id}
+    </delete>
+
+    <select id="getRoomAwardById" parameterType="com.example.demo.dto.RoomAwardQuery"
+            resultType="com.example.demo.entity.RoomAward">
+        select
+        ra.id,
+        ra.designated_user as designatedUser ,
+        ra.created_at as createdAt,
+        u.name as userName,
+        br.name,
+        br.dura,
+        br.bean
+        from room_awards ra
+        left join users u on u.id= ra.get_user_id
+        left join box_records br on br.id = ra.box_record_id
+        where ra.room_id =#{roomId}
+        order by ra.created_at desc
+    </select>
+
+    <delete id="deleteRoomIds" parameterType="java.lang.String">
+        delete from rooms where id in
+        <foreach collection="array" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

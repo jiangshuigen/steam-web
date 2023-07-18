@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.BeanChangeRecordMapper">
+        <select id="getBeanRecordList" resultType="com.example.demo.entity.BeanChangeRecords">
+              select
+                    re.id,
+                    re.user_id as userId,
+                    u.name as userName,
+                    re.final_bean as finalBean,
+                    re.bean,
+                    re.type,
+                    re.change_type as changeType,
+                    re.created_at as createdAt,
+                    re.updated_at as updatedAt
+              from bean_change_records re
+              left join users as u on u.id = re.user_id
+              order by re.created_at desc
+
+        </select>
+</mapper>

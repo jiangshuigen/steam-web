@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.PromotionLevelMapper">
+    <select id="getLevelList" resultType="com.example.demo.entity.PromotionLevels">
+          select
+           id,
+            `name`,
+            `level`,
+            invite_num as inviteNum,
+            invite_total as inviteTotal,
+            total,
+            rebate,
+            reg_rebate regRebate,
+            description
+           from promotion_levels
+    </select>
+    <select id="getLevelById" resultType="com.example.demo.entity.PromotionLevels">
+        select
+            id,
+            `name`,
+            `level`,
+            invite_num as inviteNum,
+            invite_total as inviteTotal,
+            total,
+            rebate,
+            reg_rebate regRebate,
+            description
+          from promotion_levels where id =#{id} limit 1
+    </select>
+    <update id="updateLevel" parameterType="com.example.demo.entity.PromotionLevels">
+        update promotion_levels
+        <set>
+            <if test=" name !=null and name !=''">
+                `name` =#{name},
+            </if>
+            <if test=" level>0">
+                `level` =#{level},
+            </if>
+            <if test=" total!=null">
+                total =#{total},
+            </if>
+            <if test=" rebate!=null">
+                rebate =#{rebate},
+            </if>
+            <if test=" regRebate !=null">
+                reg_rebate =#{regRebate},
+            </if>
+            <if test=" description != null and description != ''">
+                description =#{description},
+            </if>
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+    <delete id="deleteById" parameterType="java.lang.Integer">
+        delete  from promotion_levels  where id =#{id}
+    </delete>
+</mapper>

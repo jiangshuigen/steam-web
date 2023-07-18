@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.VipMapper">
+
+    <select id="getVipListByPage" resultType="com.example.demo.entity.Vip">
+        select
+         id,
+        `level`,
+        threshold,
+        rebate,
+        packet,
+        description,
+        created_at createdAt,
+        updated_at updatedAt
+         from vip
+   </select>
+    <select id="getVipById" resultType="com.example.demo.entity.Vip">
+        select
+        id,
+        `level`,
+        threshold,
+        rebate,
+        packet,
+        description,
+        created_at as createdAt,
+        updated_at as updatedAt from vip where id = #{id}
+    </select>
+    <update id="updateVip" parameterType="com.example.demo.entity.Vip">
+        update vip
+        <set>
+            <if test="level!=null">
+                level = #{level},
+            </if>
+            <if test="threshold!=null">
+                threshold = #{threshold},
+            </if>
+            <if test="rebate!=null">
+                rebate = #{rebate},
+            </if>
+            <if test="packet!=null">
+                packet = #{packet},
+            </if>
+            <if test="description!=null">
+                description = #{description},
+            </if>
+            updated_at = now()
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+</mapper>

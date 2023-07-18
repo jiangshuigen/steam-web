@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.BeanRecordMapper">
+
+    <select id="getBeanRecordList" parameterType="com.example.demo.dto.BeanRecordQuery"
+            resultType="com.example.demo.entity.BeanRecord">
+        select
+        re.id,
+        re.user_id as userId,
+        u.`name` as userName,
+        re.inviter_id as inviterId,
+        re.bean,
+        re.price,
+        re.finally_price as finallyPrice,
+        re.code,
+        re.trade_no as tradeNo,
+        re.status,
+        re.is_benefit as isBenefit,
+        re.is_pay_api as isPayApi,
+        re.created_at as createdAt,
+        re.updated_at as updatedAt
+        from bean_records re
+        left join users u on u.id =re.user_id
+        <where>
+            <if test="userId>0">
+                and u.id = #{userId}
+            </if>
+            <if test="userName!=null and userName !=''">
+                and u.name = #{userName}
+            </if>
+            <if test="inviterId>0">
+                and re.inviter_id = #{inviterId}
+            </if>
+            <if test="beginTime!=null and beginTime != ''">
+                and date_format(re.created_at,'%Y-%m-%d') >= #{beginTime}
+            </if>
+            <if test="endTime!=null and beginTime !='' ">
+                and date_format(re.created_at,'%Y-%m-%d') <![CDATA[ <=]]> #{endTime}
+            </if>
+            <if test="status!=null">
+                and re.status = #{status}
+            </if>
+            <if test="code!=null and code !=''">
+                and re.code = #{code}
+            </if>
+        </where>
+        order by re.created_at desc
+    </select>
+</mapper>

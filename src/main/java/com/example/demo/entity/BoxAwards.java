@@ -1,0 +1,43 @@
+package com.example.demo.entity;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+@Data
+public class BoxAwards {
+    @ApiModelProperty("主键id")
+    private int id;
+    @ApiModelProperty("boxId")
+    private int boxId;
+    @ApiModelProperty("名称")
+    private String name;
+    @ApiModelProperty("饰品唯一英文名称")
+    private String hashName;
+    @ApiModelProperty("封面")
+    private String cover;
+    @ApiModelProperty("外观")
+    private int dura;
+    @ApiModelProperty("品质")
+    private int lv;
+    @ApiModelProperty("金豆")
+    private BigDecimal bean;
+    @ApiModelProperty("装备类型")
+    private int type;
+    @ApiModelProperty("幸运开箱 0:否 1:是")
+    private int isLuckyBox;
+    @ApiModelProperty("库存")
+    private int shopInventory;
+    @ApiModelProperty("幸运区间")
+    private String luckInterval;
+    @ApiModelProperty("幸运区间主播")
+    private String luckIntervalAnchor;
+    @ApiModelProperty("创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date created_at;
+
+
+}

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.RedsMapper">
+
+    <select id="getRedsListByPage" parameterType="com.example.demo.dto.RedQuery"
+            resultType="com.example.demo.entity.Reds">
+        select
+        re.title,
+        re.briefe,
+        re.min_recharge as minRecharge,
+        re.pay_start_time payStartTime,
+        re.num,
+        (re.num-(SELECT COUNT(1) FROM red_records rd  WHERE rd.red_id = re.id)) as residue,
+        re.percentage,
+        re.start_time startTime,
+        re.end_time endTime,
+        re.created_at createdAt
+        from reds re
+        <where>
+            <if test="id>0">
+                re.id = #{id}
+            </if>
+        </where>
+        order by re.created_at desc
+    </select>
+    <select id="getRedsById" resultType="com.example.demo.entity.Reds" parameterType="java.lang.Integer">
+        select
+              title,
+            briefe,
+            min_recharge as minRecharge,
+            pay_start_time payStartTime,
+            num,
+            percentage,
+            start_time startTime,
+            end_time endTime,
+            created_at createdAt
+         from reds where id = #{id}
+    </select>
+    <delete id="deleteRedsById" parameterType="java.lang.Integer">
+        delete from reds where id =#{id}
+    </delete>
+    <insert id="saveReds" parameterType="com.example.demo.entity.Reds">
+        insert into reds (
+        title,
+        briefe,
+        min_recharge,
+        pay_start_time,
+        num,
+        percentage,
+        start_time,
+        end_time,
+        created_at
+        )values (
+        #{title},
+        #{briefe},
+        #{minRecharge},
+        #{payStartTime},
+        #{num},
+        #{percentage},
+        #{startTime},
+        #{endTime},
+        now()
+        )
+    </insert>
+</mapper>
