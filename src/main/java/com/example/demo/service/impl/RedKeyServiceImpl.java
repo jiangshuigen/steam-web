@@ -37,6 +37,7 @@ public class RedKeyServiceImpl implements RedKeyService {
                 RedKey redkey = new RedKey();
                 //口令
                 redkey.setCode(CodeUtils.getCode());
+                redkey.setBean(redkeydto.getBean());
                 flag = redkeymapper.saveRedKey(redkey);
             }
         }
