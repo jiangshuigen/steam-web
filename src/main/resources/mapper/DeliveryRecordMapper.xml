@@ -23,10 +23,10 @@
         left join box_records b on b.id =a.record_id
         <where>
             <if test="userId>0">
-                and a.user_id = #{userId},
+                and a.user_id = #{userId}
             </if>
             <if test="userName !=null and userName !=''">
-                and u.name =#{userName},
+                and u.name =#{userName}
             </if>
             <if test="name !=null and name !=''">
                 and b,`name` = #{name}
