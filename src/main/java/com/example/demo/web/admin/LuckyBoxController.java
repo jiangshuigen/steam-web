@@ -1,4 +1,4 @@
-package com.example.demo.web;
+package com.example.demo.web.admin;
 
 import com.example.demo.config.ResultData;
 import com.example.demo.dto.BoxAwardsQuery;

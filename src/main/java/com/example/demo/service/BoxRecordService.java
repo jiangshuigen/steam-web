@@ -1,10 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.ApplDto;
-import com.example.demo.dto.ApplUpdate;
-import com.example.demo.dto.ApplyQuery;
-import com.example.demo.dto.BoxRecordsQuery;
+import com.example.demo.dto.*;
 import com.example.demo.entity.BoxRecords;
+import com.example.demo.entity.BoxRecordsWeb;
 import com.github.pagehelper.PageInfo;
 
 public interface BoxRecordService {
@@ -18,4 +16,6 @@ public interface BoxRecordService {
     PageInfo<ApplDto>  getApplyList(ApplyQuery query);
 
     int updateApply(ApplUpdate dto);
+
+    PageInfo<BoxRecordsWeb>  getMyPackage(BoxRecordsWebQuery query);
 }

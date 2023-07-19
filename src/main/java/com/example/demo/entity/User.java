@@ -18,6 +18,8 @@ public class User {
     private String name;
     @ApiModelProperty("手机号码")
     private String mobile;
+    @ApiModelProperty("脱敏后手机号码")
+    private String mobileHide;
     @ApiModelProperty("密码")
     private String password;
     @ApiModelProperty("邀请码")

@@ -116,4 +116,23 @@
         </set>
         where id =#{id}
     </update>
+    <select id="getMyPackage" parameterType="com.example.demo.dto.BoxRecordsWebQuery"
+            resultType="com.example.demo.entity.BoxRecordsWeb">
+        select
+        id,
+        `name`,
+        bean,
+        lv,
+        cover,
+        dura
+        from box_records
+        where user_id =#{userId}
+        and status =  2
+        <if test="orderV > 0">
+            order by bean desc
+        </if>
+        <if test="0 >= orderV">
+            order by bean
+        </if>
+    </select>
 </mapper>

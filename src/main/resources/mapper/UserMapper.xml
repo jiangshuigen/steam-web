@@ -25,6 +25,21 @@
         where id = #id
     </delete>
 
+    <update id="webUpdateUser" parameterType="com.example.demo.dto.UserUpdateDto">
+        update users
+        <set>
+            <if test="name!=null and name != ''">
+                `name` =#{name},
+            </if>
+            <if test="avatar!=null">
+                avatar =#{avatar},
+            </if>
+            <if test="steamUrl!=null and steamUrl!=''">
+                steam_url =#{steamUrl},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
     <update id="updateUser" parameterType="com.example.demo.entity.User">
         update users
         <set>
@@ -79,7 +94,8 @@
         ua.inviter_id inviterId,
         (select u.`name` from users u where u.id = ua.inviter_id) as inviterName,
         (SELECT SUM(re.bean) FROM `bean_records` as re WHERE re.user_id = ua.id AND re.`status` = '1') as truePay ,
-        (SELECT SUM(res.bean) FROM `bean_records` as res WHERE res.inviter_id = ua.id  AND res.`status` = '1') as subordinatePay,
+        (SELECT SUM(res.bean) FROM `bean_records` as res WHERE res.inviter_id = ua.id AND res.`status` = '1') as
+        subordinatePay,
         ua.be_invite_number beInviteNumber,
         ua.email_verified_at emailVerifiedAt,
         ua.bean,
@@ -120,11 +136,52 @@
             </if>
         </where>
     </select>
+    <select id="getUserInfo" parameterType="java.lang.Integer" resultType="com.example.demo.dto.UserDto">
+        select
+        ua.id,
+        ua.`name`,
+        ua.mobile,
+        ua.invite_code inviteCode,
+        ua.avatar,
+        ua.steam_url steamUrl ,
+        ua.vip_level vipLevel,
+        ua.total_recharge as totalRecharge,
+        IFNULL((select v.threshold from vip as v  where v.level = (ua.vip_level+1) limit 1),999999) as nextVipLevelEXP,
+        CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide
+         from users ua where ua.id = #{id} limit 1
+    </select>
+
+    <select id="queryUserInfo" resultType="com.example.demo.dto.UserDto" parameterType="com.example.demo.dto.LoginInfo">
+        select
+        ua.id,
+        ua.`name`,
+        ua.mobile,
+        ua.invite_code inviteCode,
+        ua.avatar,
+        ua.steam_url steamUrl ,
+        ua.vip_level vipLevel,
+        ua.total_recharge as totalRecharge,
+        CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide
+        from users ua
+        <where>
+            <if test="name!=null and name !=''">
+                and ua.`name` =#{name}
+            </if>
+            <if test="mobile!=null and mobile !=''">
+                and ua.mobile =#{mobile}
+            </if>
+            <if test="password!=null and password !=''">
+                and ua.password =#{password}
+            </if>
+        </where>
+        limit 1
+    </select>
     <select id="getUserById" resultType="com.example.demo.entity.User" parameterType="java.lang.Integer">
         select
          ua.id,
         ua.`name`,
         ua.mobile,
+        CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide ,
         ua.invite_code inviteCode,
         ua.avatar,
         ua.inviter_id inviterId,
@@ -166,7 +223,6 @@
             updated_at as updatedAt
             from login_ip_logs
             where user_id = #{userId}
-
     </select>
 
 </mapper>

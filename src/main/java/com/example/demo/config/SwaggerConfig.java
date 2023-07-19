@@ -25,10 +25,26 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 //用于生成API信息
                 .apiInfo(apiInfo())
+                .groupName("admin后台管理")
                 //select()函数返回一个ApiSelectorBuilder实例,用来控制接口被swagger做成文档
                 .select()
                 //用于指定扫描哪个包下的接口
-                .apis(RequestHandlerSelectors.basePackage("com.example.demo.web"))
+                .apis(RequestHandlerSelectors.basePackage("com.example.demo.web.admin"))
+                //选择所有的API,如果你想只为部分API生成文档，可以配置这里
+                .paths(PathSelectors.any())
+                .build();
+    }
+
+    @Bean
+    public Docket createRestApi2() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                //用于生成API信息
+                .apiInfo(apiInfo())
+                .groupName("前台页面")
+                //select()函数返回一个ApiSelectorBuilder实例,用来控制接口被swagger做成文档
+                .select()
+                //用于指定扫描哪个包下的接口
+                .apis(RequestHandlerSelectors.basePackage("com.example.demo.web.web"))
                 //选择所有的API,如果你想只为部分API生成文档，可以配置这里
                 .paths(PathSelectors.any())
                 .build();

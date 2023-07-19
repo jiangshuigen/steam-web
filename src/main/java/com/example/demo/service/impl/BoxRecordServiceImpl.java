@@ -1,10 +1,8 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.ApplDto;
-import com.example.demo.dto.ApplUpdate;
-import com.example.demo.dto.ApplyQuery;
-import com.example.demo.dto.BoxRecordsQuery;
+import com.example.demo.dto.*;
 import com.example.demo.entity.BoxRecords;
+import com.example.demo.entity.BoxRecordsWeb;
 import com.example.demo.entity.RedRecords;
 import com.example.demo.mapper.BoxRecordMapper;
 import com.example.demo.service.BoxRecordService;
@@ -50,5 +48,13 @@ public class BoxRecordServiceImpl implements BoxRecordService {
     @Override
     public int updateApply(ApplUpdate dto) {
         return boxrecordmapper.updateApply(dto);
+    }
+
+    @Override
+    public PageInfo<BoxRecordsWeb> getMyPackage(BoxRecordsWebQuery query) {
+        PageHelper.startPage(query.getPageNo(), query.getPageSize());
+        List<BoxRecordsWeb> list = boxrecordmapper.getMyPackage(query);
+        PageInfo<BoxRecordsWeb> listInfo = new PageInfo<>(list);
+        return listInfo;
     }
 }

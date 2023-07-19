@@ -1,10 +1,9 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.ApplDto;
-import com.example.demo.dto.ApplUpdate;
-import com.example.demo.dto.ApplyQuery;
-import com.example.demo.dto.BoxRecordsQuery;
+import com.example.demo.dto.*;
 import com.example.demo.entity.BoxRecords;
+import com.example.demo.entity.BoxRecordsWeb;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -18,4 +17,6 @@ public interface BoxRecordMapper {
     List<ApplDto> getApplyList(ApplyQuery query);
 
     int updateApply(ApplUpdate dto);
+
+    List<BoxRecordsWeb> getMyPackage(BoxRecordsWebQuery query);
 }

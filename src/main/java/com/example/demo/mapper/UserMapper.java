@@ -1,13 +1,9 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.LoginIpLog;
-import com.example.demo.dto.LoginIpLogQuery;
-import com.example.demo.dto.UserQuery;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Dashboard;
 import com.example.demo.entity.User;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.ResultMap;
-import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -26,10 +22,6 @@ public interface UserMapper {
 
     List<User> selectAllUser();
 
-    @Select("select * from t_user where username like CONCAT('%' , #{0} , '%')")
-    @ResultMap("userMap")
-    List<User> selectUserByName(String name);
-
     Dashboard getDashboard();
 
     List<User> getUserListByPage(UserQuery query);
@@ -39,4 +31,9 @@ public interface UserMapper {
     List<LoginIpLog> getIPList(LoginIpLogQuery query);
 
 
+    UserDto getUserInfo(int id);
+
+    int webUpdateUser(UserUpdateDto user);
+
+    UserDto queryUserInfo(LoginInfo info);
 }
