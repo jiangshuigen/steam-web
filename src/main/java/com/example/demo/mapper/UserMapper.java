@@ -36,4 +36,12 @@ public interface UserMapper {
     int webUpdateUser(UserUpdateDto user);
 
     UserDto queryUserInfo(LoginInfo info);
+
+    List<User> queryUserByPhone(String mobile);
+
+    List<User> queryUserByName(String name);
+
+    int register(UserRegisterDto user);
+
+    List<User> queryUserByInviteCode(String inviteCode);
 }

@@ -18,4 +18,6 @@ public interface BoxRecordService {
     int updateApply(ApplUpdate dto);
 
     PageInfo<BoxRecordsWeb>  getMyPackage(BoxRecordsWebQuery query);
+
+    int getPackage(int[] ids);
 }

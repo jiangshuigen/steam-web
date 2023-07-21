@@ -127,7 +127,7 @@
         dura
         from box_records
         where user_id =#{userId}
-        and status =  2
+        and status =  0
         <if test="orderV > 0">
             order by bean desc
         </if>
@@ -135,4 +135,17 @@
             order by bean
         </if>
     </select>
+    <!-- 背包物品取回-->
+    <update id="getPackage">
+            update box_records
+            <set>
+                status = 4
+            </set>
+            <where>
+                id in
+                <foreach collection="ids" item="item" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </where>
+    </update>
 </mapper>

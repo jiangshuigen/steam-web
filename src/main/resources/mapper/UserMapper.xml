@@ -225,4 +225,127 @@
             where user_id = #{userId}
     </select>
 
+    <select id="queryUserByPhone" parameterType="java.lang.String" resultType="com.example.demo.entity.User">
+        select
+         ua.id,
+        ua.`name`,
+        ua.mobile,
+        CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide ,
+        ua.invite_code inviteCode,
+        ua.avatar,
+        ua.inviter_id inviterId,
+        ua.be_invite_number beInviteNumber,
+        ua.email_verified_at emailVerifiedAt,
+        ua.bean,
+        ua.integral,
+        ua.steam_url steamUrl ,
+        ua.steam_id steamId,
+        ua.password,
+        ua.remember_token rememberToken,
+        ua.promotion_level promotionLevel,
+        ua.vip_level vipLevel,
+        ua.is_recharge isRecharge,
+        ua.total_recharge totalRecharge,
+        ua.close_gift closeGift,
+        ua.ban_pick_up banPickUp,
+        ua.anchor,
+        ua.new_welfare newWelfare,
+        ua.box_key_total boxKeyTotal,
+        ua.reward_new_user rewardNewUser,
+        ua.is_adult isAdult,
+        ua.real_name realName,
+        ua.id_number idNumber,
+        ua.set_invite_code_num setInviteCodeNum,
+        ua.created_at createdAt,
+        ua.updated_at updatedAt
+         from users ua
+         where ua.mobile =#{mobile}
+    </select>
+    <select id="queryUserByName" parameterType="java.lang.String" resultType="com.example.demo.entity.User">
+         select
+                 ua.id,
+                ua.`name`,
+                ua.mobile,
+                CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide ,
+                ua.invite_code inviteCode,
+                ua.avatar,
+                ua.inviter_id inviterId,
+                ua.be_invite_number beInviteNumber,
+                ua.email_verified_at emailVerifiedAt,
+                ua.bean,
+                ua.integral,
+                ua.steam_url steamUrl ,
+                ua.steam_id steamId,
+                ua.password,
+                ua.remember_token rememberToken,
+                ua.promotion_level promotionLevel,
+                ua.vip_level vipLevel,
+                ua.is_recharge isRecharge,
+                ua.total_recharge totalRecharge,
+                ua.close_gift closeGift,
+                ua.ban_pick_up banPickUp,
+                ua.anchor,
+                ua.new_welfare newWelfare,
+                ua.box_key_total boxKeyTotal,
+                ua.reward_new_user rewardNewUser,
+                ua.is_adult isAdult,
+                ua.real_name realName,
+                ua.id_number idNumber,
+                ua.set_invite_code_num setInviteCodeNum,
+                ua.created_at createdAt,
+                ua.updated_at updatedAt
+                 from users ua
+                 where ua.`name`=#{name}
+    </select>
+    <select id="queryUserByInviteCode" parameterType="java.lang.String" resultType="com.example.demo.entity.User">
+         select
+         ua.id,
+        ua.`name`,
+        ua.mobile,
+        CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide ,
+        ua.invite_code inviteCode,
+        ua.avatar,
+        ua.inviter_id inviterId,
+        ua.be_invite_number beInviteNumber,
+        ua.email_verified_at emailVerifiedAt,
+        ua.bean,
+        ua.integral,
+        ua.steam_url steamUrl ,
+        ua.steam_id steamId,
+        ua.password,
+        ua.remember_token rememberToken,
+        ua.promotion_level promotionLevel,
+        ua.vip_level vipLevel,
+        ua.is_recharge isRecharge,
+        ua.total_recharge totalRecharge,
+        ua.close_gift closeGift,
+        ua.ban_pick_up banPickUp,
+        ua.anchor,
+        ua.new_welfare newWelfare,
+        ua.box_key_total boxKeyTotal,
+        ua.reward_new_user rewardNewUser,
+        ua.is_adult isAdult,
+        ua.real_name realName,
+        ua.id_number idNumber,
+        ua.set_invite_code_num setInviteCodeNum,
+        ua.created_at createdAt,
+        ua.updated_at updatedAt
+         from users ua
+         where ua.invite_code=#{inviteCode}
+    </select>
+    <insert id="register" parameterType="com.example.demo.dto.UserRegisterDto">
+        insert into users(
+        `name`,
+        mobile,
+        invite_code,
+        password,
+        created_at
+        )values(
+        #{name},
+        #{mobile},
+        #{inviteCode},
+         #{password},
+         now()
+        )
+    </insert>
 </mapper>

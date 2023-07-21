@@ -4,6 +4,7 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.BoxRecords;
 import com.example.demo.entity.BoxRecordsWeb;
 import com.github.pagehelper.PageInfo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface BoxRecordMapper {
     int updateApply(ApplUpdate dto);
 
     List<BoxRecordsWeb> getMyPackage(BoxRecordsWebQuery query);
+
+    int getPackage(@Param("ids")int[] ids);
 }

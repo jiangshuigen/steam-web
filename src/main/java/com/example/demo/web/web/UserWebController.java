@@ -1,10 +1,10 @@
 package com.example.demo.web.web;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.ShearCaptcha;
+import com.example.demo.config.Constant;
 import com.example.demo.config.ResultData;
-import com.example.demo.dto.BoxRecordsWebQuery;
-import com.example.demo.dto.LoginInfo;
-import com.example.demo.dto.UserDto;
-import com.example.demo.dto.UserUpdateDto;
+import com.example.demo.dto.*;
 import com.example.demo.entity.BoxRecordsWeb;
 import com.example.demo.entity.User;
 import com.example.demo.service.BoxRecordService;
@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/web")
@@ -90,5 +92,79 @@ public class UserWebController {
         } else {
             return ResultData.fail("403", "请登录");
         }
+    }
+
+    /**
+     * 获取图形验证码
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @ApiOperation(value = "获取图形验证码")
+    @GetMapping("/getCode")
+    public void getCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        response.setContentType("image/jpeg");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-cache");
+        response.setDateHeader("Expires", 0);
+        //定义图形验证码的长、宽、验证码字符数、干扰线宽度
+        ShearCaptcha shearCaptcha = CaptchaUtil.createShearCaptcha(150, 40, 5, 4);
+        //图形验证码写出，可以写出到文件，也可以写出到流
+        shearCaptcha.write(response.getOutputStream());
+        //获取验证码中的文字内容
+        System.out.println("code = " + shearCaptcha.getCode());
+        request.getSession().setAttribute(Constant.REGISTER_CODE, shearCaptcha.getCode());
+    }
+
+
+    /**
+     * 查重接口
+     * @param str
+     * @param type 1-手机 2-用户名 3-邀请码
+     * @return
+     */
+    @ApiOperation(value = "查重接口")
+    @GetMapping("/repeatCheck")
+    public ResultData repeatCheck(@RequestParam String str,@RequestParam("type(1-手机查重 2-用户名查重 3-邀请码查重)") int type) {
+        return ResultData.success(userservice.repeatCheck(str,type));
+    }
+
+
+    /**
+     * 用户注册
+     *
+     * @param user
+     * @return
+     */
+    @ApiOperation(value = "用户注册")
+    @PostMapping("/register")
+    public ResultData register(HttpServletRequest request, @RequestBody UserRegisterDto user) throws Exception {
+        return ResultData.success(userservice.register(request, user));
+    }
+
+    /**
+     * 发送短信验证码
+     *
+     * @param
+     * @param
+     * @return
+     * @throws Exception
+     */
+    @ApiOperation(value = "发送短信")
+    @GetMapping("/sendCode")
+    public ResultData sendCode(@RequestParam String phone) {
+        return ResultData.success(userservice.sendCode(phone));
+    }
+
+    /**
+     * 物品取回
+     * @param ids
+     * @return
+     */
+    @ApiOperation(value = "背包物品取回")
+    @GetMapping("/getPackage")
+    public ResultData getPackage(@RequestParam(value = "ids") int[] ids) {
+        return ResultData.success(boxrecordservice.getPackage(ids));
     }
 }

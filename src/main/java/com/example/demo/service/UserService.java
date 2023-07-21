@@ -28,4 +28,10 @@ public interface UserService {
     User getLoginUserInfo(HttpServletRequest req);
 
     UserDto userLogin(HttpServletRequest request, LoginInfo info);
+
+    String register(HttpServletRequest request,UserRegisterDto user);
+
+    String sendCode(String phone);
+
+    boolean repeatCheck(String str,int type);
 }

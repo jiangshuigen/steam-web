@@ -29,6 +29,11 @@ spring:
       enabled: true
       max-file-size: 100MB
       max-request-size: 100MB
+  #redis
+  redis:
+    host: 47.97.5.36
+    port: 16379
+    password: THKJ0429@Root
 
   application:
     name: steam-web

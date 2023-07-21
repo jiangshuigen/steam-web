@@ -5,22 +5,43 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.User;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.UserService;
+import com.example.demo.util.CheckSumBuilder;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     public int updateUser(User user) {
         return userMapper.updateUser(user);
@@ -77,6 +98,112 @@ public class UserServiceImpl implements UserService {
             request.getSession().setAttribute(Constant.USER_INFO, dto);
         }
         return dto;
+    }
+
+    @Override
+    public String register(HttpServletRequest request, UserRegisterDto user) {
+        //手机-用户名查重校验
+        List<User> list = userMapper.queryUserByPhone(user.getMobile());
+        if (!CollectionUtils.isEmpty(list)) {
+            return "手机号码已经注册";
+        }
+        //用户名校验
+        List<User> listUser = userMapper.queryUserByName(user.getName());
+        if (!CollectionUtils.isEmpty(listUser)) {
+            return "用户名：" + user.getName() + "已经注册";
+        }
+        //邀请码校验
+        List<User> Userlist = userMapper.queryUserByInviteCode(user.getInviteCode());
+        if (!CollectionUtils.isEmpty(Userlist)) {
+            return "邀请码：" + user.getInviteCode() + "已经使用";
+        }
+        //短信验证码校验
+        String mobileCode = (String) redisTemplate.opsForValue().get(user.getMobile());
+        if (!(mobileCode != null && mobileCode.equals(user.getMobileCode()))) {
+            return "手机验证码错误或已过期";
+        }
+        //图形验证码校验
+        String code = (String) request.getSession().getAttribute(Constant.REGISTER_CODE);
+        if (!(code != null && code.equals(user.getCode()))) {
+            return "图形验证码错误";
+        }
+        int i = userMapper.register(user);
+        return i + "";
+    }
+
+    @Override
+    public String sendCode(String phone) {
+        try {
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(Constant.SERVER_URL);
+            String curTime = String.valueOf((new Date()).getTime() / 1000L);
+            /*
+             * 参考计算CheckSum的java代码，在上述文档的参数列表中，有CheckSum的计算文档示例
+             */
+            String checkSum = CheckSumBuilder.getCheckSum(Constant.APP_SECRET, Constant.NONCE, curTime);
+            // 设置请求的header
+            httpPost.addHeader("AppKey", Constant.APP_KEY);
+            httpPost.addHeader("Nonce", Constant.NONCE);
+            httpPost.addHeader("CurTime", curTime);
+            httpPost.addHeader("CheckSum", checkSum);
+            httpPost.addHeader("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
+            // 设置请求的的参数，requestBody参数
+            List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+            /*
+             * 1.如果是模板短信，请注意参数mobile是有s的，详细参数配置请参考“发送模板短信文档”
+             * 2.参数格式是jsonArray的格式，例如 "['13888888888','13666666666']"
+             * 3.params是根据你模板里面有几个参数，那里面的参数也是jsonArray格式
+             */
+//            nvps.add(new BasicNameValuePair("templateid", Constant.TEMPLATEID));
+            nvps.add(new BasicNameValuePair("mobile", phone));
+            nvps.add(new BasicNameValuePair("params", Constant.PARAMS));
+
+            httpPost.setEntity(new UrlEncodedFormEntity(nvps, "utf-8"));
+
+            // 执行请求
+            HttpResponse response = httpClient.execute(httpPost);
+            /*
+             * 1.打印执行结果，打印结果一般会200、315、403、404、413、414、500
+             * 2.具体的code有问题的可以参考官网的Code状态表
+             */
+//
+            String jsonStr = EntityUtils.toString(response.getEntity());
+            log.info("==================" + jsonStr);
+            Gson gson = new Gson();
+            HttpResponseDto responsed = gson.fromJson(jsonStr, HttpResponseDto.class);
+//            HttpResponseDto responsed = (HttpResponseDto) JSONObject.parseArray(jsonArray.toJSONString(), HttpResponseDto.class);
+            if (responsed.getCode() == 200) {
+                redisTemplate.opsForValue().set(phone, responsed.getObj(), 120, TimeUnit.SECONDS);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @Override
+    public boolean repeatCheck(String str, int type) {
+        switch (type) {
+            case 1:
+                List<User> list = userMapper.queryUserByPhone(str);
+                if (!CollectionUtils.isEmpty(list)) {
+                    return false;
+                }
+                break;
+            case 2:
+                List<User> listUser = userMapper.queryUserByName(str);
+                if (!CollectionUtils.isEmpty(listUser)) {
+                    return false;
+                }
+                break;
+            case 3:
+                List<User> Userlist = userMapper.queryUserByInviteCode(str);
+                if (!CollectionUtils.isEmpty(Userlist)) {
+                    return false;
+                }
+                break;
+        }
+        return true;
     }
 
 

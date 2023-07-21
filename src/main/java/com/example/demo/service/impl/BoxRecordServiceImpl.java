@@ -57,4 +57,9 @@ public class BoxRecordServiceImpl implements BoxRecordService {
         PageInfo<BoxRecordsWeb> listInfo = new PageInfo<>(list);
         return listInfo;
     }
+
+    @Override
+    public int getPackage(int[] ids) {
+        return boxrecordmapper.getPackage(ids);
+    }
 }
