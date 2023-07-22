@@ -79,7 +79,36 @@
         </where>
         order by created_at desc
     </select>
-
+    <select id="getIndexBoxList" parameterType="java.lang.Integer" resultType="com.example.demo.entity.BoxAwards">
+          select id,
+        box_id as boxId,
+        `name`,
+        hash_name as hashName,
+        cover,
+        odds,
+        real_odds as realOdds,
+        anchor_odds as anchorOdds,
+        luck_odds as luckOdds,
+        game_odds as gameOdds,
+        game_anchor_odds as gameAnchorOdds,
+        dura,
+        lv,
+        bean,
+        max_t as maxT,
+        `type`,
+        is_lucky_box as isLuckyBox,
+        luck_interval as luckInterval,
+        luck_interval_anchor as luckIntervalAnchor,
+        is_game as isGame,
+        is_shop as isShop,
+        is_synthesis as isSynthesis,
+        clear_lucky as clearLucky,
+        shop_inventory as shopInventory,
+        created_at as createdAt,
+        updated_at as updatedAt
+        from box_awards
+        where box_id =#{boxId}
+    </select>
     <update id="updateAward" parameterType="com.example.demo.entity.BoxAwards">
         update box_awards
         <set>

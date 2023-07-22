@@ -42,7 +42,54 @@
         </where>
         order by re.created_at desc
     </select>
+    <insert id="saveBoxRecord" parameterType="com.example.demo.entity.BoxRecords">
+        insert into box_records(
+        get_user_id,
+        user_id,
+        box_id,
+        box_name,
+        box_bean,
+        box_award_id,
+        `name`,
+        hash_name,
+        cover,
+        dura,
+        lv,
+        bean,
+        max_t,
+        code,
+        uuid,
+        status,
+        `type`,
+        is_lock,
+        created_at
+        )values
+        <foreach collection="records" item="item" separator=",">
+            (
+            #{item.getUserId},
+            #{item.userId},
+            #{item.boxId},
+            #{item.boxName},
+            #{item.boxBean},
+            #{item.boxAwardId},
+            #{item.name},
+            #{item.hashName},
+            #{item.cover},
+            #{item.dura},
+            #{item.lv},
+            #{item.bean},
+            #{item.maxT},
+            #{item.code},
+            #{item.uuid},
+            0,
+            #{item.type},
+            0,
+            now()
+            )
+        </foreach>
 
+
+    </insert>
     <select id="getRecordById" resultType="com.example.demo.entity.BoxRecords" parameterType="java.lang.Integer">
         select
             re.id,
@@ -127,7 +174,7 @@
         dura
         from box_records
         where user_id =#{userId}
-        and status =  0
+        and status = 0
         <if test="orderV > 0">
             order by bean desc
         </if>
@@ -135,17 +182,37 @@
             order by bean
         </if>
     </select>
+
+    <select id="getBackList" parameterType="com.example.demo.dto.BackQuery"
+            resultType="com.example.demo.entity.BoxRecordsWeb">
+            select
+                    id,
+                    user_id as userId,
+                    `name`,
+                    bean,
+                    lv,
+                    cover,
+                    code,
+                    status,
+                    updated_at as updateAt,
+                    dura
+                    from box_records
+                    where user_id =#{userId}
+                    and status !=  0
+                    order by updated_at desc
+    </select>
     <!-- 背包物品取回-->
     <update id="getPackage">
-            update box_records
-            <set>
-                status = 4
-            </set>
-            <where>
-                id in
-                <foreach collection="ids" item="item" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
-            </where>
+        update box_records
+        <set>
+            status = 4,
+            updated_at = now()
+        </set>
+        <where>
+            id in
+            <foreach collection="ids" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
     </update>
 </mapper>

@@ -39,4 +39,9 @@ public class BoxServiceImpl implements BoxService {
     public int saveBox(Box box) {
         return boxmapper.saveBox(box);
     }
+
+    @Override
+    public List<Box> getIndexBoxList() {
+        return boxmapper.getIndexBoxList();
+    }
 }

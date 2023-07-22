@@ -145,6 +145,7 @@
         ua.avatar,
         ua.steam_url steamUrl ,
         ua.vip_level vipLevel,
+        anchor,
         ua.total_recharge as totalRecharge,
         IFNULL((select v.threshold from vip as v  where v.level = (ua.vip_level+1) limit 1),999999) as nextVipLevelEXP,
         CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide
@@ -158,6 +159,7 @@
         ua.mobile,
         ua.invite_code inviteCode,
         ua.avatar,
+        bean,
         ua.steam_url steamUrl ,
         ua.vip_level vipLevel,
         ua.total_recharge as totalRecharge,
@@ -348,4 +350,14 @@
          now()
         )
     </insert>
+
+    <update id="updateBean" >
+        update users
+        <set>
+            bean = #{balance}
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
 </mapper>

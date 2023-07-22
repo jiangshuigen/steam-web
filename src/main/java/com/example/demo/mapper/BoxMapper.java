@@ -13,4 +13,6 @@ public interface BoxMapper {
     int updateBox(Box box);
 
     int saveBox(Box box);
+
+    List<Box> getIndexBoxList();
 }

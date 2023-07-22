@@ -15,8 +15,8 @@
         luck_interval_anchor as luckIntervalAnchor,
         created_at as createdAt,
         updated_at as updatedAt,
-        game_bean  as gameBean,
-        cate_id    as cateId
+        game_bean as gameBean,
+        cate_id as cateId
         from boxs
         <where>
             <if test="id>0">
@@ -27,7 +27,24 @@
             </if>
         </where>
     </select>
-
+    <select id="getIndexBoxList" resultType="com.example.demo.entity.Box">
+  select
+        id,
+        `name`,
+        cover,
+        weapon_cover as weaponCover,
+        intact_cover as intactCover,
+        bean,
+        sort,
+        is_putaway as isPutaway,
+        luck_interval as luckInterval,
+        luck_interval_anchor as luckIntervalAnchor,
+        created_at as createdAt,
+        updated_at as updatedAt,
+        game_bean as gameBean,
+        cate_id as cateId
+        from boxs where is_putaway = 1
+    </select>
     <select id="getBoxById" resultType="com.example.demo.entity.Box">
       select
           `name`,

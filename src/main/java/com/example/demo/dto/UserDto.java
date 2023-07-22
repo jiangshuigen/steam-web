@@ -23,6 +23,10 @@ public class UserDto {
     private String avatar;
     @ApiModelProperty("VIP等级")
     private int vipLevel;
+    @ApiModelProperty("是否主播 0：否 1：是")
+    private int anchor;
+    @ApiModelProperty("金豆")
+    private BigDecimal bean;
     @ApiModelProperty("总充值（统计）")
     private BigDecimal totalRecharge;
     @ApiModelProperty("下一级VIP经验")

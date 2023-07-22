@@ -23,6 +23,12 @@ public class BoxAwards {
     private int dura;
     @ApiModelProperty("品质")
     private int lv;
+    @ApiModelProperty("投放数量")
+    private int realOdds;
+    @ApiModelProperty("投放数量(主播)")
+    private int anchorOdds;
+    @ApiModelProperty("投放数量(幸运)")
+    private int luckOdds;
     @ApiModelProperty("金豆")
     private BigDecimal bean;
     @ApiModelProperty("装备类型")
@@ -37,7 +43,7 @@ public class BoxAwards {
     private String luckIntervalAnchor;
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date created_at;
+    private Date createdAt;
 
 
 }

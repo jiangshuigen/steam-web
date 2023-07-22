@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 @RestController
@@ -120,14 +121,15 @@ public class UserWebController {
 
     /**
      * 查重接口
+     *
      * @param str
      * @param type 1-手机 2-用户名 3-邀请码
      * @return
      */
     @ApiOperation(value = "查重接口")
     @GetMapping("/repeatCheck")
-    public ResultData repeatCheck(@RequestParam String str,@RequestParam("type(1-手机查重 2-用户名查重 3-邀请码查重)") int type) {
-        return ResultData.success(userservice.repeatCheck(str,type));
+    public ResultData repeatCheck(@RequestParam String str, @RequestParam("type(1-手机查重 2-用户名查重 3-邀请码查重)") int type) {
+        return ResultData.success(userservice.repeatCheck(str, type));
     }
 
 
@@ -159,6 +161,7 @@ public class UserWebController {
 
     /**
      * 物品取回
+     *
      * @param ids
      * @return
      */
@@ -166,5 +169,22 @@ public class UserWebController {
     @GetMapping("/getPackage")
     public ResultData getPackage(@RequestParam(value = "ids") int[] ids) {
         return ResultData.success(boxrecordservice.getPackage(ids));
+    }
+
+    /**
+     * 我的取回记录
+     *
+     * @return
+     */
+    @ApiOperation(value = "取回记录")
+    @PostMapping("/getBackList")
+    public ResultData getBackList(HttpServletRequest request, @RequestBody BackQuery query) {
+        //获取session
+        HttpSession session = request.getSession();
+        UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
+        if (ObjectUtils.isEmpty(dto)) {
+            return ResultData.fail("403", "未登录");
+        }
+        return ResultData.success(boxrecordservice.getBackList(request, query));
     }
 }

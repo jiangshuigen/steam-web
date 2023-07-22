@@ -2,10 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.dto.BoxAwardsQuery;
 import com.example.demo.dto.LuckyBboxRecordQuery;
-import com.example.demo.entity.AwardTypes;
-import com.example.demo.entity.Box;
-import com.example.demo.entity.BoxAwards;
-import com.example.demo.entity.LuckyBboxRecord;
+import com.example.demo.dto.OpenBox;
+import com.example.demo.entity.*;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -26,4 +24,8 @@ public interface LuckyBoxService {
     PageInfo<LuckyBboxRecord> getLuckyBoxList(LuckyBboxRecordQuery query);
 
     int deleteById(int id);
+
+    List<BoxAwards> getIndexBoxList(int boxId);
+
+    List<BoxRecords> openBox(OpenBox openbox, User user) throws Exception;
 }

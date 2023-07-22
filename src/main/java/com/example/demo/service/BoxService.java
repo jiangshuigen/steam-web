@@ -4,6 +4,8 @@ import com.example.demo.dto.BoxQuery;
 import com.example.demo.entity.Box;
 import com.github.pagehelper.PageInfo;
 
+import java.util.List;
+
 public interface BoxService {
 
     PageInfo<Box> getBoxList(BoxQuery query);
@@ -13,4 +15,6 @@ public interface BoxService {
     int updateBox(Box box);
 
     int saveBox(Box box);
+
+    List<Box> getIndexBoxList();
 }

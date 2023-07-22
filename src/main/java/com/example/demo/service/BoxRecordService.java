@@ -5,6 +5,9 @@ import com.example.demo.entity.BoxRecords;
 import com.example.demo.entity.BoxRecordsWeb;
 import com.github.pagehelper.PageInfo;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 public interface BoxRecordService {
 
     PageInfo<BoxRecords> getBoxRecordList(BoxRecordsQuery query);
@@ -13,11 +16,15 @@ public interface BoxRecordService {
 
     int deleteById(int id);
 
-    PageInfo<ApplDto>  getApplyList(ApplyQuery query);
+    PageInfo<ApplDto> getApplyList(ApplyQuery query);
 
     int updateApply(ApplUpdate dto);
 
-    PageInfo<BoxRecordsWeb>  getMyPackage(BoxRecordsWebQuery query);
+    PageInfo<BoxRecordsWeb> getMyPackage(BoxRecordsWebQuery query);
 
     int getPackage(int[] ids);
+
+    PageInfo<BoxRecordsWeb> getBackList(HttpServletRequest request, BackQuery query);
+
+    int saveBoxRecord(List<BoxRecords> records);
 }

@@ -4,7 +4,9 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.Dashboard;
 import com.example.demo.entity.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -44,4 +46,6 @@ public interface UserMapper {
     int register(UserRegisterDto user);
 
     List<User> queryUserByInviteCode(String inviteCode);
+
+    int updateBean(@Param("balance") BigDecimal balance, @Param("id")int id);
 }

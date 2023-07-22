@@ -23,4 +23,6 @@ public interface LuckyBoxMapper {
     int updateAward(BoxAwards award);
 
     int deleteById(int id);
+
+    List<BoxAwards> getIndexBoxList(int boxId);
 }

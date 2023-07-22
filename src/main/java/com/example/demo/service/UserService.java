@@ -5,6 +5,7 @@ import com.example.demo.entity.User;
 import com.github.pagehelper.PageInfo;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 
 public interface UserService {
 
@@ -34,4 +35,6 @@ public interface UserService {
     String sendCode(String phone);
 
     boolean repeatCheck(String str,int type);
+
+    int updateBean(BigDecimal balance, int id);
 }

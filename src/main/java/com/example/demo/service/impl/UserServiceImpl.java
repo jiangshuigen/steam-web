@@ -28,6 +28,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -204,6 +205,11 @@ public class UserServiceImpl implements UserService {
                 break;
         }
         return true;
+    }
+
+    @Override
+    public int updateBean(BigDecimal balance, int id) {
+        return userMapper.updateBean(balance, id);
     }
 
 
