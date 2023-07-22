@@ -2,10 +2,10 @@ package com.example.demo.web.admin;
 
 import com.example.demo.config.ResultData;
 import com.example.demo.dto.BoxAwardsQuery;
-import com.example.demo.dto.LuckyBboxRecordQuery;
+import com.example.demo.dto.LuckyBoxRecordQuery;
 import com.example.demo.entity.AwardTypes;
 import com.example.demo.entity.BoxAwards;
-import com.example.demo.entity.LuckyBboxRecord;
+import com.example.demo.entity.LuckyBoxRecord;
 import com.example.demo.service.LuckyBoxService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
@@ -110,7 +110,7 @@ public class LuckyBoxController {
      */
     @ApiOperation(value = "幸运开箱记录")
     @PostMapping("/getLuckyBoxList")
-    public ResultData<PageInfo<LuckyBboxRecord>> getLuckyBoxList(@RequestBody LuckyBboxRecordQuery query) {
+    public ResultData<PageInfo<LuckyBoxRecord>> getLuckyBoxList(@RequestBody LuckyBoxRecordQuery query) {
         return ResultData.success(luckyboxservice.getLuckyBoxList(query));
     }
 }

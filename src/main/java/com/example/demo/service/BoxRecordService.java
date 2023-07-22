@@ -27,4 +27,7 @@ public interface BoxRecordService {
     PageInfo<BoxRecordsWeb> getBackList(HttpServletRequest request, BackQuery query);
 
     int saveBoxRecord(List<BoxRecords> records);
+
+    List<BoxRecords> getRecordHistory(int boxId);
+
 }

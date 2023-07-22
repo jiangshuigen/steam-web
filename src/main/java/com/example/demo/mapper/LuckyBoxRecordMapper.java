@@ -1,11 +1,11 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.LuckyBboxRecordQuery;
-import com.example.demo.entity.LuckyBboxRecord;
+import com.example.demo.dto.LuckyBoxRecordQuery;
+import com.example.demo.entity.LuckyBoxRecord;
 
 import java.util.List;
 
 public interface LuckyBoxRecordMapper {
 
-    List<LuckyBboxRecord> getLuckyBoxList(LuckyBboxRecordQuery query);
+    List<LuckyBoxRecord> getLuckyBoxList(LuckyBoxRecordQuery query);
 }

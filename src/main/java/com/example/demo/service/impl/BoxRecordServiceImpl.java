@@ -87,4 +87,9 @@ public class BoxRecordServiceImpl implements BoxRecordService {
     public int saveBoxRecord(List<BoxRecords> records) {
         return boxrecordmapper.saveBoxRecord(records);
     }
+
+    @Override
+    public List<BoxRecords> getRecordHistory(int boxId) {
+        return boxrecordmapper.getRecordHistory(boxId);
+    }
 }

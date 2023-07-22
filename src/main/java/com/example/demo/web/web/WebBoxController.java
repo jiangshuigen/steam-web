@@ -5,7 +5,9 @@ import com.example.demo.config.ResultData;
 import com.example.demo.dto.OpenBox;
 import com.example.demo.entity.Box;
 import com.example.demo.entity.BoxAwards;
+import com.example.demo.entity.BoxRecords;
 import com.example.demo.entity.User;
+import com.example.demo.service.BoxRecordService;
 import com.example.demo.service.BoxService;
 import com.example.demo.service.LuckyBoxService;
 import com.example.demo.service.UserService;
@@ -32,6 +34,9 @@ public class WebBoxController {
 
     @Resource
     private LuckyBoxService luckyboxservice;
+
+    @Resource
+    private BoxRecordService boxrecordservice;
 
     /**
      * 展示宝箱列表
@@ -77,5 +82,15 @@ public class WebBoxController {
         return ResultData.success(luckyboxservice.openBox(openbox, usr));
     }
 
-
+    /**
+     * 最新开箱记录
+     *
+     * @param boxId
+     * @return
+     */
+    @ApiOperation(value = "箱子历史记录")
+    @GetMapping("/getRecordHistory")
+    public ResultData<List<BoxRecords>> getRecordHistory(@RequestParam("boxId") int boxId) {
+        return ResultData.success(boxrecordservice.getRecordHistory(boxId));
+    }
 }

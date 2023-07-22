@@ -25,4 +25,6 @@ public interface BoxRecordMapper {
     List<BoxRecordsWeb> getBackList(BackQuery query);
 
     int saveBoxRecord(@Param("records") List<BoxRecords> record);
+
+    List<BoxRecords> getRecordHistory(@Param("boxId") int boxId);
 }

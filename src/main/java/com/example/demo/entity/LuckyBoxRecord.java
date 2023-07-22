@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-public class LuckyBboxRecord {
+public class LuckyBoxRecord {
     @ApiModelProperty("主键id")
     private int id;
     @ApiModelProperty("用户id")

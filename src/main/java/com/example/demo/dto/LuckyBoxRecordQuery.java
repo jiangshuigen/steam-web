@@ -4,7 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
-public class LuckyBboxRecordQuery extends BasePage {
+public class LuckyBoxRecordQuery extends BasePage {
     @ApiModelProperty("用户")
     private String userName;
     @ApiModelProperty("目标饰品")

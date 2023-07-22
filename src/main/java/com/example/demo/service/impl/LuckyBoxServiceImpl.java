@@ -2,7 +2,7 @@ package com.example.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.example.demo.dto.BoxAwardsQuery;
-import com.example.demo.dto.LuckyBboxRecordQuery;
+import com.example.demo.dto.LuckyBoxRecordQuery;
 import com.example.demo.dto.OpenBox;
 import com.example.demo.entity.*;
 import com.example.demo.mapper.LuckyBoxMapper;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -81,10 +82,10 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
     }
 
     @Override
-    public PageInfo<LuckyBboxRecord> getLuckyBoxList(LuckyBboxRecordQuery query) {
+    public PageInfo<LuckyBoxRecord> getLuckyBoxList(LuckyBoxRecordQuery query) {
         PageHelper.startPage(query.getPageNo(), query.getPageSize());
-        List<LuckyBboxRecord> list = luckyboxrecordmapper.getLuckyBoxList(query);
-        PageInfo<LuckyBboxRecord> listInfo = new PageInfo<>(list);
+        List<LuckyBoxRecord> list = luckyboxrecordmapper.getLuckyBoxList(query);
+        PageInfo<LuckyBoxRecord> listInfo = new PageInfo<>(list);
         return listInfo;
     }
 
@@ -103,7 +104,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
     public List<BoxRecords> openBox(OpenBox openbox, User user) throws Exception {
         //计算金币
         Box bx = boxservice.getBoxById(openbox.getBoxId());
-        if(ObjectUtils.isEmpty(bx)){
+        if (ObjectUtils.isEmpty(bx)) {
             throw new Exception("宝箱不存在");
         }
         BigDecimal cost = bx.getBean().multiply(new BigDecimal(openbox.getNumb()));
@@ -122,68 +123,84 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         //获取redis数据
         String listStr = (String) redisTemplate.opsForValue().get(openbox.getBoxId() + "|" + user.getAnchor());
         if (StringUtil.isNullOrEmpty(listStr)) {
-            for (BoxAwards e : listAward) {
-                if (e.getRealOdds() > 0) {
-                    int i = 0;
-                    while (i < e.getRealOdds()) {
-                        i++;
-                        listRedis.add(e);
-                    }
-                }
-            }
+            this.nextTime(listAward, listRedis, openbox, user);
         } else {
             listRedis = JSON.parseArray(listStr, BoxAwards.class);
         }
         //开箱计数器
         Object ob = redisTemplate.opsForValue().get("BoxNumb-" + "|" + user.getAnchor() + openbox.getBoxId());
-        //幸运区间
-        if (!StringUtil.isNullOrEmpty(bx.getLuckInterval())) {
-            String jsonStr = user.getAnchor().equals(1) ? bx.getLuckIntervalAnchor() : bx.getLuckInterval();
-            List<String> listLucky = JSON.parseArray(jsonStr, String.class);
-            int begin = Integer.parseInt(listLucky.get(0));
-            int end = Integer.parseInt(listLucky.get(1));
-            int boxNumb = ob != null ? (int) ob + openbox.getNumb() : openbox.getNumb();
-            log.info("箱子id======" + openbox.getBoxId() + "已开箱数目=======" + boxNumb);
-            List<BoxAwards> listLuckywards = new ArrayList<>();
-            //查询幸运物品并添加
-            for (BoxAwards boxAwards : listAward) {
-                if (boxAwards.getIsLuckyBox() == 1) {
-                    for (int i = 0; i < boxAwards.getLuckOdds(); i++) {
-                        listLuckywards.add(boxAwards);
-                    }
+        int total = 0;
+        for (BoxAwards ea : listAward) {
+            if (user.getAnchor().equals(1)) {
+                if (ea.getAnchorOdds() > 0) {
+                    total += ea.getAnchorOdds();
+                }
+            } else {
+                if (ea.getRealOdds() > 0) {
+                    total += ea.getRealOdds();
                 }
             }
-            //在幸运区间内添加到list
-            if (boxNumb >= begin && boxNumb < end) {
-                listRedis.addAll(listLuckywards);
-            } else if (boxNumb == end) {
-                //幸运区间极限值 必中
-                for (BoxAwards listLuckyward : listLuckywards) {
-                    BoxRecords record = BoxRecords.builder()
-                            .getUserId(user.getId())
-                            .userId(user.getId())
-                            .boxId(openbox.getBoxId())
-                            .boxName(bx.getName())
-                            .boxBean(bx.getBean())
-                            .boxAwardId(listLuckyward.getId())
-                            .name(listLuckyward.getName())
-                            .hashName(listLuckyward.getHashName())
-                            .cover(listLuckyward.getCover())
-                            .dura(listLuckyward.getDura())
-                            .lv(listLuckyward.getLv())
-                            .bean(listLuckyward.getBean())
-                            .maxT(new BigDecimal(0))
-                            .code(this.getCode())
-                            .uuid(UUID.randomUUID().toString())
-                            .type(1)
-                            .build();
-                    listReturn.add(record);
+        }
+        int boxNumb = 0;
+        if (!ObjectUtils.isEmpty(ob)) {
+            boxNumb = (int) ob + openbox.getNumb();
+            //再次判断是否开启下一论
+            if (boxNumb > total) {
+                //
+                boxNumb = boxNumb - total;
+            }
+        } else {
+            boxNumb = openbox.getNumb();
+        }
+
+        //幸运区间
+        String jsonStr = user.getAnchor().equals(1) ? bx.getLuckIntervalAnchor() : bx.getLuckInterval();
+        List<String> listLucky = JSON.parseArray(jsonStr, String.class);
+        int begin = Integer.parseInt(listLucky.get(0));
+        int end = Integer.parseInt(listLucky.get(1));
+        List<BoxAwards> listLuckyWards = new ArrayList<>();
+        //查询幸运物品并添加
+        for (BoxAwards boxAwards : listAward) {
+            if (boxAwards.getIsLuckyBox() == 1) {
+                for (int i = 0; i < boxAwards.getLuckOdds(); i++) {
+                    listLuckyWards.add(boxAwards);
                 }
+            }
+        }
+        //在幸运区间内添加到list
+        if (boxNumb >= begin && boxNumb < end) {
+            listRedis.addAll(listLuckyWards);
+        } else if (boxNumb == end) {
+            //幸运区间极限值 必中
+            for (BoxAwards listLuckyward : listLuckyWards) {
+                BoxRecords record = BoxRecords.builder()
+                        .getUserId(user.getId())
+                        .userId(user.getId())
+                        .boxId(openbox.getBoxId())
+                        .boxName(bx.getName())
+                        .boxBean(bx.getBean())
+                        .boxAwardId(listLuckyward.getId())
+                        .name(listLuckyward.getName())
+                        .hashName(listLuckyward.getHashName())
+                        .cover(listLuckyward.getCover())
+                        .dura(listLuckyward.getDura())
+                        .lv(listLuckyward.getLv())
+                        .bean(listLuckyward.getBean())
+                        .maxT(new BigDecimal(0))
+                        .code(this.getCode())
+                        .uuid(UUID.randomUUID().toString())
+                        .type(1)
+                        .build();
+                listReturn.add(record);
             }
         }
         //洗牌
         Collections.shuffle(listRedis);
-        for (int i = 0; i < openbox.getNumb(); i++) {
+        int size = openbox.getNumb();
+        if (openbox.getNumb() > listRedis.size()) {
+            size = listRedis.size();
+        }
+        for (int i = 0; i < size; i++) {
             if (listReturn.size() >= openbox.getNumb()) {
                 break;
             }
@@ -193,35 +210,66 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     .boxId(openbox.getBoxId())
                     .boxName(bx.getName())
                     .boxBean(bx.getBean())
-                    .boxAwardId(listRedis.get(i).getId())
-                    .name(listRedis.get(i).getName())
-                    .hashName(listRedis.get(i).getHashName())
-                    .cover(listRedis.get(i).getCover())
-                    .dura(listRedis.get(i).getDura())
-                    .lv(listRedis.get(i).getLv())
-                    .bean(listRedis.get(i).getBean())
+                    .boxAwardId(listRedis.get(0).getId())
+                    .name(listRedis.get(0).getName())
+                    .hashName(listRedis.get(0).getHashName())
+                    .cover(listRedis.get(0).getCover())
+                    .dura(listRedis.get(0).getDura())
+                    .lv(listRedis.get(0).getLv())
+                    .bean(listRedis.get(0).getBean())
                     .maxT(new BigDecimal(0))
                     .code(this.getCode())
                     .uuid(UUID.randomUUID().toString())
                     .type(1)
                     .build();
             listReturn.add(record);
-            listRedis.remove(i);
+            listRedis.remove(0);
+            if (this.nextTime(listAward, listRedis, openbox, user)) {
+                ob = boxNumb;
+            }
         }
         String reds = JSON.toJSONString(listRedis);
         redisTemplate.opsForValue().set(openbox.getBoxId() + "|" + user.getAnchor(), reds);
         //保存开箱记录
         boxrecordservice.saveBoxRecord(listReturn);
+        log.info("箱子id======" + openbox.getBoxId() + "已开箱数目=======" + boxNumb);
         if (ObjectUtils.isEmpty(ob)) {
             redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + openbox.getBoxId(), openbox.getNumb());
         } else {
-            int boxNumb = (int) ob + openbox.getNumb();
             redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + openbox.getBoxId(), boxNumb);
         }
-
         return listReturn;
     }
 
+
+    private boolean nextTime(List<BoxAwards> listAward, List<BoxAwards> listRedis, OpenBox openbox, User user) {
+        //判断是否下一轮
+        if (CollectionUtils.isEmpty(listRedis)) {
+            log.info("==============新一轮======清理缓存==========");
+            redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + openbox.getBoxId(), "");
+            for (BoxAwards ea : listAward) {
+                if (user.getAnchor().equals(1)) {
+                    if (ea.getAnchorOdds() > 0) {
+                        int j = 0;
+                        while (j < ea.getAnchorOdds()) {
+                            j++;
+                            listRedis.add(ea);
+                        }
+                    }
+                } else {
+                    if (ea.getRealOdds() > 0) {
+                        int j = 0;
+                        while (j < ea.getRealOdds()) {
+                            j++;
+                            listRedis.add(ea);
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 
     public String getCode() {
         String lock = (String) redisTemplate.opsForValue().get("OrderNo-");

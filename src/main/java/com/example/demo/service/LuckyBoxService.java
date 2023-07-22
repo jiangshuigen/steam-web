@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.BoxAwardsQuery;
-import com.example.demo.dto.LuckyBboxRecordQuery;
+import com.example.demo.dto.LuckyBoxRecordQuery;
 import com.example.demo.dto.OpenBox;
 import com.example.demo.entity.*;
 import com.github.pagehelper.PageInfo;
@@ -21,7 +21,7 @@ public interface LuckyBoxService {
 
     int updateAward(BoxAwards award);
 
-    PageInfo<LuckyBboxRecord> getLuckyBoxList(LuckyBboxRecordQuery query);
+    PageInfo<LuckyBoxRecord> getLuckyBoxList(LuckyBoxRecordQuery query);
 
     int deleteById(int id);
 

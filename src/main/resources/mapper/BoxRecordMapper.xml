@@ -42,6 +42,33 @@
         </where>
         order by re.created_at desc
     </select>
+
+    <select id="getRecordHistory" resultType="com.example.demo.entity.BoxRecords" parameterType="java.lang.Integer">
+            select
+                re.id,
+                re.get_user_id as getUserId,
+                re.user_id as userId,
+                re.box_id as boxId,
+                re.box_name as boxName,
+                re.box_bean as boxBean,
+                re.box_award_id as boxAwardId ,
+                re.`name`,
+                re.hash_name as hashName,
+                re.cover,
+                re.dura,
+                re.lv,
+                re.bean,
+                re.code,
+                re.uuid,
+                re.status,
+                re.back_message as backMessage,
+                re.`type`,
+                re.created_at as createdAt
+        from box_records re
+            where re.box_id = #{boxId}
+            order by re.created_at desc
+            limit 21
+    </select>
     <insert id="saveBoxRecord" parameterType="com.example.demo.entity.BoxRecords">
         insert into box_records(
         get_user_id,
