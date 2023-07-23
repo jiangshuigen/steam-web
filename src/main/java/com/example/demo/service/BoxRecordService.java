@@ -30,4 +30,7 @@ public interface BoxRecordService {
 
     List<BoxRecords> getRecordHistory(int boxId);
 
+    List<BoxRecords> getRecordList(int numb);
+
+    int exchange(HttpServletRequest request,int[] ids);
 }

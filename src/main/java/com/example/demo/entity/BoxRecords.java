@@ -20,6 +20,10 @@ public class BoxRecords {
     private int getUserId;
     @ApiModelProperty("持有者")
     private int userId;
+    @ApiModelProperty("用户名")
+    private String userName;
+    @ApiModelProperty("用户头像")
+    private String avatar;
     @ApiModelProperty("宝箱id")
     private int boxId;
     @ApiModelProperty("宝箱名称")
@@ -57,5 +61,6 @@ public class BoxRecords {
     private Date createdAt;
 
     @Tolerate
-    public BoxRecords(){ }
+    public BoxRecords() {
+    }
 }

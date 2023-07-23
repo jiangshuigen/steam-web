@@ -172,6 +172,24 @@ public class UserWebController {
     }
 
     /**
+     * 兑换
+     *
+     * @param ids
+     * @return
+     */
+    @ApiOperation(value = "兑换")
+    @GetMapping("/exchange")
+    public ResultData exchange(HttpServletRequest request, @RequestParam(value = "ids") int[] ids) {
+        //获取session
+        HttpSession session = request.getSession();
+        UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
+        if (ObjectUtils.isEmpty(dto)) {
+            return ResultData.fail("403", "未登录");
+        }
+        return ResultData.success(boxrecordservice.exchange(request, ids));
+    }
+
+    /**
      * 我的取回记录
      *
      * @return

@@ -5,6 +5,7 @@ import com.example.demo.entity.BoxRecords;
 import com.example.demo.entity.BoxRecordsWeb;
 import org.apache.ibatis.annotations.Param;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface BoxRecordMapper {
@@ -27,4 +28,10 @@ public interface BoxRecordMapper {
     int saveBoxRecord(@Param("records") List<BoxRecords> record);
 
     List<BoxRecords> getRecordHistory(@Param("boxId") int boxId);
+
+    List<BoxRecords> getRecordList(int numb);
+
+    int exchange(@Param("ids") int[] ids);
+
+    BigDecimal getRecords(@Param("ids") int[] ids);
 }

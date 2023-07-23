@@ -6,14 +6,17 @@ import com.example.demo.entity.BoxRecords;
 import com.example.demo.entity.BoxRecordsWeb;
 import com.example.demo.mapper.BoxRecordMapper;
 import com.example.demo.service.BoxRecordService;
+import com.example.demo.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -21,6 +24,8 @@ public class BoxRecordServiceImpl implements BoxRecordService {
 
     @Resource
     private BoxRecordMapper boxrecordmapper;
+    @Resource
+    private UserService userservice;
 
     @Override
     public PageInfo<BoxRecords> getBoxRecordList(BoxRecordsQuery query) {
@@ -91,5 +96,32 @@ public class BoxRecordServiceImpl implements BoxRecordService {
     @Override
     public List<BoxRecords> getRecordHistory(int boxId) {
         return boxrecordmapper.getRecordHistory(boxId);
+    }
+
+    @Override
+    public List<BoxRecords> getRecordList(int numb) {
+        if (numb <= 0) {
+            numb = 50;
+        }
+        return boxrecordmapper.getRecordList(numb);
+    }
+
+    @Override
+    @Transactional
+    public int exchange(HttpServletRequest request, int[] ids) {
+        int i = boxrecordmapper.exchange(ids);
+        if (i > 0) {
+            //查询记录列表
+            BigDecimal bean = boxrecordmapper.getRecords(ids);
+            //获取session
+            HttpSession session = request.getSession();
+            UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
+            if (!ObjectUtils.isEmpty(dto)) {
+                BigDecimal balance = dto.getBean().add(bean);
+                //返回金币
+                return userservice.updateBean(balance, dto.getId());
+            }
+        }
+        return 0;
     }
 }

@@ -93,4 +93,14 @@ public class WebBoxController {
     public ResultData<List<BoxRecords>> getRecordHistory(@RequestParam("boxId") int boxId) {
         return ResultData.success(boxrecordservice.getRecordHistory(boxId));
     }
+
+    /**
+     * 开箱记录跑马灯
+     * @return
+     */
+    @ApiOperation(value = "开箱跑马灯")
+    @GetMapping("/getRecordList")
+    public ResultData<List<BoxRecords>> getRecordList(@RequestParam("numb") int numb) {
+        return ResultData.success(boxrecordservice.getRecordList(numb));
+    }
 }
