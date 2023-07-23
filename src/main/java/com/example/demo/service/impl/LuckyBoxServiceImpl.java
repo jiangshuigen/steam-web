@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.example.demo.dto.AwardCountDto;
 import com.example.demo.dto.BoxAwardsQuery;
 import com.example.demo.dto.LuckyBoxRecordQuery;
 import com.example.demo.dto.OpenBox;
@@ -121,7 +122,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         //查询盒子里的武器列表
         List<BoxAwards> listAward = mapper.getIndexBoxList(openbox.getBoxId());
         //获取redis数据
-        String listStr = (String) redisTemplate.opsForValue().get(openbox.getBoxId() + "|" + user.getAnchor());
+        String listStr = (String) redisTemplate.opsForValue().get("BoxNumb-" + openbox.getBoxId() + "|" + user.getAnchor());
         if (StringUtil.isNullOrEmpty(listStr)) {
             this.nextTime(listAward, listRedis, openbox, user);
         } else {
@@ -223,13 +224,47 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     .type(1)
                     .build();
             listReturn.add(record);
+            //减库存
+            AwardCountDto awardcountdto = new AwardCountDto();
+            awardcountdto.setId(listRedis.get(0).getId());
+            if (user.getAnchor().equals(1)) {
+                if (listRedis.get(0).getIsLuckyBox() == 1) {
+                    awardcountdto.setType(1);
+                    int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
+                    awardcountdto.setNumb(countRedis - 1);
+                    redisTemplate.opsForValue().set("BoxNumb|1|" + listRedis.get(0).getId() + "|", countRedis - 1);
+                } else {
+                    awardcountdto.setType(4);
+                    int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|4|" + listRedis.get(0).getId() + "|");
+                    awardcountdto.setNumb(countRedis - 1);
+                    redisTemplate.opsForValue().set("BoxNumb|4|" + listRedis.get(0).getId() + "|", countRedis - 1);
+                }
+            } else {
+                if (listRedis.get(0).getIsLuckyBox() == 1) {
+                    awardcountdto.setType(2);
+                    int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
+                    awardcountdto.setNumb(countRedis - 1);
+                    redisTemplate.opsForValue().set("BoxNumb|1|" + listRedis.get(0).getId() + "|", countRedis - 1);
+                } else {
+                    awardcountdto.setType(3);
+                    int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|3|" + listRedis.get(0).getId() + "|");
+                    awardcountdto.setNumb(countRedis - 1);
+                    redisTemplate.opsForValue().set("BoxNumb|3|" + listRedis.get(0).getId() + "|", countRedis - 1);
+                }
+            }
+            try {
+                log.info("库存处理开始==========：" + JSON.toJSONString(awardcountdto));
+                mapper.updateAwardCount(awardcountdto);
+            } catch (Exception e) {
+                log.info("库存处理失败");
+            }
             listRedis.remove(0);
             if (this.nextTime(listAward, listRedis, openbox, user)) {
                 ob = boxNumb;
             }
         }
         String reds = JSON.toJSONString(listRedis);
-        redisTemplate.opsForValue().set(openbox.getBoxId() + "|" + user.getAnchor(), reds);
+        redisTemplate.opsForValue().set("BoxNumb-" + openbox.getBoxId() + "|" + user.getAnchor(), reds);
         //保存开箱记录
         boxrecordservice.saveBoxRecord(listReturn);
         log.info("箱子id======" + openbox.getBoxId() + "已开箱数目=======" + boxNumb);

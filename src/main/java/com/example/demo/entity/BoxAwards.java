@@ -29,6 +29,12 @@ public class BoxAwards {
     private int anchorOdds;
     @ApiModelProperty("投放数量(幸运)")
     private int luckOdds;
+    @ApiModelProperty("(剩余)投放数量")
+    private int realOddsLeave;
+    @ApiModelProperty("(剩余)投放数量(主播)")
+    private int anchorOddsLeave;
+    @ApiModelProperty("(剩余)投放数量(幸运)")
+    private int luckOddsLeave;
     @ApiModelProperty("金豆")
     private BigDecimal bean;
     @ApiModelProperty("装备类型")

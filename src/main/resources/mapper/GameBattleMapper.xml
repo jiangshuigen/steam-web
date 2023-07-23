@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.GameBattleMapper">
+    <resultMap id="GameResultMap" type="com.example.demo.dto.GameArenasDto">
+        <id property="id" column="id"/>
+        <result property="createUserId" column="create_user_id"/>
+        <result property="userNum" column="user_num"/>
+        <result property="boxNum" column="box_num"/>
+        <result property="totalBean" column="total_bean"/>
+        <result property="status" column="status"/>
+        <result property="winUserId" column="win_user_id"/>
+        <result property="drawCode" column="draw_code"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="userName" column="userName"/>
+        <result property="avatar" column="avatar"/>
+        <collection property="listBox" ofType="java.lang.String" resultMap="BoxResultMap"/>
+        <collection property="listUser" ofType="java.lang.String" resultMap="UserResultMap"/>
+    </resultMap>
+    <resultMap id="BoxResultMap" type="com.example.demo.dto.GameArenasBoxDto">
+        <id property="boxId" column="boxId"/>
+        <result property="boxName" column="boxName"/>
+        <result property="intactCover" column="intactCover"/>
+    </resultMap>
+    <resultMap id="UserResultMap" type="com.example.demo.dto.GameArenasUserDto">
+        <id property="gameUserId" column="gameUserId"/>
+        <id property="gameUserName" column="gameUserName"/>
+        <result property="gameAvatar" column="gameAvatar"/>
+        <result property="gameBean" column="gameBean"/>
+    </resultMap>
+    <insert id="createEvent" parameterType="com.example.demo.dto.GameArenasSaveDto" useGeneratedKeys="true"
+            keyProperty="id">
+          insert into game_arenas(
+            create_user_id,
+            user_num,
+            box_num,
+            total_bean,
+            status,
+            created_at,
+            updated_at
+          )values(
+            #{createUserId},
+            #{userNum},
+            #{boxNum},
+            #{totalBean},
+            0,
+            now(),
+            now()
+          )
+    </insert>
+    <insert id="insertArenaBox" parameterType="com.example.demo.entity.GameArenaBox">
+        insert into game_arena_box (
+            game_arena_id,
+            box_id,
+            created_at,
+            updated_at
+        )values(
+            #{gameArenaId},
+            #{boxId},
+            now(),
+            now()
+        )
+    </insert>
+    <insert id="insertArenaUsers" parameterType="com.example.demo.entity.GameArenaUsers">
+        insert into game_arena_users(
+            game_arena_id,
+            user_id,
+            seat,
+            worth,
+            created_at,
+            updated_at
+        )values(
+            #{gameArenaId},
+            #{userId},
+            #{seat},
+            #{worth},
+            now(),
+            now()
+        )
+    </insert>
+    <select id="getEventList" resultMap="GameResultMap">
+          select
+                ga.id,
+                ga.create_user_id ,
+                ga.user_num ,
+                ga.box_num ,
+                ga.total_bean,
+                ga.status,
+                ga.win_user_id ,
+                ga.draw_code ,
+                ga.created_at ,
+                ga.updated_at ,
+                u.name as userName,
+                u.avatar as avatar,
+                ab.id as boxId,
+                bx.name as boxName,
+                bx.intact_cover as intactCover,
+                guu.id as gameUserId,
+                guu.name as gameUserName,
+                guu.avatar as  gameAvatar,
+                guu.bean as gameBean
+           from  game_arenas ga
+           left join users u on u.id = ga.create_user_id
+           left join game_arena_box ab on ab.game_arena_id = ga.id
+           inner join boxs bx on ab.box_id = bx.id
+           left join game_arena_users gu on gu.game_arena_id = ga.id
+           inner join users guu on guu.id = gu.user_id
+           order by ga.status ,ga.created_at desc
+    </select>
+    <select id="getGameArenasDetail" resultMap="GameResultMap" parameterType="java.lang.Integer">
+              select
+                ga.id,
+                ga.create_user_id ,
+                ga.user_num ,
+                ga.box_num ,
+                ga.total_bean,
+                ga.status,
+                ga.win_user_id ,
+                ga.draw_code ,
+                ga.created_at ,
+                ga.updated_at ,
+                u.name as userName,
+                u.avatar as avatar,
+                ab.id as boxId,
+                bx.name as boxName,
+                bx.intact_cover as intactCover,
+                guu.id as gameUserId,
+                guu.name as gameUserName,
+                guu.avatar as  gameAvatar,
+                guu.bean as gameBean
+           from  game_arenas ga
+           left join users u on u.id = ga.create_user_id
+           left join game_arena_box ab on ab.game_arena_id = ga.id
+           inner join boxs bx on ab.box_id = bx.id
+           left join game_arena_users gu on gu.game_arena_id = ga.id
+           inner join users guu on guu.id = gu.user_id
+           where ga.id = #{id}
+    </select>
+</mapper>

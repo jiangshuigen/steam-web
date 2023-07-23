@@ -71,4 +71,14 @@ public class UserController {
         return ResultData.success(userservice.getIPList(query));
     }
 
+    /**
+     * 清理缓存
+     * @param
+     * @return
+     */
+    @ApiOperation(value = "清理缓存")
+    @PostMapping("/resetCache")
+    public ResultData<PageInfo<LoginIpLog>> resetCache() {
+        return ResultData.success(userservice.resetCache());
+    }
 }

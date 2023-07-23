@@ -48,4 +48,6 @@ public interface UserMapper {
     List<User> queryUserByInviteCode(String inviteCode);
 
     int updateBean(@Param("balance") BigDecimal balance, @Param("id")int id);
+
+    int resetCache();
 }

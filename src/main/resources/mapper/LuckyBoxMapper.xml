@@ -79,6 +79,16 @@
         </where>
         order by created_at desc
     </select>
+    <select id="getBoxAwardList" resultType="com.example.demo.entity.BoxAwards">
+        select id,
+
+        real_odds as realOdds,
+        anchor_odds as anchorOdds,
+        luck_odds as luckOdds
+
+        from box_awards
+        where bean>0
+    </select>
     <select id="getIndexBoxList" parameterType="java.lang.Integer" resultType="com.example.demo.entity.BoxAwards">
           select id,
         box_id as boxId,
@@ -89,6 +99,11 @@
         real_odds as realOdds,
         anchor_odds as anchorOdds,
         luck_odds as luckOdds,
+
+        IFNULL(real_odds_leave,real_odds) as realOddsLeave,
+        IFNULL(anchor_odds_leave,anchor_odds) as anchorOddsLeave,
+        IFNULL(luck_odds_leave,luck_odds) as luckOddsLeave,
+
         game_odds as gameOdds,
         game_anchor_odds as gameAnchorOdds,
         dura,
@@ -133,6 +148,24 @@
         </set>
         <where>
             id =#{id}
+        </where>
+    </update>
+    <update id="updateAwardCount" parameterType="com.example.demo.dto.AwardCountDto">
+        update box_awards
+        <if test="type==1">
+            set luck_odds_leave = #{numb}
+        </if>
+        <if test="type==2">
+            set luck_odds_leave = #{numb}
+        </if>
+        <if test="type==3">
+            set real_odds_leave = #{numb}
+        </if>
+        <if test="type==4">
+            set anchor_odds_leave = #{numb}
+        </if>
+        <where>
+            id = #{id}
         </where>
     </update>
 </mapper>

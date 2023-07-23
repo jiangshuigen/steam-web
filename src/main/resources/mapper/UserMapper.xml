@@ -143,6 +143,7 @@
         ua.mobile,
         ua.invite_code inviteCode,
         ua.avatar,
+        ua.bean,
         ua.steam_url steamUrl ,
         ua.vip_level vipLevel,
         anchor,
@@ -351,7 +352,7 @@
         )
     </insert>
 
-    <update id="updateBean" >
+    <update id="updateBean">
         update users
         <set>
             bean = #{balance}
@@ -359,5 +360,12 @@
         <where>
             id = #{id}
         </where>
+    </update>
+    <update id="resetCache">
+          update box_awards
+          set real_odds_leave=real_odds,
+              anchor_odds_leave= anchor_odds,
+              luck_odds_leave=luck_odds
+              where 1=1
     </update>
 </mapper>

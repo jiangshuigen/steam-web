@@ -44,4 +44,9 @@ public class BoxServiceImpl implements BoxService {
     public List<Box> getIndexBoxList() {
         return boxmapper.getIndexBoxList();
     }
+
+    @Override
+    public List<Box> getGameArenaBoxList() {
+        return boxmapper.getGameArenaBoxList();
+    }
 }

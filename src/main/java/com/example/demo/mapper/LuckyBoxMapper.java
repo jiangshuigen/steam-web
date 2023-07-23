@@ -1,5 +1,6 @@
 package com.example.demo.mapper;
 
+import com.example.demo.dto.AwardCountDto;
 import com.example.demo.dto.BoxAwardsQuery;
 import com.example.demo.entity.AwardTypes;
 import com.example.demo.entity.BoxAwards;
@@ -23,4 +24,8 @@ public interface LuckyBoxMapper {
     int deleteById(int id);
 
     List<BoxAwards> getIndexBoxList(int boxId);
+
+    int updateAwardCount(AwardCountDto awardcountdto);
+
+    List<BoxAwards> getBoxAwardList();
 }

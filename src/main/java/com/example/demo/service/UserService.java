@@ -37,4 +37,6 @@ public interface UserService {
     boolean repeatCheck(String str,int type);
 
     int updateBean(BigDecimal balance, int id);
+
+    int resetCache();
 }

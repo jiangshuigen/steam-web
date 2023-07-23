@@ -2,7 +2,9 @@ package com.example.demo.service.impl;
 
 import com.example.demo.config.Constant;
 import com.example.demo.dto.*;
+import com.example.demo.entity.BoxAwards;
 import com.example.demo.entity.User;
+import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.UserService;
 import com.example.demo.util.CheckSumBuilder;
@@ -32,6 +34,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -43,6 +46,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Resource
+    private LuckyBoxMapper mapper;
 
     public int updateUser(User user) {
         return userMapper.updateUser(user);
@@ -210,6 +216,26 @@ public class UserServiceImpl implements UserService {
     @Override
     public int updateBean(BigDecimal balance, int id) {
         return userMapper.updateBean(balance, id);
+    }
+
+    @Override
+    public int resetCache() {
+        //缓存清除
+        Set keys = redisTemplate.keys("BoxNumb*");
+        Long delete = redisTemplate.delete(keys);
+        Set key = redisTemplate.keys("OrderNo*");
+        Long deletekey = redisTemplate.delete(key);
+        //刷新库存的缓存
+        List<BoxAwards> list = mapper.getBoxAwardList();
+        list.stream().forEach(e -> {
+            //主播-幸运
+            redisTemplate.opsForValue().set("BoxNumb|1|" + e.getId() + "|", e.getLuckOdds());
+            //普通
+            redisTemplate.opsForValue().set("BoxNumb|3|" + e.getId() + "|", e.getRealOdds());
+            //主播
+            redisTemplate.opsForValue().set("BoxNumb|4|" + e.getId() + "|", e.getAnchorOdds());
+        });
+        return userMapper.resetCache();
     }
 
 

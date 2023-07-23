@@ -15,4 +15,6 @@ public interface BoxMapper {
     int saveBox(Box box);
 
     List<Box> getIndexBoxList();
+
+    List<Box> getGameArenaBoxList();
 }
