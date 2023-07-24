@@ -11,4 +11,6 @@ public class GameArenasBoxDto {
     private String boxName;
     @ApiModelProperty("完整封面")
     private String intactCover;
+    @ApiModelProperty("随机数")
+    private int arenaBoxId;
 }

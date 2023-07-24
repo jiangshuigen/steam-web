@@ -18,9 +18,10 @@
         <collection property="listUser" ofType="java.lang.String" resultMap="UserResultMap"/>
     </resultMap>
     <resultMap id="BoxResultMap" type="com.example.demo.dto.GameArenasBoxDto">
-        <id property="boxId" column="boxId"/>
+        <result property="boxId" column="boxId"/>
         <result property="boxName" column="boxName"/>
         <result property="intactCover" column="intactCover"/>
+        <result property="arenaBoxId" column="arenaBoxId"/>
     </resultMap>
     <resultMap id="UserResultMap" type="com.example.demo.dto.GameArenasUserDto">
         <id property="gameUserId" column="gameUserId"/>
@@ -177,6 +178,7 @@
                 bx.id as boxId,
                 bx.name as boxName,
                 bx.intact_cover as intactCover,
+                ab.id as arenaBoxId,
                 guu.id as gameUserId,
                 guu.name as gameUserName,
                 guu.avatar as  gameAvatar,

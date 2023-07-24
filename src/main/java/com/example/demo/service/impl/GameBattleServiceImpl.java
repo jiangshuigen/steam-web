@@ -89,6 +89,9 @@ public class GameBattleServiceImpl implements GameBattleService {
     public List<BattleDto> joinEvent(int id, UserDto user) throws Exception {
         //查询活动
         GameArenasDto dto = gamebattlemapper.getGameArenasDetail(id);
+        if (dto.getStatus() == 2) {
+            throw new Exception("活动已经结束");
+        }
         //人员列表
         List<GameArenasUserDto> listUser = dto.getListUser();
         //判断余额
@@ -221,6 +224,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                 });
             }
             boxrecordservice.saveBoxRecord(listReturn);
+            log.info("record 记录列表记录数目:" + gameawardrecords.size());
             gamebattlemapper.saveGameAwardRecords(gameawardrecords);
             dto.setStatus(2);
             log.info("winner is ======" + JSON.toJSONString(winner));
