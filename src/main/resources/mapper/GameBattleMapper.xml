@@ -137,7 +137,7 @@
         ab.id as arenaBoxId,
         guu.id as gameUserId,
         guu.name as gameUserName,
-        guu.avatar as  gameAvatar,
+        guu.avatar as gameAvatar,
         guu.bean as gameBean
         from game_award_records gar
         inner join game_arenas ga on ga.id = gar.game_arena_id and ga.status=2
@@ -148,7 +148,7 @@
         inner join users guu on guu.id = gu.user_id
         <where>
             <if test="userId>0">
-                and  gar.user_id =#{userId}
+                and gar.user_id =#{userId}
             </if>
         </where>
         order by ga.status ,ga.created_at desc
@@ -220,5 +220,58 @@
             now()
             )
         </foreach>
+    </insert>
+
+    <select id="queryRankUserList" resultType="com.example.demo.entity.GameRanking" parameterType="java.lang.Integer">
+         select  id,
+            user_id as userId,
+            total,
+            win,
+            fail,
+            win_rate as winRate,
+            expend,
+            income,
+            lost_bean as lostBean,
+            `date`
+          from  game_ranking
+          where  user_id =#{userId}
+          and `date` = DATE_FORMAT(now(),'%Y-%m-%d')
+          limit 1
+    </select>
+
+    <update id="updateRanking" parameterType="com.example.demo.entity.GameRanking">
+        update game_ranking
+        set total=#{total},
+             win=#{win},
+             fail=#{fail},
+             win_rate=#{winRate},
+             expend=#{expend},
+             income=#{income},
+             lost_bean=#{lostBean}
+             where id =#{id}
+    </update>
+
+    <insert id="saveRanking" parameterType="com.example.demo.entity.GameRanking">
+        insert into game_ranking(
+            user_id,
+            total,
+            win,
+            fail,
+            win_rate,
+            expend,
+            income,
+            lost_bean,
+            `date`
+        )values(
+            #{userId},
+            #{total},
+            #{win},
+            #{fail},
+            #{winRate},
+            #{expend},
+            #{income},
+            #{lostBean},
+            DATE_FORMAT(now(),'%Y-%m-%d')
+        )
     </insert>
 </mapper>

@@ -7,6 +7,7 @@ import com.example.demo.dto.GameArenasSaveDto;
 import com.example.demo.entity.GameArenaBox;
 import com.example.demo.entity.GameArenaUsers;
 import com.example.demo.entity.GameAwardRecords;
+import com.example.demo.entity.GameRanking;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
@@ -33,4 +34,10 @@ public interface GameBattleMapper {
     List<GameArenasDto> getMyBattleList(BattleQuery query);
 
     BigDecimal getTotalBean(int id);
+
+    GameRanking queryRankUserList(int userId);
+
+    int updateRanking(GameRanking ranking);
+
+    int saveRanking(GameRanking ranking);
 }

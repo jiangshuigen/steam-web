@@ -234,16 +234,40 @@ public class GameBattleServiceImpl implements GameBattleService {
             gamebattlemapper.update(dto);
             listBattle.stream().forEach(e -> {
                 BigDecimal num = e.getListAward().stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add);
+                //记录榜单
+                GameRanking ranking = gamebattlemapper.queryRankUserList(e.getUserId());
+                if (ObjectUtils.isEmpty(ranking)) {
+                    ranking = new GameRanking();
+                    ranking.setUserId(e.getUserId());
+                    ranking.setLostBean(new BigDecimal(0));
+                    ranking.setIncome(new BigDecimal(0));
+                    ranking.setExpend(new BigDecimal(0));
+                    ranking.setWinRate(new BigDecimal(0));
+                }
                 if (num.compareTo(new BigDecimal(0)) == 1) {
                     e.setBean(num);
+                    ranking.setTotal(ranking.getTotal() + 1);
+                    ranking.setWin(ranking.getWin() + 1);
+                    ranking.setIncome(ranking.getIncome().add(num));
+                    ranking.setLostBean(ranking.getLostBean().add(num).subtract(dto.getTotalBean()));
                 } else {
                     e.setBean(new BigDecimal(0.01));
+                    ranking.setFail(ranking.getFail() + 1);
+                    ranking.setIncome(ranking.getIncome());
+                    ranking.setLostBean(ranking.getLostBean().subtract(dto.getTotalBean()));
                 }
-
+                BigDecimal winRate = new BigDecimal(ranking.getWin()).divide(new BigDecimal(ranking.getWin() + ranking.getFail()),2, BigDecimal.ROUND_HALF_UP);
+                ranking.setWinRate(winRate);
+                ranking.setExpend(ranking.getExpend().add(dto.getTotalBean()));
+                if (ranking.getId() > 0) {
+                    //修改
+                    gamebattlemapper.updateRanking(ranking);
+                }else {
+                    gamebattlemapper.saveRanking(ranking);
+                }
             });
             return listBattle;
         }
-
         return null;
     }
 
