@@ -45,6 +45,12 @@ public class GameBattleServiceImpl implements GameBattleService {
     @Override
     @Transactional
     public int createEvent(GameArenasSaveDto info) {
+        //计算金额
+        BigDecimal total = new BigDecimal(0);
+        for (Integer id : info.getListBox()) {
+            total = total.add(gamebattlemapper.getTotalBean(id));
+        }
+        info.setTotalBean(total);
         int i = gamebattlemapper.createEvent(info);
         if (i > 0) {
             //记录箱子
@@ -235,6 +241,22 @@ public class GameBattleServiceImpl implements GameBattleService {
         }
 
         return null;
+    }
+
+    @Override
+    public PageInfo<GameArenasDto> getBattleList(BasePage query) {
+        PageHelper.startPage(query.getPageNo(), query.getPageSize());
+        List<GameArenasDto> list = gamebattlemapper.getBattleList(query);
+        PageInfo<GameArenasDto> listInfo = new PageInfo<>(list);
+        return listInfo;
+    }
+
+    @Override
+    public PageInfo<GameArenasDto> getMyBattleList(BattleQuery query) {
+        PageHelper.startPage(query.getPageNo(), query.getPageSize());
+        List<GameArenasDto> list = gamebattlemapper.getMyBattleList(query);
+        PageInfo<GameArenasDto> listInfo = new PageInfo<>(list);
+        return listInfo;
     }
 
 

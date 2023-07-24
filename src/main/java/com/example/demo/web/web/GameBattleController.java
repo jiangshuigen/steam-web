@@ -3,10 +3,7 @@ package com.example.demo.web.web;
 
 import com.example.demo.config.Constant;
 import com.example.demo.config.ResultData;
-import com.example.demo.dto.BasePage;
-import com.example.demo.dto.GameArenasDto;
-import com.example.demo.dto.GameArenasSaveDto;
-import com.example.demo.dto.UserDto;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Box;
 import com.example.demo.service.BoxService;
 import com.example.demo.service.GameBattleService;
@@ -113,4 +110,22 @@ public class GameBattleController {
 
     }
 
+
+    /**
+     * 对战历史
+     *
+     * @param query
+     * @return
+     */
+    @ApiOperation(value = "对战历史")
+    @PostMapping("/getBattleList")
+    public ResultData<PageInfo<GameArenasDto>> getBattleList(@RequestBody BasePage query) {
+        return ResultData.success(gamebattleservice.getBattleList(query));
+    }
+
+    @ApiOperation(value = "我的对战")
+    @PostMapping("/getMyBattleList")
+    public ResultData<PageInfo<GameArenasDto>> getMyBattleList(@RequestBody BattleQuery query) {
+        return ResultData.success(gamebattleservice.getMyBattleList(query));
+    }
 }

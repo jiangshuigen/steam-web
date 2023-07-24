@@ -78,8 +78,8 @@
             now()
         )
     </insert>
-    <select id="getEventList" resultMap="GameResultMap">
-          select
+    <sql id="Base_Column_List">
+        select
                 ga.id,
                 ga.create_user_id ,
                 ga.user_num ,
@@ -99,13 +99,66 @@
                 guu.name as gameUserName,
                 guu.avatar as  gameAvatar,
                 guu.bean as gameBean
-           from  game_arenas ga
-           left join users u on u.id = ga.create_user_id
-           left join game_arena_box ab on ab.game_arena_id = ga.id
-           inner join boxs bx on ab.box_id = bx.id
-           left join game_arena_users gu on gu.game_arena_id = ga.id
-           inner join users guu on guu.id = gu.user_id
-           order by ga.status ,ga.created_at desc
+    </sql>
+    <select id="getBattleList" resultMap="GameResultMap" parameterType="com.example.demo.dto.BasePage">
+        <include refid="Base_Column_List"></include>
+        from game_arenas ga
+        left join users u on u.id = ga.create_user_id
+        left join game_arena_box ab on ab.game_arena_id = ga.id
+        inner join boxs bx on ab.box_id = bx.id
+        left join game_arena_users gu on gu.game_arena_id = ga.id
+        inner join users guu on guu.id = gu.user_id
+        where ga.status=2
+        order by ga.created_at desc
+    </select>
+    <select id="getTotalBean" resultType="java.math.BigDecimal">
+        select bean from boxs
+        where id = #{id}
+    </select>
+    <select id="getMyBattleList" resultMap="GameResultMap" parameterType="com.example.demo.dto.BattleQuery">
+        select
+        ga.id,
+        ga.create_user_id ,
+        ga.user_num ,
+        ga.box_num ,
+        ga.total_bean,
+        ga.status,
+        ga.win_user_id ,
+        ga.draw_code ,
+        ga.created_at ,
+        ga.updated_at ,
+        u.name as userName,
+        u.avatar as avatar,
+        ab.id as boxId,
+        bx.name as boxName,
+        bx.intact_cover as intactCover,
+        guu.id as gameUserId,
+        guu.name as gameUserName,
+        guu.avatar as  gameAvatar,
+        guu.bean as gameBean
+        from game_award_records gar
+        inner join game_arenas ga on ga.id = gar.game_arena_id and ga.status=2
+        left join users u on u.id = ga.create_user_id
+        left join game_arena_box ab on ab.game_arena_id = ga.id
+        inner join boxs bx on ab.box_id = bx.id
+        left join game_arena_users gu on gu.game_arena_id = ga.id
+        inner join users guu on guu.id = gu.user_id
+        <where>
+            <if test="userId>0">
+                and  gar.user_id =#{userId}
+            </if>
+        </where>
+        order by ga.status ,ga.created_at desc
+    </select>
+    <select id="getEventList" resultMap="GameResultMap">
+        <include refid="Base_Column_List"></include>
+        from game_arenas ga
+        left join users u on u.id = ga.create_user_id
+        left join game_arena_box ab on ab.game_arena_id = ga.id
+        inner join boxs bx on ab.box_id = bx.id
+        left join game_arena_users gu on gu.game_arena_id = ga.id
+        inner join users guu on guu.id = gu.user_id
+        order by ga.status ,ga.created_at desc
     </select>
     <select id="getGameArenasDetail" resultMap="GameResultMap" parameterType="java.lang.Integer">
               select

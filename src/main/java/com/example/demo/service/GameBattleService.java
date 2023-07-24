@@ -14,4 +14,7 @@ public interface GameBattleService {
 
     List<BattleDto> joinEvent(int id, UserDto user) throws Exception;
 
+    PageInfo<GameArenasDto> getBattleList(BasePage query);
+
+    PageInfo<GameArenasDto>  getMyBattleList(BattleQuery query);
 }
