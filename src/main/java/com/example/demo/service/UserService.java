@@ -24,19 +24,22 @@ public interface UserService {
 
     /**
      * 获取登录用户信息
+     *
      * @return
      */
     User getLoginUserInfo(HttpServletRequest req);
 
     UserDto userLogin(HttpServletRequest request, LoginInfo info);
 
-    String register(HttpServletRequest request,UserRegisterDto user);
+    String register(HttpServletRequest request, UserRegisterDto user);
 
     String sendCode(String phone);
 
-    boolean repeatCheck(String str,int type);
+    boolean repeatCheck(String str, int type);
 
     int updateBean(BigDecimal balance, int id);
 
     int resetCache();
+
+    int sendReward(int userId);
 }

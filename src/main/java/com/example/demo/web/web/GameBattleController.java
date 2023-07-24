@@ -107,6 +107,7 @@ public class GameBattleController {
             }
             return ResultData.success(gamebattleservice.joinEvent(id, dto));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResultData.fail("500", e.getMessage());
         }
 

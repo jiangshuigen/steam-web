@@ -50,4 +50,6 @@ public interface UserMapper {
     int updateBean(@Param("balance") BigDecimal balance, @Param("id")int id);
 
     int resetCache();
+
+    int sendReward(int userId);
 }

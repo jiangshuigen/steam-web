@@ -1,30 +1,46 @@
 package com.example.demo.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.example.demo.dto.*;
-import com.example.demo.entity.BoxAwards;
-import com.example.demo.entity.BoxRecords;
-import com.example.demo.entity.GameArenaBox;
-import com.example.demo.entity.GameArenaUsers;
+import com.example.demo.entity.*;
 import com.example.demo.mapper.GameBattleMapper;
 import com.example.demo.mapper.LuckyBoxMapper;
+import com.example.demo.service.BoxRecordService;
 import com.example.demo.service.GameBattleService;
+import com.example.demo.service.UserService;
+import com.example.demo.util.CodeUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import io.netty.util.internal.StringUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class GameBattleServiceImpl implements GameBattleService {
 
     @Resource
     private GameBattleMapper gamebattlemapper;
     @Resource
     private LuckyBoxMapper mapper;
+    @Resource
+    private BoxRecordService boxrecordservice;
+    @Resource
+    private UserService userservice;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     @Transactional
@@ -63,14 +79,17 @@ public class GameBattleServiceImpl implements GameBattleService {
     }
 
     @Override
-    public List<BoxRecords> joinEvent(int id, UserDto user) throws Exception {
+    @Transactional
+    public List<BattleDto> joinEvent(int id, UserDto user) throws Exception {
         //查询活动
         GameArenasDto dto = gamebattlemapper.getGameArenasDetail(id);
+        //人员列表
+        List<GameArenasUserDto> listUser = dto.getListUser();
         //判断余额
         if (dto.getTotalBean().compareTo(user.getBean()) == 1) {
             throw new Exception("余额不足");
         }
-        if (CollectionUtils.isEmpty(dto.getListUser())) {
+        if (!CollectionUtils.isEmpty(dto.getListUser())) {
             for (GameArenasUserDto gameArenasUserDto : dto.getListUser()) {
                 if (gameArenasUserDto.getGameUserId() == user.getId()) {
                     throw new Exception("您已经加入，等待活动开始");
@@ -88,19 +107,159 @@ public class GameBattleServiceImpl implements GameBattleService {
             us.setSeat(dto.getListUser().size());
             us.setUserId(user.getId());
             us.setWorth(dto.getTotalBean());
+            GameArenasUserDto usDto = new GameArenasUserDto();
+            usDto.setGameUserId(user.getId());
+            usDto.setGameAvatar(user.getAvatar());
+            usDto.setGameUserName(user.getName());
+            listUser.add(usDto);
             gamebattlemapper.insertArenaUsers(us);
         }
         if (dto.getUserNum() == numb) {
+            //所有玩家roll的列表记录
+            List<BoxRecords> listReturn = new ArrayList<>();
+            List<BattleDto> listBattle = new ArrayList<>();
+            List<GameAwardRecords> gameawardrecords = new ArrayList<>();
             //对战开始
-            for (GameArenasBoxDto gameArenasBoxDto : dto.getListBox()) {
-                //获取宝箱下的武器列表
-                List<BoxAwards> listAward = mapper.getIndexBoxList(gameArenasBoxDto.getBoxId());
-                //洗牌
-                Collections.shuffle(listAward);
-
+            Collections.shuffle(listUser);
+            for (GameArenasUserDto gameArenasUserDto : listUser) {
+                BattleDto battleDto = new BattleDto();
+                battleDto.setUserId(gameArenasUserDto.getGameUserId());
+                List<BoxRecords> listUserAWards = new ArrayList<>();
+                for (GameArenasBoxDto gameArenasBoxDto : dto.getListBox()) {
+                    //获取宝箱下的武器列表
+                    List<BoxAwards> listAward = mapper.getIndexBoxList(gameArenasBoxDto.getBoxId());
+                    //洗牌
+                    Collections.shuffle(listAward);
+                    for (BoxAwards boxAwards : listAward) {
+                        BigDecimal beanCount = battleDto.getBean() == null ? boxAwards.getBean() : battleDto.getBean().add(boxAwards.getBean());
+                        battleDto.setBean(beanCount);
+                        BoxRecords record = BoxRecords.builder()
+                                .getUserId(gameArenasUserDto.getGameUserId())
+                                .userId(gameArenasUserDto.getGameUserId())
+                                .boxId(boxAwards.getBoxId())
+                                .boxName(gameArenasBoxDto.getBoxName())
+                                .boxBean(dto.getTotalBean())
+                                .boxAwardId(boxAwards.getId())
+                                .name(boxAwards.getName())
+                                .hashName(boxAwards.getHashName())
+                                .cover(boxAwards.getCover())
+                                .dura(boxAwards.getDura())
+                                .lv(boxAwards.getLv())
+                                .bean(boxAwards.getBean())
+                                .maxT(new BigDecimal(0))
+                                .code(this.getCode())
+                                .uuid(UUID.randomUUID().toString())
+                                .type(1)
+                                .build();
+                        listReturn.add(record);
+                        listUserAWards.add(record);
+                        GameAwardRecords rd = GameAwardRecords.builder()
+                                .gameArenaId(id)
+                                .status(1)
+                                .awardId(boxAwards.getId())
+                                .userId(gameArenasUserDto.getGameUserId())
+                                .build();
+                        gameawardrecords.add(rd);
+                        break;
+                    }
+                }
+                battleDto.setListAward(listUserAWards);
+                listBattle.add(battleDto);
             }
+            //计算奖品归属 如果两人比赛平局各自领取各自的物品 否则平局随机抽取胜利玩家
+            boolean bl = listBattle.stream().allMatch(listBattle.get(0).getBean()::equals);
+            List<Integer> winner = new ArrayList<>();
+            if (bl && dto.getUserNum() == 2) {
+                log.info("==========平局====================");
+                //各自放入背包
+                listBattle.stream().forEach(e -> {
+                    e.setWin(1);
+                    winner.add(e.getUserId());
+                });
+            } else if (bl && dto.getUserNum() != 2) {
+                //随机抽取用户
+                Collections.shuffle(listUser);
+                listReturn.stream().forEach(e -> {
+                    e.setGetUserId(listUser.get(0).getGameUserId());
+                    e.setUserId(listUser.get(0).getGameUserId());
+                });
+                log.info("==========随机抽取用户 胜利者：" + listUser.get(0).getGameUserId() + "====================");
+                winner.add(listUser.get(0).getGameUserId());
+                listBattle.stream().forEach(e -> {
+                    if (listUser.get(0).getGameUserId() == e.getUserId()) {
+                        e.setWin(1);
+                        e.setListAward(listReturn);
+                    } else {
+                        //其他玩家+0.01
+                        e.setListAward(new ArrayList<>());
+                        userservice.sendReward(e.getUserId());
+                    }
+                });
+
+            } else {
+                List<BattleDto> userInfoList = listBattle.stream().sorted(Comparator.comparing(BattleDto::getBean).reversed()).collect(Collectors.toList());
+                log.info("排列顺序：" + JSON.toJSONString(userInfoList));
+                listReturn.stream().forEach(e -> {
+                    e.setGetUserId(userInfoList.get(0).getUserId());
+                    e.setUserId(userInfoList.get(0).getUserId());
+                });
+                winner.add(userInfoList.get(0).getUserId());
+                listBattle.stream().forEach(e -> {
+                    if (e.getUserId() == userInfoList.get(0).getUserId()) {
+                        e.setWin(1);
+                        e.setListAward(listReturn);
+                    } else {
+                        e.setListAward(new ArrayList<>());
+                        userservice.sendReward(e.getUserId());
+                    }
+                });
+            }
+            boxrecordservice.saveBoxRecord(listReturn);
+            gamebattlemapper.saveGameAwardRecords(gameawardrecords);
+            dto.setStatus(2);
+            log.info("winner is ======" + JSON.toJSONString(winner));
+            Object[] s2 = winner.toArray();
+            dto.setWinUserId(JSON.toJSONString(s2));
+            dto.setDrawCode(CodeUtils.getCode());
+            gamebattlemapper.update(dto);
+            listBattle.stream().forEach(e -> {
+                BigDecimal num = e.getListAward().stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add);
+                if (num.compareTo(new BigDecimal(0)) == 1) {
+                    e.setBean(num);
+                } else {
+                    e.setBean(new BigDecimal(0.01));
+                }
+
+            });
+            return listBattle;
         }
 
         return null;
+    }
+
+
+    private String getCode() {
+        Object ob = redisTemplate.opsForValue().get("OrderNo-");
+        String lock = "";
+        if (!ObjectUtils.isEmpty(ob)) {
+            lock = (String) ob;
+        }
+        if (StringUtil.isNullOrEmpty(lock)) {
+            lock = "1";
+        } else {
+            int num = Integer.parseInt(lock) + 1;
+            if ((num < 10)) {
+                lock = String.valueOf(num);
+            } else {
+                lock = "1";
+            }
+        }
+        redisTemplate.opsForValue().set("OrderNo-", lock);
+        //时间（精确到毫秒）
+        DateTimeFormatter ofPattern = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
+        String localDate = LocalDateTime.now().format(ofPattern);
+        String orderNum = localDate + lock;
+        log.info("orderNum===========" + orderNum);
+        return orderNum;
     }
 }

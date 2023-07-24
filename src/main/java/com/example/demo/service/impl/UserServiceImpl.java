@@ -238,5 +238,10 @@ public class UserServiceImpl implements UserService {
         return userMapper.resetCache();
     }
 
+    @Override
+    public int sendReward(int userId) {
+        return userMapper.sendReward(userId);
+    }
+
 
 }

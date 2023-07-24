@@ -121,7 +121,7 @@
                 ga.updated_at ,
                 u.name as userName,
                 u.avatar as avatar,
-                ab.id as boxId,
+                bx.id as boxId,
                 bx.name as boxName,
                 bx.intact_cover as intactCover,
                 guu.id as gameUserId,
@@ -136,4 +136,32 @@
            inner join users guu on guu.id = gu.user_id
            where ga.id = #{id}
     </select>
+    <update id="update" parameterType="com.example.demo.dto.GameArenasDto">
+          update game_arenas
+          set win_user_id =#{winUserId},
+          draw_code=#{drawCode},
+          status =#{status},
+          updated_at = now()
+          where id =#{id}
+    </update>
+    <insert id="saveGameAwardRecords" parameterType="com.example.demo.entity.GameAwardRecords">
+        insert into game_award_records (
+        game_arena_id,
+        user_id,
+        award_id,
+        status,
+        created_at,
+        updated_at
+        )values
+        <foreach collection="records" item="item" separator=",">
+            (
+            #{item.gameArenaId},
+            #{item.userId},
+            #{item.awardId},
+            #{item.status},
+            now(),
+            now()
+            )
+        </foreach>
+    </insert>
 </mapper>

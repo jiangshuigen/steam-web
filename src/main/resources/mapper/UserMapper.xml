@@ -368,4 +368,9 @@
               luck_odds_leave=luck_odds
               where 1=1
     </update>
+    <update id="sendReward" parameterType="java.lang.Integer">
+        update users
+        set bean=bean+0.01
+        where id =#{userId}
+    </update>
 </mapper>

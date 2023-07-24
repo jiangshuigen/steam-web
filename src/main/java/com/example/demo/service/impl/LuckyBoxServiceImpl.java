@@ -306,8 +306,12 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         return false;
     }
 
-    public String getCode() {
-        String lock = (String) redisTemplate.opsForValue().get("OrderNo-");
+    private String getCode() {
+        Object ob = redisTemplate.opsForValue().get("OrderNo-");
+        String lock = "";
+        if (!ObjectUtils.isEmpty(ob)) {
+            lock = (String) ob;
+        }
         if (StringUtil.isNullOrEmpty(lock)) {
             lock = "1";
         } else {
