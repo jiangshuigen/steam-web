@@ -335,19 +335,22 @@
         ua.updated_at updatedAt
          from users ua
          where ua.invite_code=#{inviteCode}
+         limit 1
     </select>
     <insert id="register" parameterType="com.example.demo.dto.UserRegisterDto">
         insert into users(
         `name`,
         mobile,
         invite_code,
+        inviter_id,
         password,
         created_at
         )values(
         #{name},
         #{mobile},
         #{inviteCode},
-         #{password},
+        #{inviterId},
+        #{password},
          now()
         )
     </insert>

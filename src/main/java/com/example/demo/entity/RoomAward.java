@@ -15,6 +15,8 @@ public class RoomAward {
     private String name;
     @ApiModelProperty("外观")
     private String dura;
+    @ApiModelProperty("封面")
+    private String cover;
     @ApiModelProperty("金豆")
     private BigDecimal bean;
     @ApiModelProperty("获奖用户")

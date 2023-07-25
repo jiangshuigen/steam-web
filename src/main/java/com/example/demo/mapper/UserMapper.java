@@ -45,7 +45,7 @@ public interface UserMapper {
 
     int register(UserRegisterDto user);
 
-    List<User> queryUserByInviteCode(String inviteCode);
+    User queryUserByInviteCode(String inviteCode);
 
     int updateBean(@Param("balance") BigDecimal balance, @Param("id")int id);
 

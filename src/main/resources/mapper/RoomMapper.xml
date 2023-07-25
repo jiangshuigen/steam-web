@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.example.demo.mapper.RoomMapper">
+    <resultMap id="RoomResultMap" type="com.example.demo.entity.RoomWeb">
+        <id property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="describe" column="describe"/>
+        <result property="endTime" column="end_time"/>
+        <result property="status" column="status"/>
+        <result property="peopleNumber" column="people_number"/>
+        <result property="password" column="password"/>
+        <result property="payStartTime" column="pay_start_time"/>
+        <result property="minRecharge" column="min_recharge"/>
+        <result property="isGive" column="is_give"/>
+        <result property="meInviter" column="me_inviter"/>
+        <result property="top" column="top"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <result property="userName" column="userName"/>
+        <result property="avatar" column="avatar"/>
+        <result property="awardsPool" column="awardsPool"/>
+        <collection property="awardList" ofType="java.lang.String" resultMap="RoomAwardResultMap"/>
+    </resultMap>
+    <resultMap id="UserResultMap" type="com.example.demo.dto.RoomUserDto">
+        <id property="userId" column="userId"/>
+        <result property="userName" column="userName"/>
+        <result property="avatar" column="avatar"/>
+    </resultMap>
+    <resultMap id="RoomAwardResultMap" type="com.example.demo.dto.RoomAwardWeb">
+        <id property="roomAwardId" column="roomAwardId"/>
+        <result property="roomAwardName" column="roomAwardName"/>
+        <result property="roomAwardDura" column="roomAwardDura"/>
+        <result property="roomAwardBean" column="roomAwardBean"/>
+    </resultMap>
 
     <select id="getRoomsListByPage" resultType="com.example.demo.entity.Room"
             parameterType="com.example.demo.dto.RoomQuery">
@@ -18,15 +50,16 @@
         r.is_give as isGive ,
         r.me_inviter as meInviter,
         r.top,
-        r.created_at as createdAt,
-        r.updated_at as updatedAt,
+        r.created_at,
+        r.updated_at,
         IF
         (
-        DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ), '2', IF ( DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ) >= DATE_FORMAT( pay_start_time, '%Y-%m-%d %H:%i:%s' ),
+        DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ), '2',
+        IF ( DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ) >= DATE_FORMAT( pay_start_time, '%Y-%m-%d %H:%i:%s' ),
         '0',
         '1'
         )
-        )  as status
+        ) as status
         from rooms as r
         left join users as u on u.id = r.user_id
         <where>
@@ -35,6 +68,89 @@
             </if>
         </where>
         order by r.created_at desc
+    </select>
+    <select id="getRoomsList" resultMap="RoomResultMap">
+        select
+        r.id,
+        r.user_id,
+        u.name as userName,
+        r.`name`,
+        r.people_number as peopleNumber,
+        r.`describe`,
+        r.end_time ,
+        r.people_number ,
+        r.password,
+        r.pay_start_time ,
+        r.min_recharge ,
+        r.is_give  ,
+        r.me_inviter,
+        r.top,
+        r.created_at as createdAt,
+        r.updated_at as updatedAt,
+        IF
+        (
+        DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ), '2', '1'
+        )  as status,
+        (select count(1) from room_awards d where d.room_id =r.id) as awardsCount,
+        rw.id as roomAwardId,
+        br.name as roomAwardName,
+        br.cover as roomAwardDura,
+        br.bean as roomAwardBean
+        from rooms as r
+        left join users as u on u.id = r.user_id
+        left join room_awards rw on rw.room_id = r.id
+        left join box_records br on br.id = rw.box_record_id
+        order by top,r.created_at desc
+    </select>
+    <select id="getRoomAwardsListById" resultType="com.example.demo.entity.RoomAward">
+        select
+        ra.id,
+        ra.designated_user as designatedUser ,
+        ra.created_at as createdAt,
+        u.name as userName,
+        br.name,
+        br.cover,
+        br.dura,
+        br.bean
+        from room_awards ra
+        left join users u on u.id= ra.get_user_id
+        left join box_records br on br.id = ra.box_record_id
+        where ra.room_id =#{roomId}
+        order by ra.created_at desc
+    </select>
+    <select id="getRoomsListByUser" resultMap="RoomResultMap" parameterType="java.lang.Integer">
+        select
+        r.id,
+        r.user_id,
+        u.name as userName,
+        r.`name`,
+        r.people_number as peopleNumber,
+        r.`describe`,
+        r.end_time ,
+        r.people_number ,
+        r.password,
+        r.pay_start_time ,
+        r.min_recharge ,
+        r.is_give  ,
+        r.me_inviter,
+        r.top,
+        r.created_at as createdAt,
+        r.updated_at as updatedAt,
+        IF
+        (
+        DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ), '2', '1'
+        )  as status,
+        (select count(1) from room_awards d where d.room_id =r.id) as awardsCount,
+        rw.id as roomAwardId,
+        br.name as roomAwardName,
+        br.cover as roomAwardDura,
+        br.bean as roomAwardBean
+        from room_users rmu
+        inner join  rooms as r on r.id =rmu.room_id and rmu.user_id =#{userId}
+        left join users as u on u.id = r.user_id
+        left join room_awards rw on rw.room_id = r.id
+        left join box_records br on br.id = rw.box_record_id
+        order by top,r.created_at desc
     </select>
     <select id="getRoomById" resultType="com.example.demo.entity.Room" parameterType="java.lang.Integer">
         select
@@ -57,6 +173,79 @@
             r.id =#{id}
         </where>
     </select>
+    <insert id="saveRoom" parameterType="com.example.demo.entity.Room" useGeneratedKeys="true"
+            keyProperty="id">
+          insert into rooms(
+            user_id,
+            `name`,
+            `describe`,
+            end_time,
+            people_number,
+            password,
+            pay_start_time,
+            min_recharge,
+            is_give,
+            me_inviter,
+            top,
+            created_at,
+            updated_at
+          )values(
+            #{userId},
+            #{name},
+            #{describe},
+            #{endTime},
+            #{peopleNumber},
+            #{password},
+            #{payStartTime},
+            #{minRecharge},
+            0,
+            0,
+            0,
+            now(),
+            now()
+          )
+    </insert>
+    <insert id="saveBatchAwards" parameterType="com.example.demo.dto.RoomAwardsDto">
+        insert into room_awards(
+        room_id,
+        box_record_id,
+        get_user_id,
+        designated_user,
+        created_at,
+        updated_at
+        )values
+        <foreach collection="batch" item="item" separator=",">
+            (
+            #{item.roomId},
+            #{item.boxRecordId},
+            0,
+            0,
+            now(),
+            now()
+            )
+        </foreach>
+    </insert>
+    <update id="updateRoomAwards" parameterType="java.lang.Integer">
+        update box_records
+        <set>
+            status = 0
+        </set>
+        where id in (
+        select box_record_id from room_awards where room_id =#{roomId}
+        )
+    </update>
+    <update id="updateBoxRecord" parameterType="com.example.demo.dto.RoomAwardsDto" >
+        update box_records
+        <set>
+            status=3
+        </set>
+        <where>
+            id in
+            <foreach collection="ids" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </update>
     <update id="updateRoom" parameterType="com.example.demo.entity.Room">
         update rooms
         <set>
@@ -106,6 +295,7 @@
         u.name as userName,
         br.name,
         br.dura,
+        br.cover,
         br.bean
         from room_awards ra
         left join users u on u.id= ra.get_user_id
@@ -120,4 +310,14 @@
             #{item}
         </foreach>
     </delete>
+
+    <select id="getUsersById" resultType="com.example.demo.dto.RoomUserDto">
+        select
+          u.name as userName,
+          u.id as userId,
+          u.avatar as avatar
+        from room_users ru
+        inner join users u on u.id =ru.user_id
+        where ru.room_id =#{roomId}
+    </select>
 </mapper>

@@ -11,6 +11,8 @@ public class UserRegisterDto {
     private String mobile;
     @ApiModelProperty("邀请码")
     private String inviteCode;
+    @ApiModelProperty("邀请码")
+    private int inviterId;
     @ApiModelProperty("密码")
     private String password;
     @ApiModelProperty("验证码")

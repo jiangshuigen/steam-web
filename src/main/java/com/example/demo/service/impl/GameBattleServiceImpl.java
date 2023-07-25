@@ -287,6 +287,11 @@ public class GameBattleServiceImpl implements GameBattleService {
         return listInfo;
     }
 
+    @Override
+    public List<GameRanking> getGameRankingList(GameRankingQuery query) {
+        return gamebattlemapper.getGameRankingList(query);
+    }
+
 
     private String getCode() {
         Object ob = redisTemplate.opsForValue().get("OrderNo-");

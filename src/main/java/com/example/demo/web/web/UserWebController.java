@@ -128,7 +128,7 @@ public class UserWebController {
      */
     @ApiOperation(value = "查重接口")
     @GetMapping("/repeatCheck")
-    public ResultData repeatCheck(@RequestParam String str, @RequestParam("type(1-手机查重 2-用户名查重 3-邀请码查重)") int type) {
+    public ResultData repeatCheck(@RequestParam String str, @RequestParam("type(1-手机查重 2-用户名查重)") int type) {
         return ResultData.success(userservice.repeatCheck(str, type));
     }
 

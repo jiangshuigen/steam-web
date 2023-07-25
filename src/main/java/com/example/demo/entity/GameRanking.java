@@ -13,6 +13,12 @@ public class GameRanking {
     private int id;
     @ApiModelProperty("用户id")
     private int userId;
+
+    @ApiModelProperty("用户名")
+    private String userName;
+    @ApiModelProperty("用户头像")
+    private String avatar;
+
     @ApiModelProperty("总场次")
     private int total;
     @ApiModelProperty("胜利场次")

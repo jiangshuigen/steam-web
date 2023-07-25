@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.*;
+import com.example.demo.entity.GameRanking;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface GameBattleService {
     PageInfo<GameArenasDto> getBattleList(BasePage query);
 
     PageInfo<GameArenasDto>  getMyBattleList(BattleQuery query);
+
+    List<GameRanking> getGameRankingList(GameRankingQuery query);
 }

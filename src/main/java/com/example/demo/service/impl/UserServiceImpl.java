@@ -8,9 +8,11 @@ import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.service.UserService;
 import com.example.demo.util.CheckSumBuilder;
+import com.example.demo.util.CodeUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.gson.Gson;
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -119,11 +121,20 @@ public class UserServiceImpl implements UserService {
         if (!CollectionUtils.isEmpty(listUser)) {
             return "用户名：" + user.getName() + "已经注册";
         }
-        //邀请码校验
-        List<User> Userlist = userMapper.queryUserByInviteCode(user.getInviteCode());
-        if (!CollectionUtils.isEmpty(Userlist)) {
-            return "邀请码：" + user.getInviteCode() + "已经使用";
+        if (!StringUtil.isNullOrEmpty(user.getInviteCode())) {
+            User usdto = userMapper.queryUserByInviteCode(user.getInviteCode());
+            user.setInviterId(usdto.getId());
         }
+        //自动生成邀请码
+        boolean bl = true;
+        do {
+            String invitedCode = CodeUtils.getInviteCode();
+            User us = userMapper.queryUserByInviteCode(invitedCode);
+            if (ObjectUtils.isEmpty(us)) {
+                user.setInviteCode(invitedCode);
+                bl = false;
+            }
+        } while (bl);
         //短信验证码校验
         String mobileCode = (String) redisTemplate.opsForValue().get(user.getMobile());
         if (!(mobileCode != null && mobileCode.equals(user.getMobileCode()))) {
@@ -200,12 +211,6 @@ public class UserServiceImpl implements UserService {
             case 2:
                 List<User> listUser = userMapper.queryUserByName(str);
                 if (!CollectionUtils.isEmpty(listUser)) {
-                    return false;
-                }
-                break;
-            case 3:
-                List<User> Userlist = userMapper.queryUserByInviteCode(str);
-                if (!CollectionUtils.isEmpty(Userlist)) {
                     return false;
                 }
                 break;

@@ -25,7 +25,7 @@
     </resultMap>
     <resultMap id="UserResultMap" type="com.example.demo.dto.GameArenasUserDto">
         <id property="gameUserId" column="gameUserId"/>
-        <id property="gameUserName" column="gameUserName"/>
+        <result property="gameUserName" column="gameUserName"/>
         <result property="gameAvatar" column="gameAvatar"/>
         <result property="gameBean" column="gameBean"/>
     </resultMap>
@@ -274,4 +274,30 @@
             DATE_FORMAT(now(),'%Y-%m-%d')
         )
     </insert>
+
+    <select id="getGameRankingList" parameterType="com.example.demo.dto.GameRankingQuery"
+            resultType="com.example.demo.entity.GameRanking">
+        select rk.id,
+        rk.user_id as userId,
+        u.name as userName,
+        u.avatar as avatar,
+        rk.total,
+        rk.win,
+        rk.fail,
+        rk.win_rate as winRate,
+        rk.expend,
+        rk.income,
+        rk.lost_bean as lostBean,
+        rk.`date`
+        from game_ranking rk
+        left join users u on u.id = rk.user_id
+        where rk.`date` = DATE_FORMAT(now(),'%Y-%m-%d')
+        <if test="type == 1">
+            order by rk.lost_bean desc
+        </if>
+        <if test="type == 2">
+            order by rk.win desc
+        </if>
+        limit #{size}
+    </select>
 </mapper>

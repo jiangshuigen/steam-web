@@ -1,9 +1,6 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.BasePage;
-import com.example.demo.dto.BattleQuery;
-import com.example.demo.dto.GameArenasDto;
-import com.example.demo.dto.GameArenasSaveDto;
+import com.example.demo.dto.*;
 import com.example.demo.entity.GameArenaBox;
 import com.example.demo.entity.GameArenaUsers;
 import com.example.demo.entity.GameAwardRecords;
@@ -40,4 +37,6 @@ public interface GameBattleMapper {
     int updateRanking(GameRanking ranking);
 
     int saveRanking(GameRanking ranking);
+
+    List<GameRanking> getGameRankingList(GameRankingQuery query);
 }
