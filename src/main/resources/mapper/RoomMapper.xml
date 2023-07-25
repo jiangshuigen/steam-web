@@ -234,7 +234,7 @@
         select box_record_id from room_awards where room_id =#{roomId}
         )
     </update>
-    <update id="updateBoxRecord" parameterType="com.example.demo.dto.RoomAwardsDto" >
+    <update id="updateBoxRecord" parameterType="com.example.demo.dto.RoomAwardsDto">
         update box_records
         <set>
             status=3
@@ -320,4 +320,18 @@
         inner join users u on u.id =ru.user_id
         where ru.room_id =#{roomId}
     </select>
+
+    <insert id="insertRoomUser" parameterType="com.example.demo.dto.JoinRoomDto">
+          insert into room_users(
+            room_id,
+            user_id,
+            created_at,
+            updated_at
+          )values(
+            #{roomId},
+            #{userId},
+            now(),
+            now()
+          )
+    </insert>
 </mapper>

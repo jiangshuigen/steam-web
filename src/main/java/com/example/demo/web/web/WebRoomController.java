@@ -1,6 +1,7 @@
 package com.example.demo.web.web;
 
 import com.example.demo.config.ResultData;
+import com.example.demo.dto.JoinRoomDto;
 import com.example.demo.dto.RoomDto;
 import com.example.demo.dto.RoomUserDto;
 import com.example.demo.dto.WebRoomQuery;
@@ -11,6 +12,7 @@ import com.example.demo.service.RoomService;
 import com.example.demo.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/webRoom")
 @Api(value = "ROLL房(前台)", tags = {"ROLL房(前台)"})
+@Slf4j
 public class WebRoomController {
     @Resource
     private RoomService roomservice;
@@ -87,4 +90,29 @@ public class WebRoomController {
         return ResultData.success(roomservice.saveRoom(room));
     }
 
+
+    /**
+     * 加入房间
+     *
+     * @param request
+     * @param
+     * @return
+     */
+    @ApiOperation(value = "加入房间")
+    @PostMapping("/joinRoom")
+    public ResultData joinRoom(HttpServletRequest request, @RequestBody JoinRoomDto dto) {
+        try {
+            //验证登录
+            User usr = userservice.getLoginUserInfo(request);
+            if (ObjectUtils.isEmpty(usr)) {
+                return ResultData.fail("403", "请登录");
+            }
+            dto.setUserId(usr.getId());
+            return ResultData.success(roomservice.joinRoom(dto));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("加入房间异常=======" + e.getMessage());
+            return ResultData.fail("500", e.getMessage());
+        }
+    }
 }

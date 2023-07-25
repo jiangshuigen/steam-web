@@ -1,9 +1,6 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.RoomAwardQuery;
-import com.example.demo.dto.RoomAwardsDto;
-import com.example.demo.dto.RoomQuery;
-import com.example.demo.dto.RoomUserDto;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Room;
 import com.example.demo.entity.RoomAward;
 import com.example.demo.entity.RoomWeb;
@@ -39,4 +36,6 @@ public interface RoomMapper {
     int updateBoxRecord(@Param("ids")List<Integer> batch);
 
     int updateRoomAwards(int roomId);
+
+    int insertRoomUser(JoinRoomDto dto);
 }

@@ -1,11 +1,13 @@
 package com.example.demo.service.impl;
 
+import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Room;
 import com.example.demo.entity.RoomAward;
 import com.example.demo.entity.RoomWeb;
 import com.example.demo.mapper.RoomMapper;
+import com.example.demo.service.BeanRecordService;
 import com.example.demo.service.RoomService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -28,6 +30,8 @@ public class RoomServiceImpl implements RoomService {
 
     @Resource
     private RoomMapper roomMapper;
+    @Resource
+    private BeanRecordService beanrecordservice;
 
     Integer i = 0;
 
@@ -122,6 +126,40 @@ public class RoomServiceImpl implements RoomService {
             log.info("======扣除背包的===size:" + i);
         }
         return i;
+    }
+
+    @Override
+    public int joinRoom(JoinRoomDto dto) throws Exception {
+        Room room = roomMapper.getRoomById(dto.getRoomId());
+        if (!ObjectUtils.isEmpty(room)) {
+            //密码校验
+            if (!StringUtils.isEmpty(room.getPassword()) && StringUtils.equals(room.getPassword(), dto.getPassword())) {
+                throw new Exception("密码错误");
+            }
+            //人数校验
+            List<RoomUserDto> listUser = roomMapper.getUsersById(dto.getRoomId());
+            if (listUser.size() >= room.getPeopleNumber()) {
+                throw new Exception("无法加入，人数已经达到上限");
+            }
+            //查重校验
+            for (RoomUserDto roomUserDto : listUser) {
+                if (roomUserDto.getUserId() == dto.getUserId()) {
+                    throw new Exception("您已经加入该房间");
+                }
+            }
+            //充值校验
+            if (room.getMinRecharge().compareTo(new BigDecimal(0)) == 1) {
+                BigDecimal numb = beanrecordservice.queryBeanRecords(dto.getUserId(), room.getPayStartTime());
+                if (room.getMinRecharge().compareTo(numb) == 1) {
+                    throw new Exception("无法加入,房间要求自" + room.getPayStartTime() + "开始总充值金额达到 " + room.getMinRecharge() + "R币 才可进入！");
+                }
+            }
+            //加入房间
+            roomMapper.insertRoomUser(dto);
+        } else {
+            throw new Exception("房间不存在或者已经下线");
+        }
+        return 0;
     }
 
     private List<RoomWeb> calculate(List<RoomWeb> list) {
