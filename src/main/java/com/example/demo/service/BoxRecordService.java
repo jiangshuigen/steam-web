@@ -22,7 +22,7 @@ public interface BoxRecordService {
 
     PageInfo<BoxRecordsWeb> getMyPackage(BoxRecordsWebQuery query);
 
-    int getPackage(int[] ids);
+    int getPackage(int[] ids, int userId) throws Exception;
 
     PageInfo<BoxRecordsWeb> getBackList(HttpServletRequest request, BackQuery query);
 
@@ -32,5 +32,5 @@ public interface BoxRecordService {
 
     List<BoxRecords> getRecordList(int numb);
 
-    int exchange(HttpServletRequest request,int[] ids);
+    int exchange(HttpServletRequest request, int[] ids);
 }

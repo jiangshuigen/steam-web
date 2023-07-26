@@ -11,4 +11,6 @@ public interface BeanRecordMapper {
     List<BeanRecord> getBeanRecordList(BeanRecordQuery query);
 
     BigDecimal queryBeanRecords(int userId, Date payStartTime);
+
+    BigDecimal queryUserBeanRecords(int userId);
 }

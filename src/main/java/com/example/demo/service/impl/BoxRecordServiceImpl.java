@@ -5,6 +5,7 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.BoxRecords;
 import com.example.demo.entity.BoxRecordsWeb;
 import com.example.demo.mapper.BoxRecordMapper;
+import com.example.demo.service.BeanRecordService;
 import com.example.demo.service.BoxRecordService;
 import com.example.demo.service.UserService;
 import com.github.pagehelper.PageHelper;
@@ -26,6 +27,8 @@ public class BoxRecordServiceImpl implements BoxRecordService {
     private BoxRecordMapper boxrecordmapper;
     @Resource
     private UserService userservice;
+    @Resource
+    private BeanRecordService beanrecordservice;
 
     @Override
     public PageInfo<BoxRecords> getBoxRecordList(BoxRecordsQuery query) {
@@ -67,7 +70,12 @@ public class BoxRecordServiceImpl implements BoxRecordService {
     }
 
     @Override
-    public int getPackage(int[] ids) {
+    public int getPackage(int[] ids, int userId) throws Exception {
+        //需要累计充值达到30元才可以提货哦！
+        BigDecimal sumNumb = beanrecordservice.queryUserBeanRecords(userId);
+        if (sumNumb.compareTo(new BigDecimal(30)) == -1) {
+            throw new Exception("需要累计充值达到30元才可以提货哦！");
+        }
         return boxrecordmapper.getPackage(ids);
     }
 

@@ -12,6 +12,7 @@ import com.example.demo.service.UserService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/web")
 @Api(value = "用户中心(前台)", tags = {"用户中心(前台)"})
+@Slf4j
 public class UserWebController {
     @Resource
     private UserService userservice;
@@ -180,8 +182,21 @@ public class UserWebController {
      */
     @ApiOperation(value = "背包物品取回")
     @GetMapping("/getPackage")
-    public ResultData getPackage(@RequestParam(value = "ids") int[] ids) {
-        return ResultData.success(boxrecordservice.getPackage(ids));
+    public ResultData getPackage(HttpServletRequest request, @RequestParam(value = "ids") int[] ids) {
+        try {
+            //获取session
+            HttpSession session = request.getSession();
+            UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
+            if (ObjectUtils.isEmpty(dto)) {
+                return ResultData.fail("403", "未登录");
+            }
+            return ResultData.success(boxrecordservice.getPackage(ids, dto.getId()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("背包物品取回=======" + e.getMessage());
+            return ResultData.fail("500", e.getMessage());
+        }
+
     }
 
     /**

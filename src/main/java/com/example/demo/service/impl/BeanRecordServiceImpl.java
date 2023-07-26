@@ -31,4 +31,9 @@ public class BeanRecordServiceImpl implements BeanRecordService {
     public BigDecimal queryBeanRecords(int userId, Date payStartTime) {
         return beanrecordmapper.queryBeanRecords(userId,payStartTime);
     }
+
+    @Override
+    public BigDecimal queryUserBeanRecords(int userId) {
+        return beanrecordmapper.queryUserBeanRecords(userId);
+    }
 }
