@@ -1,10 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.example.demo.dto.AwardCountDto;
-import com.example.demo.dto.BoxAwardsQuery;
-import com.example.demo.dto.LuckyBoxRecordQuery;
-import com.example.demo.dto.OpenBox;
+import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.mapper.LuckyBoxRecordMapper;
@@ -108,7 +105,8 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         if (ObjectUtils.isEmpty(bx)) {
             throw new Exception("宝箱不存在");
         }
-        BigDecimal cost = bx.getBean().multiply(new BigDecimal(openbox.getNumb()));
+        BigDecimal cost = bx.getBean().multiply(new BigDecimal(openbox.getNumb())).setScale(2, BigDecimal.ROUND_DOWN);
+        ;
         BigDecimal balance = user.getBean().subtract(cost);
         if (user.getBean().compareTo(cost) == -1) {
             throw new Exception("请充值");
@@ -277,6 +275,134 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         return listReturn;
     }
 
+    @Override
+    public List<BoxAwards> getWebAwardList(WebBoxAwardsQuery query) {
+        return mapper.getWebAwardList(query);
+    }
+
+    @Override
+    public List<LuckyBoxRecord> getHistory(int awardId) {
+        return luckyboxrecordmapper.getHistory(awardId);
+    }
+
+    @Override
+    @Transactional
+    public List<BoxAwards> openAward(OpenDto dto, UserDto user) {
+        List<BoxAwards> returnList = new ArrayList<>();
+        List<BoxRecords> listReturn = new ArrayList<>();
+        BoxAwards boxawards = mapper.getBoxAwardById(dto.getAwardId());
+        String jsonStr = "";
+        if (user.getAnchor() == 1) {
+            jsonStr = boxawards.getLuckIntervalAnchor();
+        } else {
+            jsonStr = boxawards.getLuckInterval();
+        }
+        Object ob = redisTemplate.opsForValue().get("LUCKBOX|" + user.getAnchor() + "|" + dto.getAwardId());
+        BigDecimal total = new BigDecimal(0);
+        if (ObjectUtils.isEmpty(ob)) {
+            //首次开箱
+            log.info("++++++++++++++++首次开启饰品++++++++++++++++++++++");
+            //计算额度
+            List<String> listLucky = JSON.parseArray(jsonStr, String.class);
+            int min = Integer.parseInt(listLucky.get(0));
+            int max = Integer.parseInt(listLucky.get(1));
+            int radom = (int) (min + Math.random() * (max - min + 1));
+            BigDecimal maxD = new BigDecimal(max);
+            BigDecimal aaRes = maxD.setScale(-(listLucky.get(1).length() - 1), BigDecimal.ROUND_DOWN);
+            total = boxawards.getBean().divide(aaRes).multiply(new BigDecimal(radom)).setScale(2, BigDecimal.ROUND_DOWN);
+            ;
+            log.info("++++++++++" + dto.getAwardId() + "++的额度是：" + total + "++++++++++++++++++++++++++++");
+        } else {
+            total = (BigDecimal) ob;
+        }
+        //花费金额
+        BigDecimal cost = boxawards.getBean().multiply(dto.getPercent()).setScale(2, BigDecimal.ROUND_DOWN);
+        ;
+        BigDecimal balance = user.getBean().subtract(cost);
+        //扣除金币
+        userservice.updateBean(balance, user.getId());
+        LuckyBoxRecord record = null;
+        //剩余额度
+        if (total.compareTo(cost) == -1) {
+            log.info("++++++++++" + dto.getAwardId() + "++的剩余额度是0 中奖++++++++++++++++++++++++++++");
+            returnList.add(boxawards);
+            //添加记录
+            record = LuckyBoxRecord.builder()
+                    .userId(user.getId())
+                    .boxBean(cost)
+                    .percent(dto.getPercent())
+                    .awardId(dto.getAwardId())
+                    .targetName(boxawards.getName())
+                    .targetCover(boxawards.getCover())
+                    .awardDura(boxawards.getDura())
+                    .awardLv(boxawards.getLv())
+                    .targetValue(boxawards.getBean())//目标价值
+                    .getAwardId(boxawards.getId())
+                    .obtainName(boxawards.getName())
+                    .obtainHashName(boxawards.getHashName())
+                    .obtainCover(boxawards.getCover())
+                    .getAwardDura(boxawards.getDura())
+                    .getAwardLv(boxawards.getLv())
+                    .obtainValue(boxawards.getBean())
+                    .build();
+            //中奖后额度复位
+            redisTemplate.delete("LUCKBOX|" + user.getAnchor() + "|" + dto.getAwardId());
+        } else {
+            BigDecimal least = total.subtract(cost);
+            redisTemplate.opsForValue().set("LUCKBOX|" + user.getAnchor() + "|" + dto.getAwardId(), least);
+            log.info("++++++++++" + dto.getAwardId() + "++的剩余额度是" + least + "++++++++++++++++++++++++++++");
+            int id = 1448;
+            Object leaveId = redisTemplate.opsForValue().get("LUCKBOX|" + user.getAnchor() + "|DEFAULT");
+            if (!ObjectUtils.isEmpty(leaveId)) {
+                id = (int) leaveId;
+            }
+            //指定一条记录
+            BoxAwards leaveDto = mapper.getBoxAwardById(id);
+            returnList.add(leaveDto);
+            //添加记录
+            record = LuckyBoxRecord.builder()
+                    .userId(user.getId())
+                    .boxBean(cost)
+                    .percent(dto.getPercent())
+                    .awardId(dto.getAwardId())
+                    .targetName(boxawards.getName())
+                    .targetCover(boxawards.getCover())
+                    .awardDura(boxawards.getDura())
+                    .awardLv(boxawards.getLv())
+                    .targetValue(boxawards.getBean())//目标价值
+                    .getAwardId(leaveDto.getId())
+                    .obtainName(leaveDto.getName())
+                    .obtainCover(leaveDto.getCover())
+                    .getAwardDura(leaveDto.getDura())
+                    .getAwardLv(leaveDto.getLv())
+                    .obtainHashName(leaveDto.getHashName())
+                    .obtainValue(leaveDto.getBean())
+                    .build();
+        }
+        int i = luckyboxrecordmapper.saveRecord(record);
+        BoxRecords bxrecord = BoxRecords.builder()
+                .getUserId(user.getId())
+                .userId(user.getId())
+                .boxId(0)
+                .boxName("幸运开箱")
+                .boxBean(cost)
+                .boxAwardId(record.getAwardId())
+                .name(record.getObtainName())
+                .hashName(record.getObtainHashName())
+                .cover(record.getObtainCover())
+                .dura(record.getGetAwardDura())
+                .lv(record.getAwardLv())
+                .bean(record.getObtainValue())
+                .maxT(new BigDecimal(0))
+                .code(this.getCode())
+                .uuid(UUID.randomUUID().toString())
+                .type(4)
+                .build();
+        listReturn.add(bxrecord);
+        //保存开箱记录
+        boxrecordservice.saveBoxRecord(listReturn);
+        return returnList;
+    }
 
     private boolean nextTime(List<BoxAwards> listAward, List<BoxAwards> listRedis, OpenBox openbox, User user) {
         //判断是否下一轮

@@ -39,5 +39,70 @@
         order by re.created_at desc
     </select>
 
-
+    <select id="getHistory" resultType="com.example.demo.entity.LuckyBoxRecord" parameterType="java.lang.Integer">
+        select
+        re.id,
+        re.user_id as userId,
+        re.use_bean as boxBean,
+        u.name as userName,
+        u.avatar as avatar,
+        re.percent as percent,
+        re.award_id as awardId,
+        re.award_name as targetName,
+        re.award_dura as awardDura ,
+        re.award_lv as awardLv ,
+        re.bean as targetValue,
+        re.get_award_id as getAwardId,
+        aw.cover as targetCover,
+        aw2.cover as obtainCover,
+        re.get_award_name as obtainName,
+        re.get_award_dura as getAwardDura,
+        re.get_award_lv as getAwardLv,
+        re.get_bean as obtainValue,
+        re.created_at as createdAt,
+        re.updated_at as updatedAt
+        from lucky_box_records re
+        left join users u on re.user_id = u.id
+        left join box_awards aw on aw.id = re.award_id
+        left join box_awards aw2 on aw2.id = re.get_award_id
+        <where>
+            re.award_id = #{awardId}
+        </where>
+        order by re.created_at desc limit 20
+    </select>
+    <insert id="saveRecord" parameterType="com.example.demo.entity.LuckyBoxRecord">
+          insert into lucky_box_records(
+            user_id,
+            use_bean,
+            percent,
+            award_id,
+            award_name,
+            award_dura,
+            award_lv,
+            bean,
+            get_award_id,
+            get_award_name,
+            get_award_dura,
+            get_award_lv,
+            get_bean,
+            created_at,
+            updated_at
+          )values(
+              #{userId},
+              #{boxBean},
+              #{percent},
+              #{awardId},
+              #{targetName},
+              #{awardDura},
+              #{awardLv},
+              #{targetValue},
+              #{getAwardId},
+              #{obtainName},
+              #{getAwardDura},
+              #{getAwardLv},
+              #{obtainValue},
+              now(),
+              now()
+          )
+    </insert>
 </mapper>

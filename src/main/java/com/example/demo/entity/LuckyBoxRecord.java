@@ -2,12 +2,15 @@ package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Tolerate;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
+@Builder
 public class LuckyBoxRecord {
     @ApiModelProperty("主键id")
     private int id;
@@ -15,6 +18,8 @@ public class LuckyBoxRecord {
     private int userId;
     @ApiModelProperty("用户名称")
     private String userName;
+    @ApiModelProperty("用户头像")
+    private String avatar;
     @ApiModelProperty("消耗金豆")
     private BigDecimal boxBean;
     @ApiModelProperty("百分比")
@@ -35,6 +40,8 @@ public class LuckyBoxRecord {
     private int getAwardId;
     @ApiModelProperty("获得饰品名称")
     private String obtainName;
+    @ApiModelProperty("饰品唯一英文名称")
+    private String obtainHashName;
     @ApiModelProperty("获得饰品封面")
     private String obtainCover;
     @ApiModelProperty("获得饰品磨损程度")
@@ -50,4 +57,8 @@ public class LuckyBoxRecord {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
 
+
+    @Tolerate
+    public LuckyBoxRecord() {
+    }
 }

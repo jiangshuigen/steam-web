@@ -175,37 +175,17 @@ public class GameBattleServiceImpl implements GameBattleService {
                 battleDto.setListAward(listUserAWards);
                 listBattle.add(battleDto);
             }
-            //计算奖品归属 如果两人比赛平局各自领取各自的物品 否则平局随机抽取胜利玩家
-            boolean bl = listBattle.stream().allMatch(listBattle.get(0).getBean()::equals);
+            //计算奖品归属 如果任意两人平局则结果全部平局
+            boolean bl = listBattle.stream().anyMatch(listBattle.get(0).getBean()::equals);
             List<Integer> winner = new ArrayList<>();
-            if (bl && dto.getUserNum() == 2) {
+            if(bl){
                 log.info("==========平局====================");
                 //各自放入背包
                 listBattle.stream().forEach(e -> {
                     e.setWin(1);
                     winner.add(e.getUserId());
                 });
-            } else if (bl && dto.getUserNum() != 2) {
-                //随机抽取用户
-                Collections.shuffle(listUser);
-                listReturn.stream().forEach(e -> {
-                    e.setGetUserId(listUser.get(0).getGameUserId());
-                    e.setUserId(listUser.get(0).getGameUserId());
-                });
-                log.info("==========随机抽取用户 胜利者：" + listUser.get(0).getGameUserId() + "====================");
-                winner.add(listUser.get(0).getGameUserId());
-                listBattle.stream().forEach(e -> {
-                    if (listUser.get(0).getGameUserId() == e.getUserId()) {
-                        e.setWin(1);
-                        e.setListAward(listReturn);
-                    } else {
-                        //其他玩家+0.01
-                        e.setListAward(new ArrayList<>());
-                        userservice.sendReward(e.getUserId());
-                    }
-                });
-
-            } else {
+            }else {
                 List<BattleDto> userInfoList = listBattle.stream().sorted(Comparator.comparing(BattleDto::getBean).reversed()).collect(Collectors.toList());
                 log.info("排列顺序：" + JSON.toJSONString(userInfoList));
                 listReturn.stream().forEach(e -> {
