@@ -47,6 +47,10 @@ public class BoxAwards {
     private String luckInterval;
     @ApiModelProperty("幸运区间主播")
     private String luckIntervalAnchor;
+    @ApiModelProperty("剩余额度")
+    private BigDecimal leaveBean;
+    @ApiModelProperty("剩余额度(主播)")
+    private BigDecimal leaveBeanAnchor;
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;

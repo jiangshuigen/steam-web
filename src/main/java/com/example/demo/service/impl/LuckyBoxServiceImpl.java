@@ -70,6 +70,27 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
     public PageInfo<BoxAwards> getAwardList(BoxAwardsQuery query) {
         PageHelper.startPage(query.getPageNo(), query.getPageSize());
         List<BoxAwards> list = mapper.getAwardList(query);
+        long begin = System.currentTimeMillis();
+        list.stream().forEach(e -> {
+            //普通
+            Object ob = redisTemplate.opsForValue().get("LUCKBOX|0|" + e.getId());
+            if (!ObjectUtils.isEmpty(ob)) {
+                BigDecimal bean = (BigDecimal) ob;
+                e.setLeaveBean(bean);
+            } else {
+                e.setLeaveBean(new BigDecimal(0));
+            }
+            //主播
+            Object obAnchor = redisTemplate.opsForValue().get("LUCKBOX|1|" + e.getId());
+            if (!ObjectUtils.isEmpty(obAnchor)) {
+                BigDecimal bean = (BigDecimal) obAnchor;
+                e.setLeaveBeanAnchor(bean);
+            } else {
+                e.setLeaveBeanAnchor(new BigDecimal(0));
+            }
+        });
+        long num = System.currentTimeMillis() - begin;
+        log.info("+++++++++++++耗时++++++++++++" + num);
         PageInfo<BoxAwards> listInfo = new PageInfo<>(list);
         return listInfo;
     }
