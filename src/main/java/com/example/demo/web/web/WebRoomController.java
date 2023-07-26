@@ -81,13 +81,19 @@ public class WebRoomController {
     @ApiOperation(value = "创建房间")
     @PostMapping("/saveRoom")
     public ResultData updateRoom(HttpServletRequest request, @RequestBody RoomDto room) {
-        //验证登录
-        User usr = userservice.getLoginUserInfo(request);
-        if (ObjectUtils.isEmpty(usr)) {
-            return ResultData.fail("403", "请登录");
+        try {
+            //验证登录
+            User usr = userservice.getLoginUserInfo(request);
+            if (ObjectUtils.isEmpty(usr)) {
+                return ResultData.fail("403", "请登录");
+            }
+            room.setUserId(usr.getId());
+            return ResultData.success(roomservice.saveRoom(room));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("创建房间异常=======" + e.getMessage());
+            return ResultData.fail("500", e.getMessage());
         }
-        room.setUserId(usr.getId());
-        return ResultData.success(roomservice.saveRoom(room));
     }
 
 
@@ -108,7 +114,7 @@ public class WebRoomController {
                 return ResultData.fail("403", "请登录");
             }
             dto.setUserId(usr.getId());
-            return ResultData.success(roomservice.joinRoom(dto));
+            return ResultData.success(roomservice.joinRoom(dto, usr.getInviterId()));
         } catch (Exception e) {
             e.printStackTrace();
             log.info("加入房间异常=======" + e.getMessage());

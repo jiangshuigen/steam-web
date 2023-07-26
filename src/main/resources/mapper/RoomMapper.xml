@@ -107,7 +107,9 @@
         ra.id,
         ra.designated_user as designatedUser ,
         ra.created_at as createdAt,
+        ra.box_record_id as boxRecordId,
         u.name as userName,
+        u.avatar,
         br.name,
         br.cover,
         br.dura,
@@ -199,7 +201,7 @@
             #{payStartTime},
             #{minRecharge},
             0,
-            0,
+            #{meInviter},
             0,
             now(),
             now()
@@ -334,4 +336,35 @@
             now()
           )
     </insert>
+    <update id="updateBatchAwards" parameterType="java.util.List">
+        <foreach collection="listRoomAwardDto" item="item" index="index" open="" close="" separator=";">
+            update room_awards
+            <set>
+                get_user_id = #{item.getUserId},
+                updated_at = now(),
+            </set>
+            <where>
+                id =#{item.id}
+            </where>
+        </foreach>
+    </update>
+    <update id="updateBatchPackage" parameterType="java.util.List">
+        <foreach collection="listRoomAwardDto" item="item" index="index" open="" close="" separator=";">
+            update box_records
+            <set>
+                <if test="item.getUserId>0">
+                    get_user_id = #{item.getUserId},
+                    user_id = #{item.getUserId},
+                </if>
+                status = 0,
+                updated_at = now(),
+            </set>
+            <where>
+                id =#{item.boxRecordId}
+            </where>
+        </foreach>
+    </update>
+    <update id="updateRoomGive" parameterType="java.lang.Integer">
+        update rooms set is_give =1 where id =#{roomId}
+    </update>
 </mapper>

@@ -13,15 +13,16 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +33,8 @@ public class RoomServiceImpl implements RoomService {
     private RoomMapper roomMapper;
     @Resource
     private BeanRecordService beanrecordservice;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     Integer i = 0;
 
@@ -107,7 +110,7 @@ public class RoomServiceImpl implements RoomService {
 
     @Override
     @Transactional
-    public int saveRoom(RoomDto roomdto) {
+    public int saveRoom(RoomDto roomdto) throws Exception {
         log.info("======param:" + JSON.toJSONString(roomdto));
         Room room = new Room();
         BeanUtils.copyProperties(roomdto, room);
@@ -124,14 +127,29 @@ public class RoomServiceImpl implements RoomService {
             log.info("======添加奖品==size:" + i);
             i = roomMapper.updateBoxRecord(roomdto.getAwards());
             log.info("======扣除背包的===size:" + i);
+            log.info("======添加监听key===" + "ROOM|" + room.getId());
+            long tim = (room.getEndTime().getTime() - new Date().getTime()) / 1000;
+            //设置>2小时
+            long two = 2 * 60 * 60;
+            if (tim >= two) {
+                redisTemplate.opsForValue().set("ROOM|" + room.getId(), room.getId(), tim, TimeUnit.SECONDS);
+            } else {
+                throw new Exception("开奖时间最少在当前时间基础上加2小时");
+            }
         }
         return i;
     }
 
     @Override
-    public int joinRoom(JoinRoomDto dto) throws Exception {
+    public int joinRoom(JoinRoomDto dto, int inviterId) throws Exception {
         Room room = roomMapper.getRoomById(dto.getRoomId());
         if (!ObjectUtils.isEmpty(room)) {
+            //邀请校验
+            if (room.getMeInviter() == 1) {
+                if (room.getUserId() != inviterId) {
+                    throw new Exception("仅限个人推广下级用户参与本房间");
+                }
+            }
             //密码校验
             if (!StringUtils.isEmpty(room.getPassword()) && StringUtils.equals(room.getPassword(), dto.getPassword())) {
                 throw new Exception("密码错误");
@@ -159,6 +177,47 @@ public class RoomServiceImpl implements RoomService {
         } else {
             throw new Exception("房间不存在或者已经下线");
         }
+        return 0;
+    }
+
+    @Override
+    @Transactional
+    public int endRoom(int roomId) {
+        log.info("========房间" + roomId + "开奖=============");
+        Room room = roomMapper.getRoomById(roomId);
+        if (room.getIsGive() == 1) {
+            log.info("========房间" + roomId + "已经结束=============");
+        }
+        List<RoomAward> awardList = roomMapper.getRoomAwardsListById(roomId);
+//        //指定用户奖品处理
+//        List<RoomAward> awardListDesign = awardList.stream().filter(e -> e.getDesignatedUser() > 0).collect(Collectors.toList());
+        List<RoomUserDto> listUser = roomMapper.getUsersById(roomId);
+        List<RoomAwardDto> listRoomAwardDto = new ArrayList<>();
+        awardList.stream().forEach(e -> {
+            RoomAwardDto dto = new RoomAwardDto();
+            dto.setId(e.getId());
+            dto.setBoxRecordId(e.getBoxRecordId());
+            //指定用户
+            if (e.getDesignatedUser() > 0) {
+                dto.setGetUserId(e.getDesignatedUser());
+            } else {
+                //随机抽取用户
+                if (listUser.size() > 0) {
+                    int index = new Random().nextInt(listUser.size());
+                    RoomUserDto userDto = listUser.get(index);
+                    dto.setGetUserId(userDto.getUserId());
+                }
+            }
+            listRoomAwardDto.add(dto);
+        });
+        int x = roomMapper.updateBatchAwards(listRoomAwardDto);
+        log.info("=====发放奖品数目：" + x);
+        int num = roomMapper.updateBatchPackage(listRoomAwardDto);
+        log.info("=====背包放入数目：" + num);
+        //活动结束
+        roomMapper.updateRoomGive(roomId);
+        //释放锁
+        redisTemplate.delete("ROOM|" + roomId + ".lock");
         return 0;
     }
 

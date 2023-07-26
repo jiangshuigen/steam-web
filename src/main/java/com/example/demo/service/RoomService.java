@@ -28,7 +28,9 @@ public interface RoomService {
 
     List<RoomUserDto> getUsersById(int id);
 
-    int saveRoom(RoomDto room);
+    int saveRoom(RoomDto room)throws Exception ;
 
-    int joinRoom(JoinRoomDto dto)throws Exception ;
+    int joinRoom(JoinRoomDto dto, int inviterId) throws Exception;
+
+    int endRoom(int i);
 }

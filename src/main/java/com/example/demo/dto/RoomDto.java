@@ -23,6 +23,8 @@ public class RoomDto {
     private int peopleNumber;
     @ApiModelProperty("密码")
     private String password;
+    @ApiModelProperty("房主邀请的用户才能进入 0:否 1:是")
+    private int meInviter;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("累计充值开始时间")
     private Date payStartTime;

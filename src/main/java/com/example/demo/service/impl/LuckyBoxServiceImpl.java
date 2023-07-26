@@ -256,6 +256,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                 log.info("库存处理开始==========：" + JSON.toJSONString(awardcountdto));
                 mapper.updateAwardCount(awardcountdto);
             } catch (Exception e) {
+                e.printStackTrace();
                 log.info("库存处理失败");
             }
             listRedis.remove(0);

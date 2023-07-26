@@ -49,6 +49,19 @@ public class UserWebController {
 
     }
 
+    /**
+     * 登出
+     *
+     * @param request
+     * @param userName
+     * @return
+     */
+    @ApiOperation(value = "用户登出")
+    @GetMapping("/loginOut")
+    public ResultData loginOut(HttpServletRequest request, @RequestParam("userNameOrPhone") String userName) {
+        request.getSession().removeAttribute(Constant.USER_INFO);
+        return ResultData.success(0);
+    }
 
     /**
      * 用户中心

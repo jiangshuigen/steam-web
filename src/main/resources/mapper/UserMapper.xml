@@ -159,6 +159,7 @@
         ua.`name`,
         ua.mobile,
         ua.invite_code inviteCode,
+        ua.inviter_id as inviterId,
         ua.avatar,
         bean,
         ua.steam_url steamUrl ,

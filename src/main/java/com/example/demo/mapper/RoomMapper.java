@@ -33,9 +33,15 @@ public interface RoomMapper {
 
     int saveBatchAwards(@Param("batch") List<RoomAwardsDto> batch);
 
-    int updateBoxRecord(@Param("ids")List<Integer> batch);
+    int updateBoxRecord(@Param("ids") List<Integer> batch);
 
     int updateRoomAwards(int roomId);
 
     int insertRoomUser(JoinRoomDto dto);
+
+    int updateBatchAwards(@Param("listRoomAwardDto") List<RoomAwardDto> listRoomAwardDto);
+
+    int updateBatchPackage(@Param("listRoomAwardDto") List<RoomAwardDto> listRoomAwardDto);
+
+    int updateRoomGive(@Param("roomId") int roomId);
 }

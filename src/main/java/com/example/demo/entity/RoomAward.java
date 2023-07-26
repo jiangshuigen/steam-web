@@ -11,6 +11,8 @@ import java.util.Date;
 public class RoomAward {
     @ApiModelProperty("主键id")
     private int id;
+    @ApiModelProperty("宝箱记录ID")
+    private int boxRecordId;
     @ApiModelProperty("装备名称")
     private String name;
     @ApiModelProperty("外观")
@@ -21,6 +23,8 @@ public class RoomAward {
     private BigDecimal bean;
     @ApiModelProperty("获奖用户")
     private String userName;
+    @ApiModelProperty("获奖用户头像")
+    private String avatar;
     @ApiModelProperty("指定用户")
     private int designatedUser;
     @ApiModelProperty("开奖时间")
