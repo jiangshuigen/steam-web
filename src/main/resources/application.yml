@@ -23,6 +23,13 @@ spring:
     username: root
     password: THKJ0429@Root
     type: com.alibaba.druid.pool.DruidDataSource
+   #rabbitmq
+  rabbitmq:
+    host: 47.97.5.36
+    port: 5673
+    username: admin
+    password: THKJ0429@Root
+
   #图片上传
   servlet:
     multipart:

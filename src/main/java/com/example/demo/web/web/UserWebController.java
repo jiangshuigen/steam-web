@@ -7,6 +7,7 @@ import com.example.demo.config.ResultData;
 import com.example.demo.dto.*;
 import com.example.demo.entity.BoxRecordsWeb;
 import com.example.demo.entity.User;
+import com.example.demo.entity.UserMessage;
 import com.example.demo.service.BoxRecordService;
 import com.example.demo.service.UserService;
 import com.github.pagehelper.PageInfo;
@@ -233,4 +234,37 @@ public class UserWebController {
         }
         return ResultData.success(boxrecordservice.getBackList(request, query));
     }
+
+
+    /**
+     * 我的消息列表
+     *
+     * @param request
+     * @param query
+     * @return
+     */
+    @ApiOperation(value = "我的消息列表")
+    @PostMapping("/getMessageList")
+    public ResultData<PageInfo<UserMessage>> getMessageList(HttpServletRequest request, @RequestBody BasePage query) {
+        //获取用户信息
+        User usr = userservice.getLoginUserInfo(request);
+        if (!ObjectUtils.isEmpty(usr)) {
+            return ResultData.success(userservice.getMessageList(query, usr.getId()));
+        } else {
+            return ResultData.fail("403", "请登录");
+        }
+    }
+
+    /**
+     * 批量操作
+     *
+     * @param ids
+     * @return
+     */
+    @ApiOperation(value = "批量阅读")
+    @GetMapping("/batchList")
+    public ResultData batchList(@RequestParam(value = "ids") int[] ids) {
+        return ResultData.success(userservice.batchList(ids));
+    }
+
 }

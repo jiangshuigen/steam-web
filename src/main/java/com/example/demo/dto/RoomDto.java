@@ -21,6 +21,8 @@ public class RoomDto {
     private Date endTime;
     @ApiModelProperty("房间人数")
     private int peopleNumber;
+    @ApiModelProperty("房间类型 官方-1 主播-2")
+    private String type;
     @ApiModelProperty("密码")
     private String password;
     @ApiModelProperty("房主邀请的用户才能进入 0:否 1:是")

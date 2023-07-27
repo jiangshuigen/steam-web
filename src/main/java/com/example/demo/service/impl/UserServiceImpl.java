@@ -1,11 +1,16 @@
 package com.example.demo.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.example.demo.config.Constant;
+import com.example.demo.config.ResultData;
 import com.example.demo.dto.*;
 import com.example.demo.entity.BoxAwards;
 import com.example.demo.entity.User;
+import com.example.demo.entity.UserMessage;
 import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.mapper.UserMapper;
+import com.example.demo.mapper.UserMessageMapper;
+import com.example.demo.message.NoticeDto;
 import com.example.demo.service.UserService;
 import com.example.demo.util.CheckSumBuilder;
 import com.example.demo.util.CodeUtils;
@@ -21,6 +26,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -45,6 +51,12 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private UserMessageMapper usermessagemapper;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -103,6 +115,18 @@ public class UserServiceImpl implements UserService {
         //用户名密码查询（密文）
         UserDto dto = userMapper.queryUserInfo(info);
         if (!ObjectUtils.isEmpty(dto)) {
+            NoticeDto ms = NoticeDto.builder()
+                    .userId(dto.getId())
+                    .title("欢迎登陆")
+                    .remark("尊敬的用户欢迎登陆！")
+                    .build();
+            try {
+                rabbitTemplate.convertAndSend(Constant.USER_DIRECT_EXCHANGE, Constant.DIRECT_ROUTING, ms);
+                log.info("send message is ===={}", JSON.toJSONString(ms));
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.info("=====userLogin===消息推送失败=====" + e.getMessage());
+            }
             //存个Session
             request.getSession().setAttribute(Constant.USER_INFO, dto);
         }
@@ -246,6 +270,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public int sendReward(int userId) {
         return userMapper.sendReward(userId);
+    }
+
+    @Override
+    public int insertUserMessage(NoticeDto ms) {
+        return usermessagemapper.insertUserMessage(ms);
+    }
+
+    @Override
+    public PageInfo<UserMessage> getMessageList(BasePage query, int userId) {
+        PageHelper.startPage(query.getPageNo(), query.getPageSize());
+        List<UserMessage> list = usermessagemapper.getMessageList(query, userId);
+        PageInfo<UserMessage> userPageInfo = new PageInfo<>(list);
+        return userPageInfo;
+    }
+
+    @Override
+    public int batchList(int[] ids) {
+        return usermessagemapper.batchList(ids);
     }
 
 

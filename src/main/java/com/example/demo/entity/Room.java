@@ -45,4 +45,6 @@ public class Room {
     @ApiModelProperty("修改时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
+    @ApiModelProperty("房间类型 官方-1 主播-2")
+    private String type;
 }

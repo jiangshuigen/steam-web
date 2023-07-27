@@ -16,6 +16,10 @@ public class RoomWeb extends Room {
     private BigDecimal awardsPool;
     @ApiModelProperty("用户头像")
     private String avatar;
+
+    @ApiModelProperty("房间类型 官方-1 主播-2")
+    private String type;
+
     @ApiModelProperty("奖品列表")
     private List<RoomAwardWeb> awardList;
     @ApiModelProperty("玩家列表")

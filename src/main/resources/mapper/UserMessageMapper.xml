@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.UserMessageMapper">
+
+
+    <insert id="insertUserMessage" parameterType="com.example.demo.message.NoticeDto">
+          insert into user_message(
+            user_id,
+            title,
+            remark,
+            status,
+            create_at
+          )values(
+              #{userId},
+              #{title},
+              #{remark},
+              0,
+              now()
+          )
+    </insert>
+
+    <select id="getMessageList" resultType="com.example.demo.entity.UserMessage">
+          select
+           id,
+            user_id as userId,
+            title,
+            remark,
+            status,
+            create_at as createAt
+          from user_message
+          where user_id =#{userId}
+          order by status , create_at desc
+    </select>
+
+    <update id="batchList">
+        update user_message
+        <set>
+            status=1
+        </set>
+        <where>
+            id in
+            <foreach collection="ids" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </update>
+</mapper>

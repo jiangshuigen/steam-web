@@ -19,6 +19,7 @@
         <result property="updatedAt" column="updated_at"/>
         <result property="userName" column="userName"/>
         <result property="avatar" column="avatar"/>
+        <result property="type" column="type"/>
         <result property="awardsPool" column="awardsPool"/>
         <collection property="awardList" ofType="java.lang.String" resultMap="RoomAwardResultMap"/>
     </resultMap>
@@ -39,6 +40,7 @@
         select
         r.id,
         r.user_id as userId,
+        if(r.user_id =16,1,2)  as `type`,
         u.name as userName,
         r.`name`,
         r.`describe`,
@@ -73,6 +75,7 @@
         select
         r.id,
         r.user_id,
+        if(r.user_id =16,1,2)  as `type`,
         u.name as userName,
         r.`name`,
         r.people_number as peopleNumber,
@@ -124,6 +127,7 @@
         select
         r.id,
         r.user_id,
+        if(r.user_id =16,1,2)  as `type`,
         u.name as userName,
         r.`name`,
         r.people_number as peopleNumber,

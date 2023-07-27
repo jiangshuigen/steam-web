@@ -1,7 +1,10 @@
 package com.example.demo.service;
 
+import com.example.demo.config.ResultData;
 import com.example.demo.dto.*;
 import com.example.demo.entity.User;
+import com.example.demo.entity.UserMessage;
+import com.example.demo.message.NoticeDto;
 import com.github.pagehelper.PageInfo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,4 +45,10 @@ public interface UserService {
     int resetCache();
 
     int sendReward(int userId);
+
+    int insertUserMessage(NoticeDto ms);
+
+    PageInfo<UserMessage> getMessageList(BasePage query, int id);
+
+    int batchList(int[] ids);
 }
