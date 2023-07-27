@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping("/webRoom")
+@RequestMapping("/web/webRoom")
 @Api(value = "ROLL房(前台)", tags = {"ROLL房(前台)"})
 @Slf4j
 public class WebRoomController {

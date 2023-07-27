@@ -20,7 +20,7 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
-@RequestMapping("/luckyBox")
+@RequestMapping("/web/luckyBox")
 @Api(value = "幸运饰品", tags = {"幸运饰品"})
 public class LuckyBoxWebController {
     @Resource

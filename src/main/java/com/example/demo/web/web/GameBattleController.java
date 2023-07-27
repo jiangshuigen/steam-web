@@ -20,7 +20,7 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @RestController
-@RequestMapping("/battle")
+@RequestMapping("/web/battle")
 @Api(value = "盲盒对战(前台)", tags = {"盲盒对战(前台)"})
 public class GameBattleController {
 
