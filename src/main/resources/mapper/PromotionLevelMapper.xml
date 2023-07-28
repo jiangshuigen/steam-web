@@ -56,4 +56,45 @@
     <delete id="deleteById" parameterType="java.lang.Integer">
         delete  from promotion_levels  where id =#{id}
     </delete>
+    <select id="getPromotionInfo" resultType="com.example.demo.dto.PromotionInfo" parameterType="java.lang.Integer">
+        SELECT
+            ( SELECT u.invite_code FROM users u WHERE u.id = #{id} ) AS  inviterCode,
+            r.bean as inviterReward,
+            r.count as inviterNumber,
+            ( SELECT u.promotion_level FROM users u WHERE u.id = #{id} ) AS inviterLv
+        FROM
+            (
+        SELECT
+            sum( rl.bean ) AS bean,
+            count( DISTINCT rl.user_id ) AS `count`
+        FROM
+            user_reward_logs rl
+        WHERE
+            rl.user_id = #{id}
+            AND rl.type = 2
+            ) AS r
+    </select>
+
+    <select id="getPromotionList" resultType="com.example.demo.dto.PromotionUser"
+            parameterType="com.example.demo.dto.PromotionQuery">
+        select
+        distinct
+        re.bean,
+        u.name as userName,
+        re.created_at as createdAt
+        from user_reward_logs re
+        left join users u on u.id =re.next_user_id
+        where re.user_id =#{userId}
+        <if test="begin!=null">
+            DATE_FORMAT( created_at, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ >=]]> DATE_FORMAT( #{begin}, '%Y-%m-%d %H:%i:%s' )
+        </if>
+        <if test="end!=null">
+            DATE_FORMAT( created_at, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( #{end}, '%Y-%m-%d %H:%i:%s' )
+        </if>
+        GROUP BY re.bean,re.user_id
+        order by re.created_at
+        <if test="sort>0">
+            desc
+        </if>
+    </select>
 </mapper>

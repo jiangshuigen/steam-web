@@ -278,9 +278,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageInfo<UserMessage> getMessageList(BasePage query, int userId) {
+    public PageInfo<UserMessage> getMessageList(MessageQuery query) {
         PageHelper.startPage(query.getPageNo(), query.getPageSize());
-        List<UserMessage> list = usermessagemapper.getMessageList(query, userId);
+        List<UserMessage> list = usermessagemapper.getMessageList(query);
         PageInfo<UserMessage> userPageInfo = new PageInfo<>(list);
         return userPageInfo;
     }

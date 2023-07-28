@@ -1,5 +1,8 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.PromotionInfo;
+import com.example.demo.dto.PromotionQuery;
+import com.example.demo.dto.PromotionUser;
 import com.example.demo.entity.PromotionLevels;
 import com.example.demo.mapper.PromotionLevelMapper;
 import com.example.demo.service.PromotionLevelService;
@@ -32,5 +35,15 @@ public class PromotionLevelServiceImpl implements PromotionLevelService {
     @Override
     public int deleteLevel(int id) {
         return promotionlevelmapper.deleteById(id);
+    }
+
+    @Override
+    public PromotionInfo getPromotionInfo(int id) {
+        return promotionlevelmapper.getPromotionInfo(id);
+    }
+
+    @Override
+    public List<PromotionUser> getPromotionList(PromotionQuery query) {
+        return promotionlevelmapper.getPromotionList(query);
     }
 }

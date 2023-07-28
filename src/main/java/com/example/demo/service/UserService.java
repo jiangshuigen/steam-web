@@ -48,7 +48,7 @@ public interface UserService {
 
     int insertUserMessage(NoticeDto ms);
 
-    PageInfo<UserMessage> getMessageList(BasePage query, int id);
+    PageInfo<UserMessage> getMessageList(MessageQuery query);
 
     int batchList(int[] ids);
 }

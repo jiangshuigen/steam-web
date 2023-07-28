@@ -245,11 +245,12 @@ public class UserWebController {
      */
     @ApiOperation(value = "我的消息列表")
     @PostMapping("/getMessageList")
-    public ResultData<PageInfo<UserMessage>> getMessageList(HttpServletRequest request, @RequestBody BasePage query) {
+    public ResultData<PageInfo<UserMessage>> getMessageList(HttpServletRequest request, @RequestBody MessageQuery query) {
         //获取用户信息
         User usr = userservice.getLoginUserInfo(request);
         if (!ObjectUtils.isEmpty(usr)) {
-            return ResultData.success(userservice.getMessageList(query, usr.getId()));
+            query.setUserId(usr.getId());
+            return ResultData.success(userservice.getMessageList(query));
         } else {
             return ResultData.fail("403", "请登录");
         }

@@ -19,17 +19,20 @@
           )
     </insert>
 
-    <select id="getMessageList" resultType="com.example.demo.entity.UserMessage">
-          select
-           id,
-            user_id as userId,
-            title,
-            remark,
-            status,
-            create_at as createAt
-          from user_message
-          where user_id =#{userId}
-          order by status , create_at desc
+    <select id="getMessageList" resultType="com.example.demo.entity.UserMessage" parameterType="com.example.demo.dto.MessageQuery">
+        select
+        id,
+        user_id as userId,
+        title,
+        remark,
+        status,
+        create_at as createAt
+        from user_message
+        where user_id =#{userId}
+        <if test="status!=null ">
+            and status = #{status}
+        </if>
+        order by status , create_at desc
     </select>
 
     <update id="batchList">
@@ -44,4 +47,5 @@
             </foreach>
         </where>
     </update>
+
 </mapper>
