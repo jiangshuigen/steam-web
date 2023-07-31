@@ -151,7 +151,7 @@ public class RoomServiceImpl implements RoomService {
                 }
             }
             //密码校验
-            if (!StringUtils.isEmpty(room.getPassword()) && StringUtils.equals(room.getPassword(), dto.getPassword())) {
+            if (!StringUtils.isEmpty(room.getPassword()) && !StringUtils.equals(room.getPassword(), dto.getPassword())) {
                 throw new Exception("密码错误");
             }
             //人数校验
