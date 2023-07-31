@@ -88,8 +88,8 @@
         r.is_give  ,
         r.me_inviter,
         r.top,
-        r.created_at as createdAt,
-        r.updated_at as updatedAt,
+        r.created_at ,
+        r.updated_at ,
         IF
         (
         DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ), '2', '1'
@@ -140,8 +140,8 @@
         r.is_give  ,
         r.me_inviter,
         r.top,
-        r.created_at as createdAt,
-        r.updated_at as updatedAt,
+        r.created_at ,
+        r.updated_at ,
         IF
         (
         DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ), '2', '1'
