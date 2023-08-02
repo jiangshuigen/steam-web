@@ -225,7 +225,7 @@ public class UserWebController {
      */
     @ApiOperation(value = "取回记录")
     @PostMapping("/getBackList")
-    public ResultData getBackList(HttpServletRequest request, @RequestBody BackQuery query) {
+    public ResultData<PageInfo<BoxRecordsWeb>> getBackList(HttpServletRequest request, @RequestBody BackQuery query) {
         //获取session
         HttpSession session = request.getSession();
         UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
