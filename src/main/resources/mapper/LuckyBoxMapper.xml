@@ -152,6 +152,7 @@
             <if test="max>0">
                 and bean <![CDATA[ <=]]>  #{max}
             </if>
+            and (luck_interval !=null or luck_interval_anchor!=null)
         </where>
         order by bean
         <if test="sort>0">
