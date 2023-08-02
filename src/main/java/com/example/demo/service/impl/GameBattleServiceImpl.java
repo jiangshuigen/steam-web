@@ -253,11 +253,14 @@ public class GameBattleServiceImpl implements GameBattleService {
             //socket
             //创建业务消息信息
             JSONObject obj = new JSONObject();
-            obj.put("status", "start");//业务类型
-            listUser.stream().forEach(e->{
-                webSocket.sendOneMessage(String.valueOf(e.getGameUserId()), obj.toJSONString());
-            });
+            obj.put("status", "start");//开启动画
+            webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
             return listBattle;
+        }else{
+            //创建业务消息信息
+            JSONObject obj = new JSONObject();
+            obj.put("status", "join");//人员加入
+            webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
         }
         return null;
     }
