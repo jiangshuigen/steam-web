@@ -146,10 +146,10 @@
             <if test="type>0">
                 and `type`= #{type}
             </if>
-            <if test="min>=0">
+            <if test="min>0">
                 and bean >= #{min}
             </if>
-            <if test="max>=0">
+            <if test="max>0">
                 and bean <![CDATA[ <=]]>  #{max}
             </if>
         </where>
