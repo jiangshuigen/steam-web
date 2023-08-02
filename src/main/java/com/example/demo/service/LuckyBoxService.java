@@ -27,7 +27,7 @@ public interface LuckyBoxService {
 
     List<BoxRecords> openBox(OpenBox openbox, User user) throws Exception;
 
-    List<BoxAwards> getWebAwardList(WebBoxAwardsQuery query);
+    PageInfo<BoxAwards> getWebAwardList(WebBoxAwardsQuery query);
 
     List<LuckyBoxRecord> getHistory(int awardId);
 

@@ -9,6 +9,7 @@ import com.example.demo.entity.AwardTypes;
 import com.example.demo.entity.BoxAwards;
 import com.example.demo.entity.LuckyBoxRecord;
 import com.example.demo.service.LuckyBoxService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.ObjectUtils;
@@ -46,7 +47,7 @@ public class LuckyBoxWebController {
      */
     @ApiOperation(value = "获取装备列表")
     @PostMapping("/getAwardList")
-    public ResultData<List<BoxAwards>> getAwardList(@RequestBody WebBoxAwardsQuery query) {
+    public ResultData<PageInfo<BoxAwards>> getAwardList(@RequestBody WebBoxAwardsQuery query) {
         return ResultData.success(luckyboxservice.getWebAwardList(query));
     }
 
@@ -58,7 +59,7 @@ public class LuckyBoxWebController {
      */
     @ApiOperation(value = "获取历史记录")
     @GetMapping("/getHistory")
-    public ResultData<List<LuckyBoxRecord>> getHistory(@RequestParam int awardId) {
+    public ResultData<List<LuckyBoxRecord>> getHistory(@RequestParam( name = "参数说明：0-查询最新50条，否则查询指定id",required = false) int awardId) {
         return ResultData.success(luckyboxservice.getHistory(awardId));
     }
 

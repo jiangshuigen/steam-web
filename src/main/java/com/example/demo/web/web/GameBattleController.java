@@ -11,6 +11,8 @@ import com.example.demo.service.GameBattleService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -146,5 +148,18 @@ public class GameBattleController {
     @PostMapping("/getGameRankingList")
     public ResultData<List<GameRanking>> getGameRankingList(@RequestBody GameRankingQuery query) {
         return ResultData.success(gamebattleservice.getGameRankingList(query));
+    }
+
+
+    @ApiOperation(value = "Test")
+    @GetMapping("/socket")
+    public ResultData<Object> socket(@RequestParam("userId") int userId) {
+        return ResultData.success(gamebattleservice.socket(userId));
+    }
+
+    @GetMapping("/toWebSocketDemo/{cid}")
+    public String toWebSocketDemo(@PathVariable String cid, Model model) {
+        model.addAttribute("cid", cid);
+        return "demo";
     }
 }

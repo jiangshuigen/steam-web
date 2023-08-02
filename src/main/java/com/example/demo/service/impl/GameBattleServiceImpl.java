@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.mapper.GameBattleMapper;
@@ -9,6 +10,7 @@ import com.example.demo.service.BoxRecordService;
 import com.example.demo.service.GameBattleService;
 import com.example.demo.service.UserService;
 import com.example.demo.util.CodeUtils;
+import com.example.demo.web.web.WebSocket;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.netty.util.internal.StringUtil;
@@ -41,6 +43,8 @@ public class GameBattleServiceImpl implements GameBattleService {
     private UserService userservice;
     @Autowired
     private RedisTemplate redisTemplate;
+    @Resource
+    private WebSocket webSocket;
 
     @Override
     @Transactional
@@ -246,6 +250,13 @@ public class GameBattleServiceImpl implements GameBattleService {
                     gamebattlemapper.saveRanking(ranking);
                 }
             });
+            //socket
+            //创建业务消息信息
+            JSONObject obj = new JSONObject();
+            obj.put("status", "start");//业务类型
+            listUser.stream().forEach(e->{
+                webSocket.sendOneMessage(String.valueOf(e.getGameUserId()), obj.toJSONString());
+            });
             return listBattle;
         }
         return null;
@@ -270,6 +281,14 @@ public class GameBattleServiceImpl implements GameBattleService {
     @Override
     public List<GameRanking> getGameRankingList(GameRankingQuery query) {
         return gamebattlemapper.getGameRankingList(query);
+    }
+
+    @Override
+    public int socket(int userId) {
+        JSONObject obj = new JSONObject();
+        obj.put("status", "start");//业务类型
+        webSocket.sendOneMessage(String.valueOf(userId), obj.toJSONString());
+        return 1;
     }
 
 

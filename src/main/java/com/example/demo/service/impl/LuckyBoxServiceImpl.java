@@ -297,8 +297,11 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
     }
 
     @Override
-    public List<BoxAwards> getWebAwardList(WebBoxAwardsQuery query) {
-        return mapper.getWebAwardList(query);
+    public PageInfo<BoxAwards> getWebAwardList(WebBoxAwardsQuery query) {
+        PageHelper.startPage(query.getPageNo(), query.getPageSize());
+        List<BoxAwards> list = mapper.getWebAwardList(query);
+        PageInfo<BoxAwards> listInfo = new PageInfo<>(list);
+        return listInfo;
     }
 
     @Override

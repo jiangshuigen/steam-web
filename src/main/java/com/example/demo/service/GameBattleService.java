@@ -20,4 +20,6 @@ public interface GameBattleService {
     PageInfo<GameArenasDto>  getMyBattleList(BattleQuery query);
 
     List<GameRanking> getGameRankingList(GameRankingQuery query);
+
+    int socket(int userId);
 }

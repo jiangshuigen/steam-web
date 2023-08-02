@@ -66,9 +66,11 @@
         left join box_awards aw on aw.id = re.award_id
         left join box_awards aw2 on aw2.id = re.get_award_id
         <where>
-            re.award_id = #{awardId}
+            <if test="awardId>0">
+                re.award_id = #{awardId}
+            </if>
         </where>
-        order by re.created_at desc limit 20
+        order by re.created_at desc limit 50
     </select>
     <insert id="saveRecord" parameterType="com.example.demo.entity.LuckyBoxRecord">
           insert into lucky_box_records(
