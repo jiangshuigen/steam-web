@@ -11,6 +11,8 @@ import com.example.demo.entity.LuckyBoxRecord;
 import com.example.demo.service.LuckyBoxService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -54,12 +56,12 @@ public class LuckyBoxWebController {
     /**
      * 查询所有人roll的进度
      *
-     * @param
+     * @param "参数说明：0-查询最新50条，否则查询指定id"
      * @return
      */
     @ApiOperation(value = "获取历史记录")
     @GetMapping("/getHistory")
-    public ResultData<List<LuckyBoxRecord>> getHistory(@RequestParam( name = "参数说明：0-查询最新50条，否则查询指定id",required = false) int awardId) {
+    public ResultData<List<LuckyBoxRecord>> getHistory(@RequestParam(value = "awardId", required = false) int awardId) {
         return ResultData.success(luckyboxservice.getHistory(awardId));
     }
 
@@ -79,7 +81,7 @@ public class LuckyBoxWebController {
             if (ObjectUtils.isEmpty(dto)) {
                 return ResultData.fail("403", "未登录");
             }
-            return ResultData.success(luckyboxservice.openAward(open,dto));
+            return ResultData.success(luckyboxservice.openAward(open, dto));
         } catch (Exception e) {
             e.printStackTrace();
             return ResultData.fail("500", e.getMessage());
