@@ -275,8 +275,24 @@
                     dura
                     from box_records
                     where user_id =#{userId}
-                    and status !=  0
-                    order by updated_at desc
+                    and (status =1 or status=4)
+            union
+            (select
+                    re.id,
+                    re.user_id as userId,
+                    re.`name`,
+                    re.bean,
+                    re.lv,
+                    re.cover,
+                    re.code,
+                    dr.zbt_status as status,
+                    re.updated_at as updateAt,
+                    re.dura
+                    from delivery_records dr
+                   inner join  box_records re on dr.record_id = re.id
+                    where dr.user_id = #{userId}
+                    and dr.zbt_status =11
+                    order by re.updated_at desc)
     </select>
     <!-- 背包物品取回-->
     <update id="getPackage">
