@@ -14,8 +14,19 @@
         <result property="updatedAt" column="updated_at"/>
         <result property="userName" column="userName"/>
         <result property="avatar" column="avatar"/>
-        <collection property="listBox" ofType="java.lang.String" resultMap="BoxResultMap"/>
-        <collection property="listUser" ofType="java.lang.String" resultMap="UserResultMap"/>
+        <collection property="listBox" ofType="com.example.demo.dto.GameArenasBoxDto"  select="selectBoxs" column="id">
+            <result property="boxId" column="boxId"/>
+            <result property="boxName" column="boxName"/>
+            <result property="intactCover" column="intactCover"/>
+            <result property="arenaBoxId" column="arenaBoxId"/>
+        </collection>
+        <collection property="listUser" ofType="com.example.demo.dto.GameArenasUserDto"  select="selectUsers"
+                    column="id">
+            <id property="gameUserId" column="gameUserId"/>
+            <result property="gameUserName" column="gameUserName"/>
+            <result property="gameAvatar" column="gameAvatar"/>
+            <result property="gameBean" column="gameBean"/>
+        </collection>
     </resultMap>
     <resultMap id="BoxResultMap" type="com.example.demo.dto.GameArenasBoxDto">
         <result property="boxId" column="boxId"/>
@@ -92,30 +103,38 @@
                 ga.created_at ,
                 ga.updated_at ,
                 u.name as userName,
-                u.avatar as avatar,
-                ab.id as boxId,
-                bx.name as boxName,
-                bx.intact_cover as intactCover,
-                ab.id as arenaBoxId,
-                guu.id as gameUserId,
-                guu.name as gameUserName,
-                guu.avatar as  gameAvatar,
-                guu.bean as gameBean
+                u.avatar as avatar
     </sql>
     <select id="getBattleList" resultMap="GameResultMap" parameterType="com.example.demo.dto.BasePage">
         <include refid="Base_Column_List"></include>
         from game_arenas ga
         left join users u on u.id = ga.create_user_id
-        left join game_arena_box ab on ab.game_arena_id = ga.id
-        inner join boxs bx on ab.box_id = bx.id
-        left join game_arena_users gu on gu.game_arena_id = ga.id
-        inner join users guu on guu.id = gu.user_id
         where ga.status=2
         order by ga.created_at desc
     </select>
     <select id="getTotalBean" resultType="java.math.BigDecimal">
         select bean from boxs
         where id = #{id}
+    </select>
+    <select id="selectBoxs" resultMap="BoxResultMap" parameterType="java.lang.Integer">
+        select
+        ab.id as boxId,
+        bx.name as boxName,
+        bx.intact_cover as intactCover,
+        ab.id as arenaBoxId
+        from game_arena_box ab
+        inner join boxs bx on ab.box_id = bx.id
+        where ab.game_arena_id = #{id}
+    </select>
+    <select id="selectUsers" resultMap="UserResultMap" parameterType="java.lang.Integer">
+        select
+        guu.id as gameUserId,
+        guu.name as gameUserName,
+        guu.avatar as gameAvatar,
+        guu.bean as gameBean
+       from  game_arena_users gu
+        inner join users guu on guu.id = gu.user_id
+        where gu.game_arena_id = #{id}
     </select>
     <select id="getMyBattleList" resultMap="GameResultMap" parameterType="com.example.demo.dto.BattleQuery">
         select
@@ -130,22 +149,10 @@
         ga.created_at ,
         ga.updated_at ,
         u.name as userName,
-        u.avatar as avatar,
-        ab.id as boxId,
-        bx.name as boxName,
-        bx.intact_cover as intactCover,
-        ab.id as arenaBoxId,
-        guu.id as gameUserId,
-        guu.name as gameUserName,
-        guu.avatar as gameAvatar,
-        guu.bean as gameBean
+        u.avatar as avatar
         from game_award_records gar
         inner join game_arenas ga on ga.id = gar.game_arena_id and ga.status=2
         left join users u on u.id = ga.create_user_id
-        left join game_arena_box ab on ab.game_arena_id = ga.id
-        inner join boxs bx on ab.box_id = bx.id
-        left join game_arena_users gu on gu.game_arena_id = ga.id
-        inner join users guu on guu.id = gu.user_id
         <where>
             <if test="userId>0">
                 and gar.user_id =#{userId}
@@ -157,10 +164,11 @@
         <include refid="Base_Column_List"></include>
         from game_arenas ga
         left join users u on u.id = ga.create_user_id
-        left join game_arena_box ab on ab.game_arena_id = ga.id
-        inner join boxs bx on ab.box_id = bx.id
-        left join game_arena_users gu on gu.game_arena_id = ga.id
-        inner join users guu on guu.id = gu.user_id
+        <where>
+            <if test="status !=null">
+                ga.status = #{status}
+            </if>
+        </where>
         order by ga.status ,ga.created_at desc
     </select>
     <select id="getGameArenasDetail" resultMap="GameResultMap" parameterType="java.lang.Integer">
@@ -176,21 +184,9 @@
                 ga.created_at ,
                 ga.updated_at ,
                 u.name as userName,
-                u.avatar as avatar,
-                bx.id as boxId,
-                bx.name as boxName,
-                bx.intact_cover as intactCover,
-                ab.id as arenaBoxId,
-                guu.id as gameUserId,
-                guu.name as gameUserName,
-                guu.avatar as  gameAvatar,
-                guu.bean as gameBean
+                u.avatar as avatar
            from  game_arenas ga
            left join users u on u.id = ga.create_user_id
-           left join game_arena_box ab on ab.game_arena_id = ga.id
-           inner join boxs bx on ab.box_id = bx.id
-           left join game_arena_users gu on gu.game_arena_id = ga.id
-           inner join users guu on guu.id = gu.user_id
            where ga.id = #{id}
     </select>
     <update id="update" parameterType="com.example.demo.dto.GameArenasDto">
@@ -308,7 +304,8 @@
         limit #{size}
     </select>
 
-    <select id="queryYestdayStar" parameterType="com.example.demo.dto.GameRankingQuery" resultType="com.example.demo.dto.GameRankingDto">
+    <select id="queryYestdayStar" parameterType="com.example.demo.dto.GameRankingQuery"
+            resultType="com.example.demo.dto.GameRankingDto">
         select rk.id,
         rk.user_id as userId,
         u.name as userName,
@@ -331,5 +328,34 @@
             order by rk.win desc
         </if>
         limit 1
+    </select>
+
+    <select id="getBoxRecordList" parameterType="java.lang.Integer" resultType="com.example.demo.entity.BoxRecords">
+ select
+        re.id,
+        re.get_user_id as getUserId,
+        u.name as userName,
+        u.avatar,
+        re.user_id as userId,
+        re.box_id as boxId,
+        re.box_name as boxName,
+        re.box_bean as boxBean,
+        re.box_award_id as boxAwardId ,
+        re.`name`,
+        re.hash_name as hashName,
+        re.cover,
+        re.dura,
+        re.lv,
+        re.bean,
+        re.code,
+        re.uuid,
+        re.status,
+        re.back_message as backMessage,
+        re.`type`,
+        re.created_at as createdAt
+        from game_award_records gar
+        left join box_records re on gar.award_id = re.id
+        left join users u on re.get_user_id = u.id
+        where gar.game_arena_id = #{id}
     </select>
 </mapper>

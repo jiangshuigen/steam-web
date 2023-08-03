@@ -76,7 +76,7 @@ public class GameBattleServiceImpl implements GameBattleService {
     }
 
     @Override
-    public PageInfo<GameArenasDto> getEventList(BasePage base) {
+    public PageInfo<GameArenasDto> getEventList(BattleWebQuery base) {
         PageHelper.startPage(base.getPageNo(), base.getPageSize());
         List<GameArenasDto> list = gamebattlemapper.getEventList(base);
         PageInfo<GameArenasDto> listInfo = new PageInfo<>(list);
@@ -85,7 +85,10 @@ public class GameBattleServiceImpl implements GameBattleService {
 
     @Override
     public GameArenasDto getGameArenasDetail(int id) {
-        return gamebattlemapper.getGameArenasDetail(id);
+        GameArenasDto dto = gamebattlemapper.getGameArenasDetail(id);
+        List<BoxRecords> recordList = gamebattlemapper.getBoxRecordList(id);
+        dto.setRecordList(recordList);
+        return dto;
     }
 
     @Override

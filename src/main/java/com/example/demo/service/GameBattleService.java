@@ -9,7 +9,7 @@ import java.util.List;
 public interface GameBattleService {
     int createEvent(GameArenasSaveDto info);
 
-    PageInfo<GameArenasDto> getEventList(BasePage base);
+    PageInfo<GameArenasDto> getEventList(BattleWebQuery base);
 
     GameArenasDto getGameArenasDetail(int id);
 

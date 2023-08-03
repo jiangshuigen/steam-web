@@ -39,7 +39,7 @@ public class GameBattleController {
      */
     @ApiOperation(value = "活动列表")
     @PostMapping("/getList")
-    public ResultData<PageInfo<GameArenasDto>> getEventList(@RequestBody BasePage base) {
+    public ResultData<PageInfo<GameArenasDto>> getEventList(@RequestBody BattleWebQuery base) {
         return ResultData.success(gamebattleservice.getEventList(base));
     }
 

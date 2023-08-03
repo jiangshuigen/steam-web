@@ -11,7 +11,7 @@ public interface GameBattleMapper {
 
     int createEvent(GameArenasSaveDto info);
 
-    List<GameArenasDto> getEventList(BasePage base);
+    List<GameArenasDto> getEventList(BattleWebQuery base);
 
     int insertArenaBox(GameArenaBox bx);
 
@@ -38,4 +38,6 @@ public interface GameBattleMapper {
     List<GameRanking> getGameRankingList(GameRankingQuery query);
 
     GameRankingDto queryYestdayStar(GameRankingQuery query);
+
+    List<BoxRecords> getBoxRecordList(int id);
 }

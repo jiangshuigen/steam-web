@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.entity.BoxRecords;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -40,5 +41,6 @@ public class GameArenasDto {
     private List<GameArenasBoxDto> listBox;
     @ApiModelProperty("玩家列表")
     private List<GameArenasUserDto> listUser;
-
+    @ApiModelProperty("抽到的物品列表")
+    private List<BoxRecords> recordList;
 }
