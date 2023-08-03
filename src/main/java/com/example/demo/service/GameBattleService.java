@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.*;
-import com.example.demo.entity.GameRanking;
+import com.example.demo.dto.GameRankingDto;
 import com.github.pagehelper.PageInfo;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public interface GameBattleService {
 
     PageInfo<GameArenasDto>  getMyBattleList(BattleQuery query);
 
-    List<GameRanking> getGameRankingList(GameRankingQuery query);
+    GameRankingDto getGameRankingList(GameRankingQuery query);
 
     int socket(int userId);
 }

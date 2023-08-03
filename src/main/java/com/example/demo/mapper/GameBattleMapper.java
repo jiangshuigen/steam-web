@@ -1,10 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.dto.*;
-import com.example.demo.entity.GameArenaBox;
-import com.example.demo.entity.GameArenaUsers;
-import com.example.demo.entity.GameAwardRecords;
-import com.example.demo.entity.GameRanking;
+import com.example.demo.entity.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.math.BigDecimal;
@@ -39,4 +36,6 @@ public interface GameBattleMapper {
     int saveRanking(GameRanking ranking);
 
     List<GameRanking> getGameRankingList(GameRankingQuery query);
+
+    GameRankingDto queryYestdayStar(GameRankingQuery query);
 }

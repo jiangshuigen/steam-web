@@ -5,13 +5,12 @@ import com.example.demo.config.Constant;
 import com.example.demo.config.ResultData;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Box;
-import com.example.demo.entity.GameRanking;
+import com.example.demo.dto.GameRankingDto;
 import com.example.demo.service.BoxService;
 import com.example.demo.service.GameBattleService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.ui.Model;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
 @RestController
 @RequestMapping("/web/battle")
@@ -146,7 +144,7 @@ public class GameBattleController {
      */
     @ApiOperation(value = "排行榜")
     @PostMapping("/getGameRankingList")
-    public ResultData<List<GameRanking>> getGameRankingList(@RequestBody GameRankingQuery query) {
+    public ResultData<GameRankingDto> getGameRankingList(@RequestBody GameRankingQuery query) {
         return ResultData.success(gamebattleservice.getGameRankingList(query));
     }
 

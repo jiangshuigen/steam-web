@@ -291,7 +291,14 @@
         rk.`date`
         from game_ranking rk
         left join users u on u.id = rk.user_id
-        where rk.`date` = DATE_FORMAT(now(),'%Y-%m-%d')
+        <where>
+            <if test="dateType>0 and dateType==1">
+                rk.`date` = DATE_FORMAT(now(),'%Y-%m-%d')
+            </if>
+            <if test="dateType>0 and dateType==2">
+                rk.`date` = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY),'%Y-%m-%d')
+            </if>
+        </where>
         <if test="type == 1">
             order by rk.lost_bean desc
         </if>
@@ -299,5 +306,30 @@
             order by rk.win desc
         </if>
         limit #{size}
+    </select>
+
+    <select id="queryYestdayStar" parameterType="com.example.demo.dto.GameRankingQuery" resultType="com.example.demo.dto.GameRankingDto">
+        select rk.id,
+        rk.user_id as userId,
+        u.name as userName,
+        u.avatar as avatar,
+        rk.total,
+        rk.win,
+        rk.fail,
+        rk.win_rate as winRate,
+        rk.expend,
+        rk.income,
+        rk.lost_bean as lostBean,
+        rk.`date`
+        from game_ranking rk
+        left join users u on u.id = rk.user_id
+        where rk.`date` = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY),'%Y-%m-%d')
+        <if test="type == 1">
+            order by rk.lost_bean desc
+        </if>
+        <if test="type == 2">
+            order by rk.win desc
+        </if>
+        limit 1
     </select>
 </mapper>

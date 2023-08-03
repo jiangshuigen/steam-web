@@ -182,14 +182,14 @@ public class GameBattleServiceImpl implements GameBattleService {
             //计算奖品归属 如果任意两人平局则结果全部平局
             boolean bl = listBattle.stream().anyMatch(listBattle.get(0).getBean()::equals);
             List<Integer> winner = new ArrayList<>();
-            if(bl){
+            if (bl) {
                 log.info("==========平局====================");
                 //各自放入背包
                 listBattle.stream().forEach(e -> {
                     e.setWin(1);
                     winner.add(e.getUserId());
                 });
-            }else {
+            } else {
                 List<BattleDto> userInfoList = listBattle.stream().sorted(Comparator.comparing(BattleDto::getBean).reversed()).collect(Collectors.toList());
                 log.info("排列顺序：" + JSON.toJSONString(userInfoList));
                 listReturn.stream().forEach(e -> {
@@ -240,13 +240,13 @@ public class GameBattleServiceImpl implements GameBattleService {
                     ranking.setIncome(ranking.getIncome());
                     ranking.setLostBean(ranking.getLostBean().subtract(dto.getTotalBean()));
                 }
-                BigDecimal winRate = new BigDecimal(ranking.getWin()).divide(new BigDecimal(ranking.getWin() + ranking.getFail()),2, BigDecimal.ROUND_HALF_UP);
+                BigDecimal winRate = new BigDecimal(ranking.getWin()).divide(new BigDecimal(ranking.getWin() + ranking.getFail()), 2, BigDecimal.ROUND_HALF_UP);
                 ranking.setWinRate(winRate);
                 ranking.setExpend(ranking.getExpend().add(dto.getTotalBean()));
                 if (ranking.getId() > 0) {
                     //修改
                     gamebattlemapper.updateRanking(ranking);
-                }else {
+                } else {
                     gamebattlemapper.saveRanking(ranking);
                 }
             });
@@ -256,7 +256,7 @@ public class GameBattleServiceImpl implements GameBattleService {
             obj.put("status", "start");//开启动画
             webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
             return listBattle;
-        }else{
+        } else {
             //创建业务消息信息
             JSONObject obj = new JSONObject();
             obj.put("status", "join");//人员加入
@@ -282,8 +282,14 @@ public class GameBattleServiceImpl implements GameBattleService {
     }
 
     @Override
-    public List<GameRanking> getGameRankingList(GameRankingQuery query) {
-        return gamebattlemapper.getGameRankingList(query);
+    public GameRankingDto getGameRankingList(GameRankingQuery query) {
+        //查询昨日之星
+        GameRankingDto dto = gamebattlemapper.queryYestdayStar(query);
+        if (ObjectUtils.isEmpty(dto)) {
+            dto = new GameRankingDto();
+        }
+        dto.setRankingList(gamebattlemapper.getGameRankingList(query));
+        return dto;
     }
 
     @Override
