@@ -2,7 +2,6 @@ package com.example.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.example.demo.config.Constant;
-import com.example.demo.config.ResultData;
 import com.example.demo.dto.*;
 import com.example.demo.entity.BoxAwards;
 import com.example.demo.entity.User;
@@ -29,7 +28,13 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.connection.RedisConnection;
+import org.springframework.data.redis.core.RedisCallback;
+import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -249,6 +254,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int resetCache() {
+        RedisConnection conn = RedisConnectionUtils.getConnection(redisTemplate.getConnectionFactory());
         //缓存清除
         Set keys = redisTemplate.keys("BoxNumb*");
         Long delete = redisTemplate.delete(keys);
@@ -256,14 +262,23 @@ public class UserServiceImpl implements UserService {
         Long deletekey = redisTemplate.delete(key);
         //刷新库存的缓存
         List<BoxAwards> list = mapper.getBoxAwardList();
-        list.stream().forEach(e -> {
-            //主播-幸运
-            redisTemplate.opsForValue().set("BoxNumb|1|" + e.getId() + "|", e.getLuckOdds());
-            //普通
-            redisTemplate.opsForValue().set("BoxNumb|3|" + e.getId() + "|", e.getRealOdds());
-            //主播
-            redisTemplate.opsForValue().set("BoxNumb|4|" + e.getId() + "|", e.getAnchorOdds());
-        });
+        RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
+        redisTemplate.executePipelined(new RedisCallback<String>() {
+            @Override
+            public String doInRedis(RedisConnection connection) throws DataAccessException {
+                list.forEach((e) -> {
+                    //主播-幸运
+                    connection.set(("BoxNumb|1|" + e.getId() + "|").getBytes(), String.valueOf(e.getLuckOdds()).getBytes());
+                    //普通
+                    connection.set(("BoxNumb|3|" + e.getId() + "|").getBytes(), String.valueOf(e.getRealOdds()).getBytes());
+                    //主播
+                    connection.set(("BoxNumb|4|" + e.getId() + "|").getBytes(), String.valueOf(e.getAnchorOdds()).getBytes());
+                });
+                return null;
+            }
+        }, serializer);
+
+
         return userMapper.resetCache();
     }
 
