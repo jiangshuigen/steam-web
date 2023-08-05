@@ -61,7 +61,7 @@ public class LuckyBoxWebController {
      */
     @ApiOperation(value = "获取历史记录")
     @GetMapping("/getHistory")
-    public ResultData<List<LuckyBoxRecord>> getHistory(@RequestParam(value = "awardId", required = false) int awardId) {
+    public ResultData<List<LuckyBoxRecord>> getHistory(@RequestParam( defaultValue = "0",value = "awardId", required = false) int awardId) {
         return ResultData.success(luckyboxservice.getHistory(awardId));
     }
 
