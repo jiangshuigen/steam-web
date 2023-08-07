@@ -1,0 +1,24 @@
+package com.example.demo.service;
+
+import com.example.demo.dto.BasePage;
+import com.example.demo.dto.UUAwardDto;
+import com.example.demo.dto.UUQuery;
+import com.example.demo.dto.UUResponse;
+import com.example.demo.entity.UUAward;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
+public interface UUPService {
+    //获取模板初始数据
+    UUResponse getTemplateList();
+
+    String importData(MultipartFile file);
+
+    List<UUAwardDto> getUUList(UUQuery query);
+
+    List<UUAwardDto> getWebUUList(BasePage query);
+
+    List<UUAward> getUUAwardList(String templateHashName);
+
+}

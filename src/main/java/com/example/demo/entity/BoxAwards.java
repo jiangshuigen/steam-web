@@ -23,6 +23,8 @@ public class BoxAwards {
     private int dura;
     @ApiModelProperty("品质")
     private int lv;
+    @ApiModelProperty("显示爆率")
+    private int odds;
     @ApiModelProperty("投放数量")
     private int realOdds;
     @ApiModelProperty("投放数量(主播)")

@@ -1,21 +1,17 @@
 package com.example.demo.web.admin;
 
 import com.example.demo.config.ResultData;
-import com.example.demo.dto.ApplDto;
-import com.example.demo.dto.ApplUpdate;
-import com.example.demo.dto.ApplyQuery;
-import com.example.demo.dto.DeliveryRecordQuery;
+import com.example.demo.dto.*;
 import com.example.demo.entity.BoxRecords;
 import com.example.demo.entity.DeliveryRecord;
 import com.example.demo.service.BoxRecordService;
 import com.example.demo.service.DeliveryRecordService;
+import com.example.demo.service.UUPService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -31,6 +27,8 @@ public class DeliveryRecordController {
 
     @Resource
     private BoxRecordService boxrecordservice;
+    @Resource
+    private UUPService uupservice;
 
     /**
      * 发货记录
@@ -61,4 +59,55 @@ public class DeliveryRecordController {
     public ResultData<PageInfo<BoxRecords>> updateApply(@RequestBody ApplUpdate dto) {
         return ResultData.success(boxrecordservice.updateApply(dto));
     }
+
+
+    /**
+     * 在售查询
+     *
+     * @param query
+     * @return
+     */
+    @ApiOperation(value = "在售查询")
+    @PostMapping("/getSellList")
+    public ResultData<List<DeliveryRecord>> getSellList(@RequestBody DeliveryRecordQuery query) {
+        return ResultData.success(deliveryrecordservice.getSellList(query));
+    }
+
+
+    /**
+     * 查询基础数据
+     *
+     * @return
+     */
+    @ApiOperation(value = "（优品）查询模板ID")
+    @PostMapping("/getTemplateList")
+    public ResultData<UUResponse> getTemplateList() {
+        return ResultData.success(uupservice.getTemplateList());
+    }
+
+
+    @ApiOperation(value = "（优品）数据导入")
+    @PostMapping("/importData")
+    public ResultData<String> importData(MultipartFile file) {
+        return ResultData.success(uupservice.importData(file));
+    }
+
+
+    @ApiOperation(value = "（优品）获取商品基础数据(入库)")
+    @PostMapping("/getUUList")
+    public ResultData<PageInfo<UUAwardDto>> getUUList(@RequestBody BasePage query) {
+        return ResultData.success(uupservice.getWebUUList(query));
+    }
+
+    /**
+     * 查询商品列表
+     * @param templateHashName
+     * @return
+     */
+    @ApiOperation(value = "（优品）查询商品列表-（在售查询）")
+    @PostMapping("/getUUAwardList")
+    public ResultData<UUResponse> getUUAwardList(@RequestParam String templateHashName) {
+        return ResultData.success(uupservice.getUUAwardList(templateHashName));
+    }
+
 }

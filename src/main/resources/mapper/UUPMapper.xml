@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.mapper.UUPMapper">
+
+    <insert id="insertBaseData" parameterType="com.example.demo.dto.UUbaseData">
+        insert into steam_items_uu(
+        item_id,
+        item_name,
+        market_hash_name
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.id},
+            #{item.name},
+            #{item.hashName}
+            )
+        </foreach>
+    </insert>
+    <insert id="insertBaseAwardData" parameterType="com.example.demo.dto.UUAwardDto">
+        insert into steam_items_uu(
+        item_id,
+        `name`,
+        item_name,
+        market_hash_name,
+        short_name,
+        image_url,
+        local_image_url,
+        dura,
+        uu_type_id,
+        uu_weapon_id,
+        bean,
+        created_at
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.templateId},
+            #{item.templateName},
+            #{item.templateName},
+            #{item.templateHashName},
+            #{item.templateName},
+            #{item.iconUrl},
+            #{item.iconUrl},
+            #{item.exteriorName},
+            #{item.typeId},
+            #{item.weaponId},
+            IFNULL(#{item.minSellPrice},0),
+            now()
+            )
+        </foreach>
+    </insert>
+</mapper>

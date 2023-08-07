@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -48,7 +49,18 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
 
     @Override
     public List<AwardTypes> getTypeList() {
-        return mapper.getTypeList();
+        List<AwardTypes> list = mapper.getTypeList();
+        List<AwardTypes> reList = list.stream().filter(e -> e.getUuWeaponId() <= 0).collect(Collectors.toList());
+        reList.stream().forEach(e -> {
+            List<AwardTypes> liste = new ArrayList<>();
+            for (AwardTypes awardTypes : list) {
+                if (e.getUuTypeId() == awardTypes.getUuTypeId() && awardTypes.getUuWeaponId() > 0) {
+                    liste.add(awardTypes);
+                }
+            }
+            e.setList(liste);
+        });
+        return reList;
     }
 
     @Override
