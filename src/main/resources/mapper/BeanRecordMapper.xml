@@ -54,7 +54,7 @@
           and status =1
     </select>
     <select id="queryUserBeanRecords" resultType="java.math.BigDecimal">
-        select IFNULL(SSUM(bean),0) from bean_records
+        select IFNULL(SUM(bean),0) from bean_records
           where user_id = #{userId}
           and status =1
     </select>
