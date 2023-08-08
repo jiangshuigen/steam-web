@@ -65,6 +65,11 @@
         bean,
         max_t as maxT,
         `type`,
+
+        IFNULL(real_odds_leave,real_odds) as realOddsLeave,
+        IFNULL(anchor_odds_leave,anchor_odds) as anchorOddsLeave,
+        IFNULL(luck_odds_leave,luck_odds) as luckOddsLeave,
+
         is_lucky_box as isLuckyBox,
         luck_interval as luckInterval,
         luck_interval_anchor as luckIntervalAnchor,
