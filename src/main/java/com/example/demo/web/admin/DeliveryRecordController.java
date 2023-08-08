@@ -110,4 +110,15 @@ public class DeliveryRecordController {
         return ResultData.success(uupservice.getUUAwardList(templateHashName));
     }
 
+    /**
+     * 下单购买
+     * @param dto
+     * @return
+     */
+    @ApiOperation(value = "（优品）指定商品购买（购买发货）")
+    @PostMapping("/buyAwards")
+    public ResultData<UUResponse> buyAwards(@RequestBody UUOrder dto) {
+        return ResultData.success(uupservice.buyAwards(dto));
+    }
+
 }

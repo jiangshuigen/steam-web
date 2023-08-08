@@ -72,7 +72,7 @@ public class GameBattleServiceImpl implements GameBattleService {
         us.setUserId(info.getCreateUserId());
         us.setWorth(info.getTotalBean());
         int numb = gamebattlemapper.insertArenaUsers(us);
-        return numb;
+        return info.getId();
     }
 
     @Override

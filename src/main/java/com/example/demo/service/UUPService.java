@@ -1,9 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.BasePage;
-import com.example.demo.dto.UUAwardDto;
-import com.example.demo.dto.UUQuery;
-import com.example.demo.dto.UUResponse;
+import com.example.demo.dto.*;
 import com.example.demo.entity.UUAward;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,4 +18,5 @@ public interface UUPService {
 
     List<UUAward> getUUAwardList(String templateHashName);
 
+    UUResponse buyAwards(UUOrder dto);
 }

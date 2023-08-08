@@ -5,7 +5,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.dto.*;
 import com.example.demo.entity.AwardTypes;
+import com.example.demo.entity.BoxRecords;
+import com.example.demo.entity.DeliveryRecord;
 import com.example.demo.entity.UUAward;
+import com.example.demo.mapper.BoxRecordMapper;
 import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.mapper.UUPMapper;
 import com.example.demo.service.UUPService;
@@ -15,12 +18,14 @@ import com.example.demo.util.OkHttpUtil;
 import com.example.demo.util.RSAUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -39,6 +44,8 @@ public class UUPServiceImpl implements UUPService {
     private UUPMapper uupmapper;
     @Resource
     private LuckyBoxMapper mapper;
+    @Resource
+    private BoxRecordMapper boxrecordmapper;
 
     @Override
     public UUResponse getTemplateList() {
@@ -164,6 +171,59 @@ public class UUPServiceImpl implements UUPService {
             return list;
         } else {
             log.error("getUUAwardList error data is =======" + JSON.toJSONString(res));
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public UUResponse buyAwards(UUOrder dto) {
+        //查询订单信息
+        BoxRecords record = boxrecordmapper.getRecordById(dto.getRecordId());
+        Map<String, Object> params = this.getBaseMap();
+        params.put("merchantOrderNo", record.getCode());
+//        params.put("tradeLinks", record.getSteamUrl());
+        params.put("tradeLinks", "https://steamcommunity.com/tradeoffer/new/?partner=467543820&token=KcgFJVAW");
+        params.put("commodityId", dto.getCommodityId());
+        params.put("purchasePrice", dto.getPurchasePrice());
+        String sign = this.sign(params);
+        String result = OkHttpUtil.builder().url("http://gw-openapi.youpin898.com/open/v1/api/byGoodsIdCreateOrder")
+                .addParam("sign", sign)
+                .addParam("timestamp", String.valueOf(params.get("timestamp")))
+                .addParam("appKey", appKey)
+                .addParam("merchantOrderNo", record.getCode())
+//                .addParam("tradeLinks", record.getSteamUrl())
+                .addParam("tradeLinks", "https://steamcommunity.com/tradeoffer/new/?partner=467543820&token=KcgFJVAW")
+                .addParam("commodityId", dto.getCommodityId())
+                .addParam("purchasePrice", dto.getPurchasePrice())
+                .initPost(true)
+                .sync();
+        UUResponse res = JSON.parseObject(result, UUResponse.class);
+        log.info("buyAwards  data is =======" + JSON.toJSONString(res));
+        if (res.getCode() == 0) {
+            String json = JSONUtils.toJSONString(res.getData());
+            JSONObject jsonObject = JSONObject.parseObject(json);
+            String orderNo = (String) jsonObject.get("orderNo");
+            BigDecimal payAmount = jsonObject.getBigDecimal("payAmount");
+            Integer orderStatus = jsonObject.getInteger("orderStatus");
+            //业务处理
+            int i = uupmapper.updateStatusByOrderNo(record.getCode());
+            if (i > 1) {
+                log.error("订单为{} 有问题=======", record.getCode());
+            }
+            //添加发货记录
+            DeliveryRecord deliveryrecord = new DeliveryRecord();
+            deliveryrecord.setUserId(record.getUserId());
+            deliveryrecord.setRecordId(record.getId());
+            deliveryrecord.setRecordCode(record.getCode());
+            deliveryrecord.setTradeNo(orderNo);
+            deliveryrecord.setPrice(payAmount);
+            deliveryrecord.setDelivery(1);
+            deliveryrecord.setZbtStatus(9);//发货中
+            deliveryrecord.setOrderId(orderNo);
+            uupmapper.addDeliveryRecords(deliveryrecord);
+        } else {
+            log.error("buyAwards error data is =======" + JSON.toJSONString(res));
         }
         return null;
     }

@@ -15,6 +15,8 @@ public class ApplDto {
     private int getUserId;
     @ApiModelProperty("申请用户")
     private String userName;
+    @ApiModelProperty("steam交易链接")
+    private String steamUrl;
     @ApiModelProperty("主播 0：否 1：是")
     private int anchor;
     @ApiModelProperty("持有者")

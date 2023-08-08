@@ -22,6 +22,8 @@ public class BoxRecords {
     private int userId;
     @ApiModelProperty("用户名")
     private String userName;
+    @ApiModelProperty("steam交易链接")
+    private String steamUrl;
     @ApiModelProperty("用户头像")
     private String avatar;
     @ApiModelProperty("宝箱id")

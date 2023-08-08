@@ -48,4 +48,41 @@
             )
         </foreach>
     </insert>
+
+    <!-- 修改订单-->
+    <update id="updateStatusByOrderNo" parameterType="java.lang.String">
+        update box_records
+        <set>
+            status = 1
+        </set>
+        <where>
+            code =#{merchantOrderNo}
+        </where>
+    </update>
+
+    <insert id="addDeliveryRecords" parameterType="com.example.demo.entity.DeliveryRecord">
+        insert into delivery_records(
+        user_id,
+        record_id,
+        record_code,
+        trade_no,
+        price,
+        delivery,
+        order_id,
+        zbt_status,
+        created_at,
+        updated_at
+        )values(
+        #{userId},
+        #{recordId},
+        #{recordCode},
+        #{tradeNo},
+        #{price},
+        #{delivery},
+        #{orderId},
+        #{zbtStatus},
+        now(),
+        now()
+        )
+    </insert>
 </mapper>
