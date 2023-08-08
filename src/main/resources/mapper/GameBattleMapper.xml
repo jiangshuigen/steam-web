@@ -118,7 +118,7 @@
     </select>
     <select id="selectBoxs" resultMap="BoxResultMap" parameterType="java.lang.Integer">
         select
-        ab.id as boxId,
+        bx.id as boxId,
         bx.name as boxName,
         bx.intact_cover as intactCover,
         ab.id as arenaBoxId
