@@ -444,7 +444,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         //判断是否下一轮
         if (CollectionUtils.isEmpty(listRedis)) {
             log.info("==============新一轮======清理缓存==========");
-            redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + openbox.getBoxId(), "");
+            redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor()+ "|"  + openbox.getBoxId(), "");
             for (BoxAwards ea : listAward) {
                 if (user.getAnchor().equals(1)) {
                     if (ea.getAnchorOdds() > 0) {
