@@ -331,31 +331,28 @@
     </select>
 
     <select id="getBoxRecordList" parameterType="java.lang.Integer" resultType="com.example.demo.entity.BoxRecords">
- select
+      select
         re.id,
-        re.get_user_id as getUserId,
+        u.id as getUserId,
         u.name as userName,
         u.avatar,
-        re.user_id as userId,
-        re.box_id as boxId,
-        re.box_name as boxName,
-        re.box_bean as boxBean,
-        re.box_award_id as boxAwardId ,
         re.`name`,
         re.hash_name as hashName,
         re.cover,
         re.dura,
         re.lv,
         re.bean,
-        re.code,
-        re.uuid,
-        re.status,
-        re.back_message as backMessage,
-        re.`type`,
         re.created_at as createdAt
         from game_award_records gar
-        left join box_records re on gar.award_id = re.id
-        left join users u on re.get_user_id = u.id
+        left join box_awards re on gar.award_id = re.id
+        left join users u on gar.user_id = u.id
         where gar.game_arena_id = #{id}
     </select>
+
+    <update id="updateUserWin" parameterType="java.lang.Integer">
+        update game_arena_users
+         set is_win =1
+         where game_arena_id = #{id}
+         and user_id = #{win}
+    </update>
 </mapper>
