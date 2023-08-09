@@ -40,4 +40,6 @@ public interface GameBattleMapper {
     GameRankingDto queryYestdayStar(GameRankingQuery query);
 
     List<BoxRecords> getBoxRecordList(int id);
+
+    int updateUserWin(@Param("win") Integer win, @Param("id") int id);
 }

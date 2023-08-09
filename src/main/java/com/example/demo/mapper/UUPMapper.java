@@ -12,7 +12,9 @@ public interface UUPMapper {
 
     int insertBaseAwardData(@Param("list") List<UUAwardDto> listReturn);
 
-    int updateStatusByOrderNo(String merchantOrderNo);
+    int updateStatusByOrderNo(@Param("merchantOrderNo")String merchantOrderNo,@Param("status")String status);
 
     int addDeliveryRecords(DeliveryRecord deliveryrecord);
+
+    int updateStatus(String orderNo);
 }

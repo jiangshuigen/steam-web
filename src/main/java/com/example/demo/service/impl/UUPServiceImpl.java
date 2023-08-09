@@ -4,10 +4,7 @@ import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.dto.*;
-import com.example.demo.entity.AwardTypes;
-import com.example.demo.entity.BoxRecords;
-import com.example.demo.entity.DeliveryRecord;
-import com.example.demo.entity.UUAward;
+import com.example.demo.entity.*;
 import com.example.demo.mapper.BoxRecordMapper;
 import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.mapper.UUPMapper;
@@ -182,8 +179,7 @@ public class UUPServiceImpl implements UUPService {
         BoxRecords record = boxrecordmapper.getRecordById(dto.getRecordId());
         Map<String, Object> params = this.getBaseMap();
         params.put("merchantOrderNo", record.getCode());
-//        params.put("tradeLinks", record.getSteamUrl());
-        params.put("tradeLinks", "https://steamcommunity.com/tradeoffer/new/?partner=467543820&token=KcgFJVAW");
+        params.put("tradeLinks", record.getSteamUrl());
         params.put("commodityId", dto.getCommodityId());
         params.put("purchasePrice", dto.getPurchasePrice());
         String sign = this.sign(params);
@@ -192,8 +188,8 @@ public class UUPServiceImpl implements UUPService {
                 .addParam("timestamp", String.valueOf(params.get("timestamp")))
                 .addParam("appKey", appKey)
                 .addParam("merchantOrderNo", record.getCode())
-//                .addParam("tradeLinks", record.getSteamUrl())
-                .addParam("tradeLinks", "https://steamcommunity.com/tradeoffer/new/?partner=467543820&token=KcgFJVAW")
+                .addParam("tradeLinks", record.getSteamUrl())
+//                .addParam("tradeLinks", "https://steamcommunity.com/tradeoffer/new/?partner=467543820&token=KcgFJVAW")
                 .addParam("commodityId", dto.getCommodityId())
                 .addParam("purchasePrice", dto.getPurchasePrice())
                 .initPost(true)
@@ -207,7 +203,8 @@ public class UUPServiceImpl implements UUPService {
             BigDecimal payAmount = jsonObject.getBigDecimal("payAmount");
             Integer orderStatus = jsonObject.getInteger("orderStatus");
             //业务处理
-            int i = uupmapper.updateStatusByOrderNo(record.getCode());
+            String status = "1"; //待操作
+            int i = uupmapper.updateStatusByOrderNo(record.getCode(), status);
             if (i > 1) {
                 log.error("订单为{} 有问题=======", record.getCode());
             }
@@ -226,6 +223,30 @@ public class UUPServiceImpl implements UUPService {
             log.error("buyAwards error data is =======" + JSON.toJSONString(res));
         }
         return null;
+    }
+
+    @Override
+    @Transactional
+    public void callback(CallbackInfo info) {
+        switch (info.getOrderStatus()) {
+            case 340:
+                log.info("平台订单号为:{}订单号为:{}收货成功，===完成订单", info.getMerchantOrderNo(), info.getOrderNo());
+                //修改订单状态
+                uupmapper.updateStatus(info.getOrderNo());
+                String status = "1"; //领取成功
+                int i = uupmapper.updateStatusByOrderNo(info.getMerchantOrderNo(), status);
+                break;
+            case 280:
+                log.info("平台订单号为:{}订单号为:{}取消订单，===取消订单", info.getMerchantOrderNo(), info.getOrderNo());
+                String status_str = "1407,1409,1410,1412";//因代购对象原因取消的订单
+                if (status_str.contains(String.valueOf(info.getOrderSubStatus()))) {
+                    log.info("因代购对象原因取消的订单=====");
+                } else {
+                    log.info("正常取消订单=========");
+                }
+                break;
+        }
+
     }
 
 

@@ -56,6 +56,8 @@ public class BoxAwards {
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;
+    @ApiModelProperty("是否是清幸运值物品")
+    private int clearLucky;
 
 
 }

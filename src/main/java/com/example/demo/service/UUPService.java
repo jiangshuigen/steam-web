@@ -19,4 +19,6 @@ public interface UUPService {
     List<UUAward> getUUAwardList(String templateHashName);
 
     UUResponse buyAwards(UUOrder dto);
+
+    void callback(CallbackInfo info);
 }
