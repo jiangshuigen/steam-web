@@ -86,6 +86,6 @@
         )
     </insert>
     <update id="updateStatus" parameterType="java.lang.String">
-            update delivery_records set zbt_status = 10 where trade_no =#{orderNo}
+            update delivery_records set zbt_status = #{status} where trade_no =#{orderNo}
     </update>
 </mapper>

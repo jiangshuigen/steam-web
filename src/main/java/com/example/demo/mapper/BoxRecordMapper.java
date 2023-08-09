@@ -34,4 +34,8 @@ public interface BoxRecordMapper {
     int exchange(@Param("ids") int[] ids);
 
     BigDecimal getRecords(@Param("ids") int[] ids);
+
+    int exchangeOrderNo(String merchantOrderNo);
+
+    BoxRecords getRecordByOrderNo(String merchantOrderNo);
 }

@@ -9,6 +9,7 @@ import com.example.demo.mapper.BoxRecordMapper;
 import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.mapper.UUPMapper;
 import com.example.demo.service.UUPService;
+import com.example.demo.service.UserService;
 import com.example.demo.util.JacksonUtils;
 import com.example.demo.util.JsonUtil;
 import com.example.demo.util.OkHttpUtil;
@@ -43,6 +44,8 @@ public class UUPServiceImpl implements UUPService {
     private LuckyBoxMapper mapper;
     @Resource
     private BoxRecordMapper boxrecordmapper;
+    @Resource
+    private UserService userservice;
 
     @Override
     public UUResponse getTemplateList() {
@@ -228,11 +231,12 @@ public class UUPServiceImpl implements UUPService {
     @Override
     @Transactional
     public void callback(CallbackInfo info) {
+        BoxRecords red = boxrecordmapper.getRecordByOrderNo(info.getMerchantOrderNo());
         switch (info.getOrderStatus()) {
             case 340:
                 log.info("平台订单号为:{}订单号为:{}收货成功，===完成订单", info.getMerchantOrderNo(), info.getOrderNo());
                 //修改订单状态
-                uupmapper.updateStatus(info.getOrderNo());
+                uupmapper.updateStatus(info.getOrderNo(), "10");
                 String status = "1"; //领取成功
                 int i = uupmapper.updateStatusByOrderNo(info.getMerchantOrderNo(), status);
                 break;
@@ -240,9 +244,18 @@ public class UUPServiceImpl implements UUPService {
                 log.info("平台订单号为:{}订单号为:{}取消订单，===取消订单", info.getMerchantOrderNo(), info.getOrderNo());
                 String status_str = "1407,1409,1410,1412";//因代购对象原因取消的订单
                 if (status_str.contains(String.valueOf(info.getOrderSubStatus()))) {
-                    log.info("因代购对象原因取消的订单=====");
+                    log.info("因代购对象原因取消的订单，将会扣除该订单金额的2%=====");
+                    //兑换
+                    int sta = boxrecordmapper.exchangeOrderNo(info.getMerchantOrderNo());
+                    if (sta > 0) {
+                        User u = userservice.getUserById(red.getUserId());
+                        BigDecimal balance = u.getBean().add(red.getBean().multiply(new BigDecimal(0.97)).setScale(2, BigDecimal.ROUND_DOWN));
+                        userservice.updateBean(balance, u.getId());
+                    }
                 } else {
                     log.info("正常取消订单=========");
+                    uupmapper.updateStatus(info.getOrderNo(), "9");
+                    uupmapper.updateStatusByOrderNo(info.getMerchantOrderNo(), "0");
                 }
                 break;
         }

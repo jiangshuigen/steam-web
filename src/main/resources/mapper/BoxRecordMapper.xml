@@ -239,6 +239,41 @@
             order by bean
         </if>
     </select>
+    <select id="getRecordByOrderNo" resultType="com.example.demo.entity.BoxRecords" parameterType="java.lang.String">
+          select
+            re.id,
+            re.get_user_id as getUserId,
+            re.user_id as userId,
+            re.box_id as boxId,
+            re.box_name as boxName,
+            re.box_bean as boxBean,
+            re.box_award_id as boxAwardId ,
+            re.`name`,
+            re.hash_name as hashName,
+            re.cover,
+            re.dura,
+            re.lv,
+            re.bean,
+            re.code,
+            re.uuid,
+            re.status,
+            re.back_message as backMessage,
+            re.`type`,
+            re.created_at as createdAt
+           from box_records re
+           where re.code =#{merchantOrderNo}
+    </select>
+    <update id="exchangeOrderNo">
+        update box_records
+        <set>
+            status = 2,
+            updated_at = now(),
+            back_message ='因代购对象原因取消的订单，将会扣除该订单金额的2%'
+        </set>
+        <where>
+            code =#{merchantOrderNo}
+        </where>
+    </update>
     <update id="exchange">
         update box_records
         <set>

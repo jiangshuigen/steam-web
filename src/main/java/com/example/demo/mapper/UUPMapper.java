@@ -16,5 +16,5 @@ public interface UUPMapper {
 
     int addDeliveryRecords(DeliveryRecord deliveryrecord);
 
-    int updateStatus(String orderNo);
+    int updateStatus(@Param("orderNo") String orderNo,@Param("status") String status);
 }
