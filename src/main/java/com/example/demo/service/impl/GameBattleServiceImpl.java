@@ -86,12 +86,32 @@ public class GameBattleServiceImpl implements GameBattleService {
     @Override
     public GameArenasDto getGameArenasDetail(int id) {
         GameArenasDto dto = gamebattlemapper.getGameArenasDetail(id);
-        dto.getListBox().stream().forEach(e -> {
-            List<BoxAwards> listAward = mapper.getIndexBoxList(e.getBoxId());
-            e.setListAward(listAward);
-        });
+        //本局游戏奖品列表
         List<BoxRecords> recordList = gamebattlemapper.getBoxRecordList(id);
         dto.setRecordList(recordList);
+        recordList.stream().forEach(re -> {
+            dto.getListBox().stream().forEach(e -> {
+                List<BoxAwards> listAward = mapper.getIndexBoxList(e.getBoxId());
+                e.setListAward(listAward);
+                //判定武器批次
+                listAward.stream().forEach(award -> {
+                    if (re.getBoxAwardId() == award.getId()) {
+                        re.setBoxId(e.getBoxId());
+                    }
+                });
+            });
+        });
+        //
+        for (GameArenasUserDto gameArenasUserDto : dto.getListUser()) {
+            List<BoxRecords> reList = new ArrayList<>();
+            for (BoxRecords records : recordList) {
+                if (records.getUserId() == gameArenasUserDto.getGameUserId()) {
+                    reList.add(records);
+                }
+            }
+            reList.sort(Comparator.comparing(BoxRecords::getCreatedAt));
+            gameArenasUserDto.setRecordList(reList);
+        }
         return dto;
     }
 

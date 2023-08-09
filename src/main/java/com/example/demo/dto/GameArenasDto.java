@@ -41,6 +41,6 @@ public class GameArenasDto {
     private List<GameArenasBoxDto> listBox;
     @ApiModelProperty("玩家列表")
     private List<GameArenasUserDto> listUser;
-    @ApiModelProperty("抽到的物品列表")
+    @ApiModelProperty("抽到的物品列表（总）")
     private List<BoxRecords> recordList;
 }

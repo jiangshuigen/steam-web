@@ -14,13 +14,13 @@
         <result property="updatedAt" column="updated_at"/>
         <result property="userName" column="userName"/>
         <result property="avatar" column="avatar"/>
-        <collection property="listBox" ofType="com.example.demo.dto.GameArenasBoxDto"  select="selectBoxs" column="id">
+        <collection property="listBox" ofType="com.example.demo.dto.GameArenasBoxDto" select="selectBoxs" column="id">
             <result property="boxId" column="boxId"/>
             <result property="boxName" column="boxName"/>
             <result property="intactCover" column="intactCover"/>
             <result property="arenaBoxId" column="arenaBoxId"/>
         </collection>
-        <collection property="listUser" ofType="com.example.demo.dto.GameArenasUserDto"  select="selectUsers"
+        <collection property="listUser" ofType="com.example.demo.dto.GameArenasUserDto" select="selectUsers"
                     column="id">
             <id property="gameUserId" column="gameUserId"/>
             <result property="gameUserName" column="gameUserName"/>
@@ -334,6 +334,7 @@
       select
         re.id,
         u.id as getUserId,
+        u.id as userId,
         u.name as userName,
         u.avatar,
         re.`name`,
@@ -342,11 +343,13 @@
         re.dura,
         re.lv,
         re.bean,
+        gar.award_id as  boxAwardId,
         re.created_at as createdAt
         from game_award_records gar
         left join box_awards re on gar.award_id = re.id
         left join users u on gar.user_id = u.id
         where gar.game_arena_id = #{id}
+        order by gar.created_at
     </select>
 
     <update id="updateUserWin" parameterType="java.lang.Integer">
