@@ -33,4 +33,6 @@ public interface LuckyBoxMapper {
     List<BoxAwards> getWebAwardList(WebBoxAwardsQuery query);
 
     BoxAwards getBoxAwardById(int awardId);
+
+    List<BoxAwards> getSellAwardList(WebBoxAwardsQuery query);
 }

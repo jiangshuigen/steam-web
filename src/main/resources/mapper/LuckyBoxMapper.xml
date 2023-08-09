@@ -91,6 +91,57 @@
         </where>
         order by created_at desc
     </select>
+
+    <select id="getSellAwardList" resultType="com.example.demo.entity.BoxAwards"
+            parameterType="com.example.demo.dto.WebBoxAwardsQuery">
+          select id,
+            box_id as boxId,
+            `name`,
+            hash_name as hashName,
+            cover,
+            odds,
+            real_odds as realOdds,
+            anchor_odds as anchorOdds,
+            luck_odds as luckOdds,
+            game_odds as gameOdds,
+            game_anchor_odds as gameAnchorOdds,
+            dura,
+            lv,
+            bean,
+            max_t as maxT,
+            `type`,
+            is_lucky_box as isLuckyBox,
+            luck_interval as luckInterval,
+            luck_interval_anchor as luckIntervalAnchor,
+            is_game as isGame,
+            is_shop as isShop,
+            is_synthesis as isSynthesis,
+            clear_lucky as clearLucky,
+            shop_inventory as shopInventory,
+            created_at as createdAt,
+            updated_at as updatedAt
+            from box_awards
+        <where>
+            is_shop =1
+            <if test="name !=null and name !=''">
+                and `name` like "%"#{name}"%"
+            </if>
+            <if test="type>0">
+                and `type`= #{type}
+            </if>
+            <if test="min>0">
+                and bean >= #{min}
+            </if>
+            <if test="max>0">
+                and bean <![CDATA[ <=]]>  #{max}
+            </if>
+        </where>
+        order by bean
+        <if test="sort>0">
+            desc
+        </if>
+    </select>
+
     <select id="getBoxAwardById" resultType="com.example.demo.entity.BoxAwards">
            select id,
         box_id as boxId,
