@@ -86,6 +86,10 @@ public class GameBattleServiceImpl implements GameBattleService {
     @Override
     public GameArenasDto getGameArenasDetail(int id) {
         GameArenasDto dto = gamebattlemapper.getGameArenasDetail(id);
+        dto.getListBox().stream().forEach(e -> {
+            List<BoxAwards> listAward = mapper.getIndexBoxList(e.getBoxId());
+            e.setListAward(listAward);
+        });
         List<BoxRecords> recordList = gamebattlemapper.getBoxRecordList(id);
         dto.setRecordList(recordList);
         return dto;
@@ -144,7 +148,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                 for (GameArenasBoxDto gameArenasBoxDto : dto.getListBox()) {
                     //获取宝箱下的武器列表
                     List<BoxAwards> listAward = mapper.getIndexBoxList(gameArenasBoxDto.getBoxId());
-                    //洗牌
+                    //                    //洗牌
                     Collections.shuffle(listAward);
                     for (BoxAwards boxAwards : listAward) {
                         BigDecimal beanCount = battleDto.getBean() == null ? boxAwards.getBean() : battleDto.getBean().add(boxAwards.getBean());
@@ -153,7 +157,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                                 .getUserId(gameArenasUserDto.getGameUserId())
                                 .userId(gameArenasUserDto.getGameUserId())
                                 .boxId(boxAwards.getBoxId())
-                                .boxName(gameArenasBoxDto.getBoxName())
+                                .boxName("盲盒对战")
                                 .boxBean(dto.getTotalBean())
                                 .boxAwardId(boxAwards.getId())
                                 .name(boxAwards.getName())
@@ -219,6 +223,10 @@ public class GameBattleServiceImpl implements GameBattleService {
             dto.setWinUserId(JSON.toJSONString(s2));
             dto.setDrawCode(CodeUtils.getCode());
             gamebattlemapper.update(dto);
+            //修改参与者名单输赢
+            winner.stream().forEach(win -> {
+                gamebattlemapper.updateUserWin(win, id);
+            });
             listBattle.stream().forEach(e -> {
                 BigDecimal num = e.getListAward().stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add);
                 //记录榜单
