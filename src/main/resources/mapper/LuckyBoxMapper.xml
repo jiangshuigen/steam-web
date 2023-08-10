@@ -224,7 +224,7 @@
             <if test="max>0">
                 and bean <![CDATA[ <=]]>  #{max}
             </if>
-            and (luck_interval !=null or luck_interval_anchor!=null)
+            and (luck_interval is not NULL  or luck_interval_anchor is not NULL )
         </where>
         order by bean
         <if test="sort>0">
