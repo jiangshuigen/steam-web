@@ -110,6 +110,7 @@
         updated_at as updatedAt
         from steam_items_uu
         <where>
+            bean > 0
             <if test="name !=null and name !=''">
                 and `name` like "%"#{name}"%"
             </if>
