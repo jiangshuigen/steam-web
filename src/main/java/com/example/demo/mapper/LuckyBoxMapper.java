@@ -1,8 +1,6 @@
 package com.example.demo.mapper;
 
-import com.example.demo.dto.AwardCountDto;
-import com.example.demo.dto.BoxAwardsQuery;
-import com.example.demo.dto.WebBoxAwardsQuery;
+import com.example.demo.dto.*;
 import com.example.demo.entity.AwardTypes;
 import com.example.demo.entity.BoxAwards;
 
@@ -34,5 +32,7 @@ public interface LuckyBoxMapper {
 
     BoxAwards getBoxAwardById(int awardId);
 
-    List<BoxAwards> getSellAwardList(WebBoxAwardsQuery query);
+    List<UUawardsDto> getSellAwardList(UUawardsQuery query);
+
+    UUawardsDto getSellAwardById(int id);
 }

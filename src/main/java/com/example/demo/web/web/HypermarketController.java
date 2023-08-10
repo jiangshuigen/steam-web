@@ -2,6 +2,8 @@ package com.example.demo.web.web;
 
 import com.example.demo.config.Constant;
 import com.example.demo.config.ResultData;
+import com.example.demo.dto.UUawardsDto;
+import com.example.demo.dto.UUawardsQuery;
 import com.example.demo.dto.UserDto;
 import com.example.demo.dto.WebBoxAwardsQuery;
 import com.example.demo.entity.BoxAwards;
@@ -27,7 +29,7 @@ public class HypermarketController {
 
     @ApiOperation(value = "获取装备列表")
     @PostMapping("/getAwardList")
-    public ResultData<PageInfo<BoxAwards>> getAwardList(@RequestBody WebBoxAwardsQuery query) {
+    public ResultData<PageInfo<UUawardsDto>> getAwardList(@RequestBody UUawardsQuery query) {
         return ResultData.success(hypermarketservice.getAwardList(query));
     }
 

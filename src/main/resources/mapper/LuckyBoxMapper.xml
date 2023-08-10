@@ -92,42 +92,32 @@
         order by created_at desc
     </select>
 
-    <select id="getSellAwardList" resultType="com.example.demo.entity.BoxAwards"
-            parameterType="com.example.demo.dto.WebBoxAwardsQuery">
-          select id,
-            box_id as boxId,
-            `name`,
-            hash_name as hashName,
-            cover,
-            odds,
-            real_odds as realOdds,
-            anchor_odds as anchorOdds,
-            luck_odds as luckOdds,
-            game_odds as gameOdds,
-            game_anchor_odds as gameAnchorOdds,
-            dura,
-            lv,
-            bean,
-            max_t as maxT,
-            `type`,
-            is_lucky_box as isLuckyBox,
-            luck_interval as luckInterval,
-            luck_interval_anchor as luckIntervalAnchor,
-            is_game as isGame,
-            is_shop as isShop,
-            is_synthesis as isSynthesis,
-            clear_lucky as clearLucky,
-            shop_inventory as shopInventory,
-            created_at as createdAt,
-            updated_at as updatedAt
-            from box_awards
+    <select id="getSellAwardList" resultType="com.example.demo.dto.UUawardsDto"
+            parameterType="com.example.demo.dto.UUawardsQuery">
+        select id,
+        item_id as itemId,
+        `name`,
+        item_name as itemName,
+        market_hash_name as marketHashName,
+        short_name as shortName,
+        image_url as imageUrl,
+        local_image_url as localImageUrl,
+        dura,
+        uu_type_id as uuTypeId,
+        uu_weapon_id as uuWeaponId,
+        bean,
+        created_at as createdAt,
+        updated_at as updatedAt
+        from steam_items_uu
         <where>
-            is_shop =1
             <if test="name !=null and name !=''">
                 and `name` like "%"#{name}"%"
             </if>
-            <if test="type>0">
-                and `type`= #{type}
+            <if test="uuTypeId>0">
+                and uu_type_id= #{uuTypeId}
+            </if>
+            <if test="uuWeaponId>0">
+                and uu_weapon_id= #{uuWeaponId}
             </if>
             <if test="min>0">
                 and bean >= #{min}
@@ -141,7 +131,25 @@
             desc
         </if>
     </select>
-
+    <select id="getSellAwardById" resultType="com.example.demo.dto.UUawardsDto">
+          select id,
+        item_id as itemId,
+        `name`,
+        item_name as itemName,
+        market_hash_name as marketHashName,
+        short_name as shortName,
+        image_url as imageUrl,
+        local_image_url as localImageUrl,
+        dura,
+        uu_type_id as uuTypeId,
+        uu_weapon_id as uuWeaponId,
+        bean,
+        created_at as createdAt,
+        updated_at as updatedAt
+        from steam_items_uu
+        where id =#{id}
+        limit 1
+    </select>
     <select id="getBoxAwardById" resultType="com.example.demo.entity.BoxAwards">
            select id,
         box_id as boxId,

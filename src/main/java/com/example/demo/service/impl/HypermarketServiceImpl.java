@@ -1,10 +1,11 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.config.Constant;
+import com.example.demo.dto.UUawardsDto;
+import com.example.demo.dto.UUawardsQuery;
 import com.example.demo.dto.UserDto;
-import com.example.demo.dto.WebBoxAwardsQuery;
-import com.example.demo.entity.BoxAwards;
 import com.example.demo.entity.BoxRecords;
+import com.example.demo.enumpakage.Dura;
 import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.service.BoxRecordService;
 import com.example.demo.service.HypermarketService;
@@ -41,10 +42,10 @@ public class HypermarketServiceImpl implements HypermarketService {
     private UserService userservice;
 
     @Override
-    public PageInfo<BoxAwards> getAwardList(WebBoxAwardsQuery query) {
+    public PageInfo<UUawardsDto> getAwardList(UUawardsQuery query) {
         PageHelper.startPage(query.getPageNo(), query.getPageSize());
-        List<BoxAwards> list = mapper.getSellAwardList(query);
-        PageInfo<BoxAwards> listInfo = new PageInfo<>(list);
+        List<UUawardsDto> list = mapper.getSellAwardList(query);
+        PageInfo<UUawardsDto> listInfo = new PageInfo<>(list);
         return listInfo;
     }
 
@@ -57,7 +58,7 @@ public class HypermarketServiceImpl implements HypermarketService {
         if (!ObjectUtils.isEmpty(user)) {
             BigDecimal cost = new BigDecimal(0);
             for (int id : ids) {
-                BoxAwards boxawards = mapper.getBoxAwardById(id);
+                UUawardsDto boxawards = mapper.getSellAwardById(id);
                 if (ObjectUtils.isEmpty(boxawards)) {
                     throw new Exception("商品ID有误");
                 }
@@ -65,15 +66,15 @@ public class HypermarketServiceImpl implements HypermarketService {
                 BoxRecords record = BoxRecords.builder()
                         .getUserId(user.getId())
                         .userId(user.getId())
-                        .boxId(boxawards.getBoxId())
+                        .boxId(0)
                         .boxName("商城购买")
                         .boxBean(boxawards.getBean())
                         .boxAwardId(boxawards.getId())
                         .name(boxawards.getName())
-                        .hashName(boxawards.getHashName())
-                        .cover(boxawards.getCover())
-                        .dura(boxawards.getDura())
-                        .lv(boxawards.getLv())
+                        .hashName(boxawards.getMarketHashName())
+                        .cover(boxawards.getImageUrl())
+                        .dura(this.getValue(boxawards.getDura()))
+                        .lv(0)
                         .bean(boxawards.getBean())
                         .maxT(new BigDecimal(0))
                         .code(this.getCode())
@@ -90,6 +91,15 @@ public class HypermarketServiceImpl implements HypermarketService {
             //扣除金币
             userservice.updateBean(balance, user.getId());
             return boxrecordservice.saveBoxRecord(reList);
+        }
+        return 0;
+    }
+
+    private int getValue(String msg) {
+        for (Dura value : Dura.values()) {
+            if (value.getMsg().equals(msg)) {
+                return value.getCode();
+            }
         }
         return 0;
     }
