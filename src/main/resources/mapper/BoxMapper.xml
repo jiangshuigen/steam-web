@@ -4,6 +4,7 @@
 
     <select id="getBoxList" parameterType="com.example.demo.dto.BoxQuery" resultType="com.example.demo.entity.Box">
         select
+        id,
         `name`,
         cover,
         weapon_cover as weaponCover,
@@ -66,6 +67,7 @@
     </select>
     <select id="getBoxById" resultType="com.example.demo.entity.Box">
       select
+            id,
           `name`,
             cover,
             weapon_cover as weaponCover,
