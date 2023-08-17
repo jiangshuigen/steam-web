@@ -1,12 +1,15 @@
 package com.example.demo.web.admin;
 
 import com.example.demo.config.ResultData;
-import com.example.demo.dto.BoxQuery;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Box;
+import com.example.demo.entity.BoxAwards;
 import com.example.demo.service.BoxService;
+import com.example.demo.service.HypermarketService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -19,6 +22,8 @@ public class BoxsController {
 
     @Resource
     private BoxService boxservice;
+    @Resource
+    private HypermarketService hypermarketservice;
 
     /**
      * 获取宝箱列表
@@ -60,7 +65,6 @@ public class BoxsController {
     }
 
     /**
-     *
      * @param box
      * @return
      */
@@ -69,4 +73,29 @@ public class BoxsController {
     public ResultData saveBox(@RequestBody Box box) {
         return ResultData.success(boxservice.saveBox(box));
     }
+
+    /**
+     * 获取可选择的装备列表
+     * @param query
+     * @return
+     */
+    @ApiOperation(value = "获取可选择的装备列表")
+    @PostMapping("/getAwardList")
+    public ResultData<PageInfo<UUawardsDto>> getAwardList(@RequestBody BasePage query) {
+        UUawardsQuery queryVo = new UUawardsQuery();
+        BeanUtils.copyProperties(query, queryVo);
+        return ResultData.success(hypermarketservice.getAwardList(queryVo));
+    }
+
+    /**
+     * 新增奖品
+     * @param dto
+     * @return
+     */
+    @ApiOperation(value = "新增奖品")
+    @PostMapping("/saveAward")
+    public ResultData updateAward(@RequestBody SaveAwardsDto dto) {
+        return ResultData.success(boxservice.saveAward(dto));
+    }
+
 }

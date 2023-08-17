@@ -35,4 +35,6 @@ public interface LuckyBoxMapper {
     List<UUawardsDto> getSellAwardList(UUawardsQuery query);
 
     UUawardsDto getSellAwardById(int id);
+
+    int saveAward(SaveAwardsDto dto);
 }

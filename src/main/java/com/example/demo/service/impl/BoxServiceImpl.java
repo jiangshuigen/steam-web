@@ -1,11 +1,16 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.BoxQuery;
+import com.example.demo.dto.SaveAwardsDto;
+import com.example.demo.dto.UUawardsDto;
 import com.example.demo.entity.Box;
+import com.example.demo.entity.BoxAwards;
 import com.example.demo.mapper.BoxMapper;
+import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.service.BoxService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,6 +21,8 @@ public class BoxServiceImpl implements BoxService {
 
     @Resource
     private BoxMapper boxmapper;
+    @Resource
+    private LuckyBoxMapper mapper;
 
     @Override
     public PageInfo<Box> getBoxList(BoxQuery query) {
@@ -48,5 +55,10 @@ public class BoxServiceImpl implements BoxService {
     @Override
     public List<Box> getGameArenaBoxList() {
         return boxmapper.getGameArenaBoxList();
+    }
+
+    @Override
+    public int saveAward(SaveAwardsDto dto) {
+        return mapper.saveAward(dto);
     }
 }

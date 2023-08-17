@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.BoxQuery;
 import com.example.demo.dto.GameArenasDto;
+import com.example.demo.dto.SaveAwardsDto;
 import com.example.demo.entity.Box;
 import com.github.pagehelper.PageInfo;
 
@@ -21,4 +22,5 @@ public interface BoxService {
 
     List<Box>  getGameArenaBoxList();
 
+    int saveAward(SaveAwardsDto dto);
 }

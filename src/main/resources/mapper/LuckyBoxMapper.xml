@@ -151,6 +151,54 @@
         where id =#{id}
         limit 1
     </select>
+
+    <insert id="saveAward" parameterType="com.example.demo.dto.SaveAwardsDto">
+          insert into box_awards(
+            box_id,
+            `name`,
+            hash_name,
+            cover,
+            odds,
+            real_odds,
+            real_odds_leave,
+            anchor_odds,
+            anchor_odds_leave,
+            luck_odds,
+            luck_odds_leave,
+            game_odds,
+            game_anchor_odds,
+            dura,
+            lv,
+            bean,
+            max_t,
+            `type`,
+            is_lucky_box,
+            is_shop,
+            is_synthesis,
+            clear_lucky,
+            shop_inventory,
+            created_at
+          )
+          select
+          #{boxId},
+          `name`,
+          market_hash_name,
+          image_url,
+          #{odds},
+          #{realOdds},
+          0,
+          #{anchorOdds},0,
+          0,0,0,0,0,
+          #{lv},
+          bean,
+          0,
+          uu_type_id,
+          #{isLuckyBox},
+          0,0,0,999,
+          now()
+          from steam_items_uu
+          where id = #{uId}
+    </insert>
     <select id="getBoxAwardById" resultType="com.example.demo.entity.BoxAwards">
            select id,
         box_id as boxId,
@@ -224,7 +272,7 @@
             <if test="max>0">
                 and bean <![CDATA[ <=]]>  #{max}
             </if>
-            and (luck_interval is not NULL  or luck_interval_anchor is not NULL )
+            and (luck_interval is not NULL or luck_interval_anchor is not NULL )
         </where>
         order by bean
         <if test="sort>0">
