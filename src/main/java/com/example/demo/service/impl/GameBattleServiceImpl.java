@@ -114,7 +114,7 @@ public class GameBattleServiceImpl implements GameBattleService {
             List<Integer> listWinner = JSON.parseArray(dto.getWinUserId(), int.class);
             if (!CollectionUtils.isEmpty(listWinner) && listWinner.size() > 1) {
                 gameArenasUserDto.setGameBean(reList.stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
-            } else if (!CollectionUtils.isEmpty(listWinner) && listWinner.size() == 1) {
+            } else if (!CollectionUtils.isEmpty(listWinner) && listWinner.size() == 1 && listWinner.get(0) == gameArenasUserDto.getGameUserId()) {
                 gameArenasUserDto.setGameBean(recordList.stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
             }
 
