@@ -116,6 +116,8 @@ public class GameBattleServiceImpl implements GameBattleService {
                 gameArenasUserDto.setGameBean(reList.stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
             } else if (!CollectionUtils.isEmpty(listWinner) && listWinner.size() == 1 && listWinner.get(0) == gameArenasUserDto.getGameUserId()) {
                 gameArenasUserDto.setGameBean(recordList.stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
+            }else {
+                gameArenasUserDto.setGameBean(new BigDecimal(0));
             }
 
         }
