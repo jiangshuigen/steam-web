@@ -111,7 +111,9 @@ public class GameBattleServiceImpl implements GameBattleService {
             }
             reList.sort(Comparator.comparing(BoxRecords::getCreatedAt));
             gameArenasUserDto.setRecordList(reList);
+            gameArenasUserDto.setGameBean(reList.stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
         }
+        dto.setWinnerBean(dto.getRecordList().stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
         return dto;
     }
 

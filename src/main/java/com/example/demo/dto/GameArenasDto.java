@@ -43,4 +43,7 @@ public class GameArenasDto {
     private List<GameArenasUserDto> listUser;
     @ApiModelProperty("抽到的物品列表（总）")
     private List<BoxRecords> recordList;
+    @ApiModelProperty("胜利获得")
+    private BigDecimal winnerBean;
+
 }
