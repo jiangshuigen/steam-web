@@ -111,7 +111,13 @@ public class GameBattleServiceImpl implements GameBattleService {
             }
             reList.sort(Comparator.comparing(BoxRecords::getCreatedAt));
             gameArenasUserDto.setRecordList(reList);
-            gameArenasUserDto.setGameBean(reList.stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
+            List<Integer> listWinner = JSON.parseArray(dto.getWinUserId(), int.class);
+            if (!CollectionUtils.isEmpty(listWinner) && listWinner.size() > 1) {
+                gameArenasUserDto.setGameBean(reList.stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
+            } else if (!CollectionUtils.isEmpty(listWinner) && listWinner.size() == 1) {
+                gameArenasUserDto.setGameBean(recordList.stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
+            }
+
         }
         dto.setWinnerBean(dto.getRecordList().stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
         return dto;

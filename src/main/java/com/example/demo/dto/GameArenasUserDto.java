@@ -15,8 +15,10 @@ public class GameArenasUserDto {
     private String gameUserName;
     @ApiModelProperty("用户头像")
     private String gameAvatar;
-    @ApiModelProperty("金币")
+    @ApiModelProperty("胜利获得金币")
     private BigDecimal gameBean;
+    @ApiModelProperty("roll得金币")
+    private BigDecimal rollBean;
     @ApiModelProperty("抽到的物品")
     private List<BoxRecords> recordList;
 
