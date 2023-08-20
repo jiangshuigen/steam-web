@@ -17,4 +17,8 @@ public class UUawardsQuery extends BasePage {
     private int min;
     @ApiModelProperty("价格区间最高")
     private int max;
+    @ApiModelProperty("商城 0-正序 1-倒序")
+    private int isShop;
+    @ApiModelProperty("对战 0-正序 1-倒序")
+    private int isBattle;
 }

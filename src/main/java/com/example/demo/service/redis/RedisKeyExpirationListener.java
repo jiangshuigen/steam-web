@@ -1,5 +1,6 @@
 package com.example.demo.service.redis;
 
+import com.example.demo.service.GameBattleService;
 import com.example.demo.service.RoomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * redis 失效监听
@@ -26,7 +29,8 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
 
     @Autowired
     private RoomService roomservice;
-
+    @Resource
+    private GameBattleService gamebattleservice;
     @Autowired
     private RedisTemplate redisTemplate;
 
@@ -47,6 +51,9 @@ public class RedisKeyExpirationListener extends KeyExpirationEventMessageListene
         if (expireKey.startsWith("ROOM|")) {
             String room = expireKey.replace("ROOM|", "");
             roomservice.endRoom(Integer.parseInt(room));
+        } else if (expireKey.startsWith("BATTLE|")) {
+            String battleId = expireKey.replace("BATTLE|", "");
+            gamebattleservice.endBattle(Integer.parseInt(battleId));
         }
     }
 

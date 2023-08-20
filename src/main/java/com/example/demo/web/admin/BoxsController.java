@@ -84,6 +84,7 @@ public class BoxsController {
     public ResultData<PageInfo<UUawardsDto>> getAwardList(@RequestBody BasePage query) {
         UUawardsQuery queryVo = new UUawardsQuery();
         BeanUtils.copyProperties(query, queryVo);
+        queryVo.setIsBattle(1);//对战
         return ResultData.success(hypermarketservice.getAwardList(queryVo));
     }
 

@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,7 +49,7 @@ public class GameBattleServiceImpl implements GameBattleService {
 
     @Override
     @Transactional
-    public int createEvent(GameArenasSaveDto info) {
+    public int createEvent(GameArenasSaveDto info, UserDto user) {
         //计算金额
         BigDecimal total = new BigDecimal(0);
         for (Integer id : info.getListBox()) {
@@ -72,6 +73,13 @@ public class GameBattleServiceImpl implements GameBattleService {
         us.setUserId(info.getCreateUserId());
         us.setWorth(info.getTotalBean());
         int numb = gamebattlemapper.insertArenaUsers(us);
+        //扣除费用
+        BigDecimal balance = user.getBean().subtract(total);
+        //扣除金币
+        userservice.updateBean(balance, info.getCreateUserId());
+        //定时15分钟内未有用户加入则解散
+        long tim = 15 * 60;
+        redisTemplate.opsForValue().set("BATTLE|" + info.getId(), info.getId(), tim, TimeUnit.SECONDS);
         return info.getId();
     }
 
@@ -116,7 +124,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                 gameArenasUserDto.setGameBean(reList.stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
             } else if (!CollectionUtils.isEmpty(listWinner) && listWinner.size() == 1 && listWinner.get(0) == gameArenasUserDto.getGameUserId()) {
                 gameArenasUserDto.setGameBean(recordList.stream().map(BoxRecords::getBean).reduce(BigDecimal.ZERO, BigDecimal::add));
-            }else {
+            } else {
                 gameArenasUserDto.setGameBean(new BigDecimal(0));
             }
 
@@ -339,6 +347,26 @@ public class GameBattleServiceImpl implements GameBattleService {
         obj.put("status", "start");//业务类型
         webSocket.sendOneMessage(String.valueOf(userId), obj.toJSONString());
         return 1;
+    }
+
+
+    @Override
+    @Transactional
+    public int endBattle(int battleId) {
+        //用户退款
+        GameArenasDto dto = gamebattlemapper.getGameArenasDetail(battleId);
+        if (!ObjectUtils.isEmpty(dto) || dto.getCreateUserId() > 0) {
+            //退款
+            User user = userservice.getUserById(dto.getCreateUserId());
+            BigDecimal balance = user.getBean().add(dto.getTotalBean());
+            //扣除金币
+            userservice.updateBean(balance, dto.getCreateUserId());
+            //清除记录
+            gamebattlemapper.deleteBattleById(battleId);
+        }
+        //释放锁
+        redisTemplate.delete("BATTLE|" + battleId + ".lock");
+        return 0;
     }
 
 

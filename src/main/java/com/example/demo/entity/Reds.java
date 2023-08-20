@@ -25,6 +25,8 @@ public class Reds {
     private int residue;
     @ApiModelProperty("面值(总充值%)")
     private BigDecimal percentage;
+    @ApiModelProperty("最小面值")
+    private BigDecimal percentageMin;
     @ApiModelProperty("开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
@@ -37,5 +39,7 @@ public class Reds {
     @ApiModelProperty("修改时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updatedAt;
+    @ApiModelProperty("状态0-无效 1-有效")
+    private int status;
 
 }

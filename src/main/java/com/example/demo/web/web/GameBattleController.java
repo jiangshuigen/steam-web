@@ -83,7 +83,7 @@ public class GameBattleController {
             return ResultData.fail("403", "未登录");
         }
         info.setCreateUserId(dto.getId());
-        return ResultData.success(gamebattleservice.createEvent(info));
+        return ResultData.success(gamebattleservice.createEvent(info, dto));
     }
 
 
@@ -127,6 +127,7 @@ public class GameBattleController {
 
     /**
      * 我的对战
+     *
      * @param query
      * @return
      */
@@ -139,6 +140,7 @@ public class GameBattleController {
 
     /**
      * 排行榜
+     *
      * @param query
      * @return
      */

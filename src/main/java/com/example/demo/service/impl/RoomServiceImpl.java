@@ -221,6 +221,7 @@ public class RoomServiceImpl implements RoomService {
         return 0;
     }
 
+
     private List<RoomWeb> calculate(List<RoomWeb> list) {
         list.stream().forEach(el -> {
             BigDecimal num = el.getAwardList().stream().map(e -> {

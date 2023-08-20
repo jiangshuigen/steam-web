@@ -6,6 +6,8 @@ import com.example.demo.mapper.RedsMapper;
 import com.example.demo.service.RedsService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,6 +18,8 @@ public class RedsServiceImpl implements RedsService {
 
     @Resource
     private RedsMapper redsmapper;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public PageInfo<Reds> getRedsListByPage(RedQuery query) {
@@ -37,6 +41,19 @@ public class RedsServiceImpl implements RedsService {
 
     @Override
     public int saveReds(Reds reds) {
-        return redsmapper.saveReds(reds);
+        redsmapper.saveReds(reds);
+        //维护库存
+        try {
+            redisTemplate.opsForValue().set("RedPackage|" + reds.getId(), reds.getNum());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
+    }
+
+    @Override
+    public int updateNumbReds(Reds red) {
+        redisTemplate.opsForValue().set("RedPackage|" + red.getId(), red.getNum());
+        return redsmapper.updateNumbReds(red);
     }
 }

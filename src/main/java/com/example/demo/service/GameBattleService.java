@@ -7,7 +7,7 @@ import com.github.pagehelper.PageInfo;
 import java.util.List;
 
 public interface GameBattleService {
-    int createEvent(GameArenasSaveDto info);
+    int createEvent(GameArenasSaveDto info,UserDto dto);
 
     PageInfo<GameArenasDto> getEventList(BattleWebQuery base);
 
@@ -22,4 +22,6 @@ public interface GameBattleService {
     GameRankingDto getGameRankingList(GameRankingQuery query);
 
     int socket(int userId);
+
+    int endBattle(int i);
 }

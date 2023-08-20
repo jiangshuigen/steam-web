@@ -16,4 +16,6 @@ public interface RedsMapper {
     int deleteRedsById(int id);
 
     int saveReds(Reds reds);
+
+    int updateNumbReds(Reds red);
 }

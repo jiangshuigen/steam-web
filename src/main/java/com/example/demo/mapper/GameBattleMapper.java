@@ -42,4 +42,6 @@ public interface GameBattleMapper {
     List<BoxRecords> getBoxRecordList(int id);
 
     int updateUserWin(@Param("win") Integer win, @Param("id") int id);
+
+    void deleteBattleById(int battleId);
 }

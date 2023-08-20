@@ -33,4 +33,5 @@ public interface RoomService {
     int joinRoom(JoinRoomDto dto, int inviterId) throws Exception;
 
     int endRoom(int i);
+
 }

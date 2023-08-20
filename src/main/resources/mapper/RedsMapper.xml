@@ -5,20 +5,29 @@
     <select id="getRedsListByPage" parameterType="com.example.demo.dto.RedQuery"
             resultType="com.example.demo.entity.Reds">
         select
+        id,
         re.title,
         re.briefe,
         re.min_recharge as minRecharge,
         re.pay_start_time payStartTime,
         re.num,
-        (re.num-(SELECT COUNT(1) FROM red_records rd  WHERE rd.red_id = re.id)) as residue,
+        (re.num-(SELECT COUNT(1) FROM red_records rd WHERE rd.red_id = re.id)) as residue,
         re.percentage,
+        percentage_min as percentageMin,
         re.start_time startTime,
         re.end_time endTime,
+        IF ( DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ) >= DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' ),
+        '0',
+        '1'
+        ) as `status`,
         re.created_at createdAt
         from reds re
         <where>
             <if test="id>0">
-                re.id = #{id}
+                and re.id = #{id}
+            </if>
+            <if test="status>0">
+                and DATE_FORMAT( end_time , '%Y-%m-%d %H:%i:%s' ) >= DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' )
             </if>
         </where>
         order by re.created_at desc
@@ -31,6 +40,7 @@
             pay_start_time payStartTime,
             num,
             percentage,
+            percentage_min as percentageMin,
             start_time startTime,
             end_time endTime,
             created_at createdAt
@@ -39,7 +49,7 @@
     <delete id="deleteRedsById" parameterType="java.lang.Integer">
         delete from reds where id =#{id}
     </delete>
-    <insert id="saveReds" parameterType="com.example.demo.entity.Reds">
+    <insert id="saveReds" parameterType="com.example.demo.entity.Reds" useGeneratedKeys="true" keyProperty="id">
         insert into reds (
         title,
         briefe,
@@ -47,6 +57,7 @@
         pay_start_time,
         num,
         percentage,
+        percentage_min,
         start_time,
         end_time,
         created_at
@@ -57,9 +68,13 @@
         #{payStartTime},
         #{num},
         #{percentage},
+        #{percentageMin},
         #{startTime},
         #{endTime},
         now()
         )
     </insert>
+    <update id="updateNumbReds" parameterType="com.example.demo.entity.Reds">
+        update reds set num = #{num} where id =#{id}
+    </update>
 </mapper>

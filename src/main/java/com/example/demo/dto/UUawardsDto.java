@@ -33,6 +33,10 @@ public class UUawardsDto {
     private int uuWeaponId;
     @ApiModelProperty("金币")
     private BigDecimal bean;
+    @ApiModelProperty("是否商城 1-是 0-否")
+    private int isShop;
+    @ApiModelProperty("是否对战 1-是 0-否")
+    private int isBattle;
     @ApiModelProperty("创建时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createdAt;

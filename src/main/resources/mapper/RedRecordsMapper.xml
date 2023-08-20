@@ -17,6 +17,33 @@
         </where>
         order by cod.created_at desc
     </select>
-
+    <select id="getRecord" resultType="com.example.demo.entity.RedRecords" parameterType="java.lang.Integer">
+        select
+        id,
+        red_id as redId,
+        user_id as user_id,
+        bean,
+        `type`,
+        created_at,
+        updated_at
+         from red_records where red_id =#{redId} and user_id = #{userId}
+    </select>
+    <insert id="saveRecords" parameterType="com.example.demo.entity.RedRecords">
+          insert into red_records(
+            red_id,
+            user_id,
+            bean,
+            `type`,
+            created_at,
+            updated_at
+          )values (
+            #{redId},
+            #{userId},
+            #{bean},
+            #{type},
+            now(),
+            now()
+          )
+    </insert>
 
 </mapper>

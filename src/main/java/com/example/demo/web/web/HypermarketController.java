@@ -30,6 +30,7 @@ public class HypermarketController {
     @ApiOperation(value = "获取装备列表")
     @PostMapping("/getAwardList")
     public ResultData<PageInfo<UUawardsDto>> getAwardList(@RequestBody UUawardsQuery query) {
+        query.setIsShop(1);
         return ResultData.success(hypermarketservice.getAwardList(query));
     }
 

@@ -19,4 +19,6 @@ public interface RedsService {
     int deleteRedsById(int id);
 
     int saveReds(Reds reds);
+
+    int updateNumbReds(Reds red);
 }

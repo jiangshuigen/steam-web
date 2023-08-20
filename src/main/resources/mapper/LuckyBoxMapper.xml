@@ -106,11 +106,19 @@
         uu_type_id as uuTypeId,
         uu_weapon_id as uuWeaponId,
         bean,
+        is_shop as isShop,
+        is_battle as isBattle,
         created_at as createdAt,
         updated_at as updatedAt
         from steam_items_uu
         <where>
             bean > 0
+            <if test="isShop>0">
+                and is_shop >= #{isShop}
+            </if>
+            <if test="isBattle>0">
+                and is_battle>= #{isBattle}
+            </if>
             <if test="name !=null and name !=''">
                 and `name` like "%"#{name}"%"
             </if>

@@ -358,4 +358,7 @@
          where game_arena_id = #{id}
          and user_id = #{win}
     </update>
+    <delete id="deleteBattleById" parameterType="java.lang.Integer">
+         call deleteBattleById(#{battleId})
+    </delete>
 </mapper>
