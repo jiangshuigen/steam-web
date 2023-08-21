@@ -299,6 +299,8 @@ public class GameBattleServiceImpl implements GameBattleService {
                     gamebattlemapper.saveRanking(ranking);
                 }
             });
+            //解除监听
+            redisTemplate.delete("BATTLE|" + id);
             //socket
             //创建业务消息信息
             JSONObject obj = new JSONObject();
