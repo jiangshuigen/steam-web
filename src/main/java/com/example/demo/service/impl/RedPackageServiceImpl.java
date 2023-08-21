@@ -1,11 +1,14 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.UserDto;
+import com.example.demo.entity.RedKey;
 import com.example.demo.entity.RedRecords;
 import com.example.demo.entity.Reds;
 import com.example.demo.mapper.RedRecordsMapper;
+import com.example.demo.service.RedKeyService;
 import com.example.demo.service.RedPackageService;
 import com.example.demo.service.RedsService;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,10 @@ public class RedPackageServiceImpl implements RedPackageService {
     private RedRecordsMapper redrecordsmapper;
     @Resource
     private RedsService redsservice;
+    @Resource
+    private UserService userservice;
+    @Resource
+    private RedKeyService redkeyservice;
 
     @Override
     @Transactional
@@ -36,9 +43,12 @@ public class RedPackageServiceImpl implements RedPackageService {
         String key = "RedPackage|" + redId;
         Reds red = redsservice.getRedsById(redId);
         Object obj = redisTemplate.opsForValue().get(key);
-        List<RedRecords> list = redrecordsmapper.getRecord(redId, dto.getId());
+        List<RedRecords> list = redrecordsmapper.getRecord(redId, dto.getId(), 1);
         if (!CollectionUtils.isEmpty(list)) {
             throw new Exception("您已打开过该红包，只能打开一次！");
+        }
+        if (red.getNum() < 1) {
+            throw new Exception("您来晚了，红包抢完了！");
         }
         Lock lock = new ReentrantLock();// 重入锁
         try {
@@ -61,6 +71,10 @@ public class RedPackageServiceImpl implements RedPackageService {
                         .build();
                 //保存记录
                 redrecordsmapper.saveRecords(redRecords);
+                //
+                BigDecimal balance = dto.getBean().add(costb);
+                //金币
+                userservice.updateBean(balance, dto.getId());
                 return String.valueOf(costb);
             }
         } catch (Exception e) {
@@ -70,4 +84,31 @@ public class RedPackageServiceImpl implements RedPackageService {
         }
         return null;
     }
+
+    @Override
+    @Transactional
+    public String snatchKeyPackage(UserDto dto, String keyCode) throws Exception {
+        RedKey redkey = redkeyservice.getRedsByKey(keyCode);
+        if (ObjectUtils.isEmpty(redkey)) {
+            throw new Exception("红包已经领光了");
+        }
+        List<RedRecords> list = redrecordsmapper.getRecord(redkey.getId(), dto.getId(), 2);
+        if (!CollectionUtils.isEmpty(list)) {
+            throw new Exception("您已打开过该红包，只能打开一次！");
+        }
+        redkeyservice.updateStatus(keyCode);
+        RedRecords redRecords = RedRecords.builder()
+                .redId(redkey.getId())
+                .userId(dto.getId())
+                .bean(redkey.getBean())
+                .type(2)
+                .build();
+        //保存记录
+        redrecordsmapper.saveRecords(redRecords);
+        BigDecimal balance = dto.getBean().add(redkey.getBean());
+        //得到金币
+        userservice.updateBean(balance, dto.getId());
+        return String.valueOf(redkey.getBean());
+    }
+
 }

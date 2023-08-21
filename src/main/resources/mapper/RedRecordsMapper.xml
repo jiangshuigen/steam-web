@@ -26,7 +26,10 @@
         `type`,
         created_at,
         updated_at
-         from red_records where red_id =#{redId} and user_id = #{userId}
+         from red_records
+         where red_id =#{redId}
+         and user_id = #{userId}
+         and `type` = #{type}
     </select>
     <insert id="saveRecords" parameterType="com.example.demo.entity.RedRecords">
           insert into red_records(
