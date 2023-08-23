@@ -26,6 +26,10 @@ public class DirectRabbitConfig {
         return new Queue(Constant.USER_MESSAGE, true);
     }
 
+    @Bean
+    public Queue DirectQueue_callback() {
+        return new Queue(Constant.ORDER_CALLBACK_MESSAGE, true);
+    }
     /**
      * 交换机
      * @return
@@ -34,13 +38,19 @@ public class DirectRabbitConfig {
     DirectExchange DirectExchange() {
         return new DirectExchange(Constant.USER_DIRECT_EXCHANGE, true, false);
     }
-
+    @Bean
+    DirectExchange DirectExchange_callback() {
+        return new DirectExchange(Constant.ORDER_CALLBACK_DIRECT_EXCHANGE, true, false);
+    }
 
     @Bean
     Binding bindingDirect() {
-        return BindingBuilder.bind(DirectQueue()).to(DirectExchange()).with(Constant.DIRECT_ROUTING);
+        return BindingBuilder.bind(DirectQueue_callback()).to(DirectExchange_callback()).with(Constant.DIRECT_ROUTING);
     }
-
+    @Bean
+    Binding bindingDirect_callback() {
+        return BindingBuilder.bind(DirectQueue()).to(DirectExchange()).with(Constant.ORDER_CALLBACK_DIRECT_ROUTING);
+    }
 
     @Bean
     DirectExchange lonelyDirectExchange() {

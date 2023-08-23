@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.dto.BeanRecordQuery;
+import com.example.demo.dto.Callback;
 import com.example.demo.entity.BeanRecord;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,4 +15,12 @@ public interface BeanRecordMapper {
     BigDecimal queryBeanRecords(@Param("userId") int userId, @Param("payStartTime") Date payStartTime);
 
     BigDecimal queryUserBeanRecords(@Param("userId") int userId);
+
+    int insertBeanReacord(BeanRecord record);
+
+    int updateBeanRecordsStatus(Callback callback);
+
+    BeanRecord queryBeanRecordsByCode(String code);
+
+    BigDecimal queryAllBeanRecords(int userId);
 }

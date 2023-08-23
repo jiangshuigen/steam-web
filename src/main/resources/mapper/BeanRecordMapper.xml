@@ -58,4 +58,65 @@
           where user_id = #{userId}
           and status =1
     </select>
+
+    <insert id="insertBeanReacord" parameterType="com.example.demo.entity.BeanRecord">
+        insert into bean_records(
+            user_id,
+            inviter_id,
+            bean,
+            price,
+            finally_price,
+            code,
+            trade_no,
+            status,
+            is_benefit,
+            is_pay_api,
+            created_at
+        )values(
+            #{userId},
+            #{inviterId},
+            #{bean},
+            #{price},
+            #{finallyPrice},
+            #{code},
+            #{tradeNo},
+            #{status},
+            #{isBenefit},
+            #{isPayApi},
+            now()
+        )
+    </insert>
+
+    <update id="updateBeanRecordsStatus" parameterType="com.example.demo.dto.Callback">
+          update bean_records
+          set trade_no =  #{order_id},
+          status =1 ,
+          update_at = now()
+          where code = #{api_order_id}
+    </update>
+    <select id="queryBeanRecordsByCode" resultType="com.example.demo.entity.BeanRecord">
+          select
+        re.id,
+        re.user_id as userId,
+        re.inviter_id as inviterId,
+        re.bean,
+        re.price,
+        re.finally_price as finallyPrice,
+        re.code,
+        re.trade_no as tradeNo,
+        re.status,
+        re.is_benefit as isBenefit,
+        re.is_pay_api as isPayApi,
+        re.created_at as createdAt,
+        re.updated_at as updatedAt
+        from bean_records re
+        where re.code = #{code}
+        limit 1
+    </select>
+
+    <select id="queryAllBeanRecords" resultType="java.math.BigDecimal">
+         select IFNULL(SUM(bean),0) from bean_records
+          where user_id = #{userId}
+          and status =1
+    </select>
 </mapper>

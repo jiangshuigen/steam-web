@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.BeanRecordQuery;
+import com.example.demo.dto.Callback;
 import com.example.demo.entity.BeanRecord;
 import com.example.demo.mapper.BeanRecordMapper;
 import com.example.demo.service.BeanRecordService;
@@ -35,5 +36,25 @@ public class BeanRecordServiceImpl implements BeanRecordService {
     @Override
     public BigDecimal queryUserBeanRecords(int userId) {
         return beanrecordmapper.queryUserBeanRecords(userId);
+    }
+
+    @Override
+    public int insertBeanReacord(BeanRecord record) {
+        return beanrecordmapper.insertBeanReacord(record);
+    }
+
+    @Override
+    public int updateBeanRecordsStatus(Callback callback) {
+        return beanrecordmapper.updateBeanRecordsStatus(callback);
+    }
+
+    @Override
+    public BeanRecord queryBeanRecordsByCode(String api_order_id) {
+        return beanrecordmapper.queryBeanRecordsByCode(api_order_id);
+    }
+
+    @Override
+    public BigDecimal queryAllBeanRecords(int userId) {
+        return beanrecordmapper.queryAllBeanRecords(userId);
     }
 }

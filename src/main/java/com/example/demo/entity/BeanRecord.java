@@ -11,6 +11,7 @@ import java.util.Date;
 public class BeanRecord {
     @ApiModelProperty("主键id")
     private int id;
+    @ApiModelProperty("用户id")
     private int userId;
     @ApiModelProperty("用户名")
     private String userName;
