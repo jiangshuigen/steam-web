@@ -3,11 +3,9 @@ package com.example.demo.service.pay.impl;
 import com.alibaba.fastjson.JSON;
 import com.example.demo.config.AliPayConstant;
 import com.example.demo.dto.AliPayOrderInfo;
-import com.example.demo.dto.BasePage;
 import com.example.demo.dto.Callback;
 import com.example.demo.entity.BeanRecord;
 import com.example.demo.entity.User;
-import com.example.demo.entity.Vip;
 import com.example.demo.service.BeanRecordService;
 import com.example.demo.service.VipService;
 import com.example.demo.service.pay.PayService;
@@ -24,11 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -40,11 +38,9 @@ public class PayServiceImpl implements PayService {
     private RedisTemplate redisTemplate;
     @Resource
     private BeanRecordService beanrecordservice;
-    @Resource
-    private VipService vipservice;
 
     @Override
-    public AliPayOrderInfo getOrderNumber(User usr, int count) {
+    public AliPayOrderInfo getOrderNumber(User usr, int count, HttpServletRequest request) {
         Object ob = redisTemplate.opsForValue().get("PayOrderN-");
         String lock = "";
         if (!ObjectUtils.isEmpty(ob)) {
@@ -88,7 +84,7 @@ public class PayServiceImpl implements PayService {
         }
         map.put("contact", usr.getMobile());
         map.put("callback_url", callbackUrl);
-        map.put("ip_address", "127.0.0.1");
+        map.put("ip_address", this.getRemoteIP(request));
         map.put("pay_type", "0");
         map.put("sign", md5);
         map.put("discount_price", "1");
@@ -123,5 +119,17 @@ public class PayServiceImpl implements PayService {
         return beanrecordservice.updateBeanRecordsStatus(callback);
     }
 
-
+    private String getRemoteIP(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (ip == null || ip.isEmpty() || "unknown".equalsIgnoreCase(ip)) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
 }

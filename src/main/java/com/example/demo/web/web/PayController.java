@@ -51,7 +51,7 @@ public class PayController {
         if (!ObjectUtils.isEmpty(usr)) {
             String ip = request.getRemoteAddr();
             System.out.println(ip);
-            return payservice.getOrderNumber(usr, count);
+            return payservice.getOrderNumber(usr, count,request);
         } else {
             AliPayOrderInfo info = new AliPayOrderInfo();
             info.setErrMsg("请登录");
