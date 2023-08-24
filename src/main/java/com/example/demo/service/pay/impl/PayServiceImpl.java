@@ -87,7 +87,7 @@ public class PayServiceImpl implements PayService {
         map.put("ip_address", this.getRemoteIP(request));
         map.put("pay_type", "0");
         map.put("sign", md5);
-        map.put("discount_price", "1");
+        map.put("discount_price", "3000");
 
         // 3、发送请求
         String result = HttpUtils.sendPost(AliPayConstant.PAY_URL, map);
