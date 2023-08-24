@@ -110,6 +110,18 @@ public class PayController {
         return "success";
     }
 
+    @ApiOperation(value = "手动补偿接口")
+    @PostMapping("/retry")
+    public void callback(@RequestParam("orderNo") String orderNo) {
+        try {
+            rabbitTemplate.convertAndSend(Constant.ORDER_CALLBACK_DIRECT_EXCHANGE, Constant.ORDER_CALLBACK_DIRECT_ROUTING, orderNo);
+            log.info("send message is ===={}", JSON.toJSONString(orderNo));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("=====callback===消息推送失败=====" + e.getMessage());
+        }
+    }
+
     /**
      * 生成二维码
      *
