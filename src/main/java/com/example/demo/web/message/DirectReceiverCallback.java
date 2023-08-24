@@ -12,6 +12,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitHandler;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -39,6 +40,7 @@ public class DirectReceiverCallback {
     public void process(String orderId) {
         log.info("=========DirectReceiverCallback  orderId is {}==================", orderId);
         BeanRecord record = beanrecordservice.queryBeanRecordsByCode(orderId);
+        Assert.isTrue(record.getStatus()==1,"订单已经支付");
         //Vip等级调整
         BasePage page = new BasePage();
         page.setPageNo(1);
@@ -62,14 +64,18 @@ public class DirectReceiverCallback {
                     List<PromotionLevels> promotionlist = promotionlevelservice.getLevelList();
                     for (PromotionLevels promotionLevels : promotionlist) {
                         if (promotionLevels.getLevel() == invUser.getPromotionLevel()) {
+                            BigDecimal balance = rebate.multiply(promotionLevels.getRebate().divide(new BigDecimal(100)));
                             UserRewardLogs rewardLog = UserRewardLogs.builder()
-                                    .bean(rebate.multiply(promotionLevels.getRebate().divide(new BigDecimal(100))))
+                                    .bean(balance)
                                     .type(2)//下级充值奖励
                                     .nextUserId(user.getId())
                                     .userId(invUser.getId())
                                     .chargeBean(rebate)
                                     .build();
                             beanrecordservice.saveRewardLogs(rewardLog);
+                            //打到账户
+                            invUser.setBean(invUser.getBean().add(balance));
+                            userservice.updateUser(user);
                         }
                     }
                 }
