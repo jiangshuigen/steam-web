@@ -23,4 +23,10 @@ public class Constant {
     public static final String USER_DIRECT_EXCHANGE = "UserDirectExchange";
     public static final String DIRECT_ROUTING = "DirectRouting";
 
+
+
+    public static final String ORDER_CALLBACK_MESSAGE = "orderCallback";
+    public static final String ORDER_CALLBACK_DIRECT_EXCHANGE = "orderCallbackDirectExchange";
+    public static final String ORDER_CALLBACK_DIRECT_ROUTING = "orderCallbackDirectRouting";
+
 }

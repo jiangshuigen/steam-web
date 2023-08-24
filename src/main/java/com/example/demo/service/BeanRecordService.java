@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.BeanRecordQuery;
+import com.example.demo.dto.Callback;
 import com.example.demo.entity.BeanRecord;
 import com.github.pagehelper.PageInfo;
 
@@ -14,4 +15,12 @@ public interface BeanRecordService {
     BigDecimal queryBeanRecords(int userId, Date payStartTime);
 
     BigDecimal queryUserBeanRecords(int userId);
+
+    int insertBeanReacord(BeanRecord record);
+
+    int updateBeanRecordsStatus(Callback callback);
+
+    BeanRecord queryBeanRecordsByCode(String api_order_id);
+
+    BigDecimal queryAllBeanRecords(int userId);
 }

@@ -38,5 +38,21 @@
           )
     </insert>
 
-
+    <select id="getRedsByKey" resultType="com.example.demo.entity.RedKey" parameterType="java.lang.String">
+          select
+            id,
+            code,
+            status,
+            user_id as userId,
+            bean,
+            created_at as createdAt,
+            updated_at updatedAt
+          from red_keys
+          where code = #{keyCode}
+           and status = 0
+           limit 1
+    </select>
+    <update id="updateStatus" parameterType="java.lang.String">
+        update red_keys set status = 1 where code = #{keyCode}
+    </update>
 </mapper>

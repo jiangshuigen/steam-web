@@ -69,4 +69,26 @@ public class RedPackageController {
     }
 
 
+    /**
+     * 输入口令领取口令红包
+     * @param request
+     * @param keyCode
+     * @return
+     */
+    @ApiOperation(value = "领取口令红包")
+    @PostMapping("/keyPackage")
+    public ResultData<String> snatchKeyPackage(HttpServletRequest request, @RequestParam("key") String keyCode) {
+        //获取session
+        HttpSession session = request.getSession();
+        UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
+        if (ObjectUtils.isEmpty(dto)) {
+            return ResultData.fail("403", "未登录");
+        }
+        try {
+            return ResultData.success(redpackageservice.snatchKeyPackage(dto, keyCode));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultData.fail("500", e.getMessage());
+        }
+    }
 }

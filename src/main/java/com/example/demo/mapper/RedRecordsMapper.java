@@ -11,5 +11,5 @@ public interface RedRecordsMapper {
 
     int saveRecords(RedRecords redRecords);
 
-    List<RedRecords> getRecord(@Param("redId") int redId, @Param("userId") int userId);
+    List<RedRecords> getRecord(@Param("redId") int redId, @Param("userId") int userId, @Param("type") int type);
 }

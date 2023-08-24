@@ -13,6 +13,7 @@
         created_at createdAt,
         updated_at updatedAt
          from vip
+         order by `level`
    </select>
     <select id="getVipById" resultType="com.example.demo.entity.Vip">
         select

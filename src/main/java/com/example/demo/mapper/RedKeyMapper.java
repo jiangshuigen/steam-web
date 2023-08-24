@@ -10,4 +10,8 @@ public interface RedKeyMapper {
     List<RedKey> getRedsListByPage(RedKeyQuery query);
 
     int saveRedKey(RedKey redkey);
+
+    RedKey getRedsByKey(String keyCode);
+
+    int updateStatus(String keyCode);
 }

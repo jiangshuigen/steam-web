@@ -43,4 +43,14 @@ public class RedKeyServiceImpl implements RedKeyService {
         }
         return flag;
     }
+
+    @Override
+    public RedKey getRedsByKey(String keyCode) {
+        return redkeymapper.getRedsByKey(keyCode);
+    }
+
+    @Override
+    public int updateStatus(String keyCode) {
+        return redkeymapper.updateStatus(keyCode);
+    }
 }

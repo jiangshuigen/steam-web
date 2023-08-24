@@ -9,4 +9,8 @@ public interface RedKeyService {
     PageInfo<RedKey> getRedsListByPage(RedKeyQuery query);
 
     int saveRedKey(RedKeyDto redkeydto);
+
+    RedKey getRedsByKey(String keyCode);
+
+    int updateStatus(String keyCode);
 }
