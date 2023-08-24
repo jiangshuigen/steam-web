@@ -91,7 +91,7 @@
           update bean_records
           set trade_no =  #{order_id},
           status =1 ,
-          update_at = now()
+          updated_at = now()
           where code = #{api_order_id}
     </update>
     <select id="queryBeanRecordsByCode" resultType="com.example.demo.entity.BeanRecord">
@@ -119,4 +119,22 @@
           where user_id = #{userId}
           and status =1
     </select>
+
+    <insert id="saveRewardLogs" parameterType="com.example.demo.entity.UserRewardLogs">
+        insert into user_reward_logs(
+        user_id,
+        `type`,
+        next_user_id,
+        bean,
+        charge_bean,
+        created_at
+        )values(
+        #{userId},
+        #{type},
+        #{nextUserId},
+        #{bean},
+        #{chargeBean},
+        now()
+        )
+    </insert>
 </mapper>
