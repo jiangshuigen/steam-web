@@ -133,7 +133,7 @@
         #{type},
         #{nextUserId},
         #{bean},
-        #{chargeBean},
+        ifnull(#{chargeBean},0),
         now()
         )
     </insert>
