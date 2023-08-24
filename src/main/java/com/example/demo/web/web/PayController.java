@@ -10,19 +10,22 @@ import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import com.example.demo.service.pay.PayService;
 import com.example.demo.util.Md5Utils;
+import com.example.demo.util.QRCodeUtils;
 import com.example.demo.util.SignUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.DigestUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
 import java.util.LinkedHashMap;
 
 @RestController
@@ -54,7 +57,7 @@ public class PayController {
         if (!ObjectUtils.isEmpty(usr)) {
             String ip = request.getRemoteAddr();
             System.out.println(ip);
-            return payservice.getOrderNumber(usr, count,request);
+            return payservice.getOrderNumber(usr, count, request);
         } else {
             AliPayOrderInfo info = new AliPayOrderInfo();
             info.setErrMsg("请登录");
@@ -106,4 +109,30 @@ public class PayController {
         }
         return "success";
     }
+
+    /**
+     * 生成二维码
+     *
+     * @param request
+     * @param response
+     * @return
+     */
+    @GetMapping("/addOneQRCode")
+    @ApiOperation(value = "成功回调url生成二维码")
+    public String addOneQRCode(HttpServletRequest request, HttpServletResponse response, @RequestParam("url") String url) {
+        BufferedImage image = null;
+        //这里可以先通过查库将需要生成的数据拼接到content中，然后作为二维码的标题
+        String content = "支付二维码";
+        try {
+            image = QRCodeUtils.generateQrCodeBack(url, content);
+            ServletOutputStream os = response.getOutputStream();
+            ImageIO.write(image, "jpg", os);
+            return "success";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "fail";
+    }
+
+
 }
