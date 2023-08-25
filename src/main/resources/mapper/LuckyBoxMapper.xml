@@ -45,11 +45,15 @@
         insert into award_types(
                 `name`,
                 cover,
-                sort
+                sort,
+                uu_type_id,
+                uu_weapon_id
         )values(
               #{name},
               #{cover},
-              #{sort}
+              #{sort},
+              #{uuTypeId},
+              #{uuWeaponId}
         )
     </insert>
 
