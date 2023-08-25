@@ -28,7 +28,13 @@
                 cover =#{cover},
             </if>
             <if test="sort >0">
-                sort =#{sort}
+                sort =#{sort},
+            </if>
+            <if test="uuTypeId >0">
+                uu_type_id =#{uuTypeId},
+            </if>
+            <if test="sort >0">
+                uu_weapon_id =#{uuWeaponId},
             </if>
         </set>
         <where>
