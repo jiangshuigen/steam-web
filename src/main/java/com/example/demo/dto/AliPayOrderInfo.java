@@ -28,7 +28,7 @@ public class AliPayOrderInfo {
         private int status;
         @ApiModelProperty("二维码")
         @JSONField(name = "url")
-        private int url;
+        private String url;
 
     }
 }

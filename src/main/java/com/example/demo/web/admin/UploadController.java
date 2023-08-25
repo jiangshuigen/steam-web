@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/upload")
+@RequestMapping("/admin/upload")
 @Api(value = "图片上传", tags = {"图片上传"})
 public class UploadController {
 

@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.dto.BeanRecordQuery;
 import com.example.demo.dto.Callback;
 import com.example.demo.entity.BeanRecord;
+import com.example.demo.entity.UserRewardLogs;
 import com.github.pagehelper.PageInfo;
 
 import java.math.BigDecimal;
@@ -23,4 +24,6 @@ public interface BeanRecordService {
     BeanRecord queryBeanRecordsByCode(String api_order_id);
 
     BigDecimal queryAllBeanRecords(int userId);
+
+    int saveRewardLogs(UserRewardLogs rewardLogs);
 }

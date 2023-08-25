@@ -68,7 +68,7 @@ public class PayServiceImpl implements PayService {
          */
         map.put("app_key", AliPayConstant.APP_KEY);
         map.put("api_domain", AliPayConstant.API_DOMAIN);
-        map.put("goods_id", "796");
+        map.put("goods_id", "805");
         map.put("goods_num", "1");
         map.put("order_id", orderNum);
         map.put("is_mobile", "1");
@@ -87,7 +87,7 @@ public class PayServiceImpl implements PayService {
         map.put("ip_address", this.getRemoteIP(request));
         map.put("pay_type", "0");
         map.put("sign", md5);
-        map.put("discount_price", "1");
+        map.put("discount_price", String.valueOf(count * 100));
 
         // 3、发送请求
         String result = HttpUtils.sendPost(AliPayConstant.PAY_URL, map);
