@@ -13,7 +13,14 @@
          from award_types order  by  sort
     </select>
     <select id="getTypeById" resultType="com.example.demo.entity.AwardTypes">
-        select * from award_types where id =#{id} limit 1
+        select
+         id,
+            `name`,
+            cover,
+            IFNULL(uu_type_id,0) as uuTypeId,
+            IFNULL(uu_weapon_id,0) as uuWeaponId,
+            sort
+         from award_types where id =#{id} limit 1
     </select>
     <delete id="deleteById" parameterType="java.lang.Integer">
         delete from award_types where id =#{id}
