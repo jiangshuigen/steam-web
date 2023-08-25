@@ -61,4 +61,4 @@ upload:
   url: "http://47.97.5.36:8089/upload"
 
 callback:
-  url: "http://24l01479b5.imdo.co:80/web/pay/callback"
+  url: "http://47.97.5.36:8088/web/pay/callback"
