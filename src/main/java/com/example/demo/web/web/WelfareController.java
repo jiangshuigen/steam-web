@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -42,14 +43,21 @@ public class WelfareController {
         if (ObjectUtils.isEmpty(usr)) {
             return ResultData.fail("403", "请登录");
         }
+        String jsonStr = null;
         try {
-            File file = ResourceUtils.getFile("classpath:welfare/welfare.json");
-            String jsStr = JsonUtil.getJsonStr(file);
-            System.out.println(jsStr);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            InputStream inputStream = this.getClass().getResourceAsStream("/welfare/welfare.json");
+            InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            int ch = 0;
+            StringBuilder sb = new StringBuilder();
+            while ((ch = reader.read()) != -1) {
+                sb.append((char) ch);
+            }
+            reader.close();
+            jsonStr = sb.toString();
+            System.out.println(jsonStr);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
 
         return null;
     }
