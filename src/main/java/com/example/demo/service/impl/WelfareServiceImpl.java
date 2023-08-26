@@ -39,7 +39,7 @@ public class WelfareServiceImpl implements WelfareService {
             String userKey = "UserRecharge|Month" + usr.getId();
             return this.getListLucky("/welfare/welfare_month.json", userKey);
         } else if (type == 3) {
-            String userKey = "UserRecharge|MH" + usr.getId();
+            String userKey = "UserBlindBox|Day" + usr.getId();
             return this.getListLucky("/welfare/welfare_mh.json", userKey);
         }
         return null;
