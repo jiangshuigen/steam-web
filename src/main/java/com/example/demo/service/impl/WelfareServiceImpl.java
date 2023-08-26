@@ -8,7 +8,6 @@ import com.example.demo.service.UserService;
 import com.example.demo.service.WelfareService;
 import com.example.demo.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
-import okio.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -124,11 +123,12 @@ public class WelfareServiceImpl implements WelfareService {
                         red.setList(list);
                         redisTemplate.opsForValue().set(userKey, JSON.toJSON(red));
                         Object ostr = redisTemplate.opsForValue().get("UserWelfare|Day" + usr.getId());
+                        int count = 0;
+                        long time = DateUtils.getTime();
                         if (!ObjectUtils.isEmpty(ostr)) {
-                            int count = Integer.parseInt(ostr.toString());
-                            long time = DateUtils.getTime();
-                            redisTemplate.opsForValue().set("UserWelfare|Day" + usr.getId(), count + number, time, TimeUnit.SECONDS);
+                            count = Integer.parseInt(ostr.toString());
                         }
+                        redisTemplate.opsForValue().set("UserWelfare|Day" + usr.getId(), count + number, time, TimeUnit.SECONDS);
                         return number;
                     } else {
                         log.error("已经领取。重复领取====");
