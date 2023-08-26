@@ -9,4 +9,6 @@ public interface WelfareService {
     List<RechangeWelfare> getRechargeWelfare(User usr, int type);
 
     int getWelfare(User usr, int id, int type);
+
+    int getDays(User usr);
 }

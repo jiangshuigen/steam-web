@@ -6,7 +6,9 @@ import com.example.demo.entity.User;
 import com.example.demo.entity.WelfareRedis;
 import com.example.demo.service.UserService;
 import com.example.demo.service.WelfareService;
+import com.example.demo.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import okio.Timeout;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -85,6 +88,15 @@ public class WelfareServiceImpl implements WelfareService {
         return rewardCount;
     }
 
+    @Override
+    public int getDays(User usr) {
+        Object str = redisTemplate.opsForValue().get("UserWelfare|Day" + usr.getId());
+        if (!ObjectUtils.isEmpty(str)) {
+            return Integer.parseInt(str.toString());
+        }
+        return 0;
+    }
+
 
     private int getReawardById(User usr, int id, String file, String userKey) {
         String jstr = this.getJsonForFile(file);
@@ -111,8 +123,14 @@ public class WelfareServiceImpl implements WelfareService {
                         list.add(id);
                         red.setList(list);
                         redisTemplate.opsForValue().set(userKey, JSON.toJSON(red));
+                        Object ostr = redisTemplate.opsForValue().get("UserWelfare|Day" + usr.getId());
+                        if (!ObjectUtils.isEmpty(ostr)) {
+                            int count = Integer.parseInt(ostr.toString());
+                            long time = DateUtils.getTime();
+                            redisTemplate.opsForValue().set("UserWelfare|Day" + usr.getId(), count + number, time, TimeUnit.SECONDS);
+                        }
                         return number;
-                    }else{
+                    } else {
                         log.error("已经领取。重复领取====");
                         return 0;
                     }

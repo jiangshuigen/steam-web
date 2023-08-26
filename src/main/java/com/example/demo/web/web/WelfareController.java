@@ -61,4 +61,16 @@ public class WelfareController {
         }
         return ResultData.success(welfareservice.getWelfare(usr, id, type));
     }
+
+
+    @ApiOperation(value = "当日获得")
+    @PostMapping("/getDays")
+    public ResultData<List<RoomWeb>> getDays(HttpServletRequest request) {
+        //验证登录
+        User usr = userservice.getLoginUserInfo(request);
+        if (ObjectUtils.isEmpty(usr)) {
+            return ResultData.fail("403", "请登录");
+        }
+        return ResultData.success(welfareservice.getDays(usr));
+    }
 }
