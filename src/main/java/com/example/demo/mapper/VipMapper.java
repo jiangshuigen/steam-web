@@ -11,4 +11,6 @@ public interface VipMapper {
     Vip getVipById(int id);
 
     int updateVip(Vip vip);
+
+    Vip getVipBylv(int lv);
 }

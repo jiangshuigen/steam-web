@@ -1,6 +1,7 @@
 package com.example.demo.web.web;
 
 import com.example.demo.config.ResultData;
+import com.example.demo.dto.VipReturnDto;
 import com.example.demo.entity.RechangeWelfare;
 import com.example.demo.entity.RoomWeb;
 import com.example.demo.entity.User;
@@ -63,6 +64,12 @@ public class WelfareController {
     }
 
 
+    /**
+     * 当日获取
+     *
+     * @param request
+     * @return
+     */
     @ApiOperation(value = "当日获得")
     @PostMapping("/getDays")
     public ResultData<List<RoomWeb>> getDays(HttpServletRequest request) {
@@ -73,4 +80,38 @@ public class WelfareController {
         }
         return ResultData.success(welfareservice.getDays(usr));
     }
+
+
+    /**
+     * 查询会员等级奖励
+     *
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "获取vip列表")
+    @PostMapping("/getVipList")
+    public ResultData<VipReturnDto> getVipList(HttpServletRequest request) {
+        //验证登录
+        User usr = userservice.getLoginUserInfo(request);
+        if (ObjectUtils.isEmpty(usr)) {
+            return ResultData.fail("403", "请登录");
+        }
+        return ResultData.success(welfareservice.getVipList(usr));
+    }
+
+
+    @ApiOperation(value = "领取Vip奖励")
+    @PostMapping("/getVipWelfare")
+    public ResultData<List<RoomWeb>> getVipWelfare(HttpServletRequest request, @RequestParam int lv) {
+        //验证登录
+        User usr = userservice.getLoginUserInfo(request);
+        if (ObjectUtils.isEmpty(usr)) {
+            return ResultData.fail("403", "请登录");
+        }
+        if (lv > usr.getVipLevel()) {
+            return ResultData.fail("403", "非法参数");
+        }
+        return ResultData.success(welfareservice.getVipWelfare(usr, lv));
+    }
+
 }

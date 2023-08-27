@@ -39,4 +39,9 @@ public class VipServiceImpl implements VipService {
         return vipmapper.updateVip(vip);
     }
 
+    @Override
+    public Vip getVipBylv(int lv) {
+        return vipmapper.getVipBylv(lv);
+    }
+
 }

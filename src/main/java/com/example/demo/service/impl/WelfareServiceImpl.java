@@ -1,13 +1,17 @@
 package com.example.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.example.demo.entity.RechangeWelfare;
-import com.example.demo.entity.User;
-import com.example.demo.entity.WelfareRedis;
+import com.example.demo.dto.BasePage;
+import com.example.demo.dto.VipDto;
+import com.example.demo.dto.VipReturnDto;
+import com.example.demo.entity.*;
+import com.example.demo.service.BeanRecordService;
 import com.example.demo.service.UserService;
+import com.example.demo.service.VipService;
 import com.example.demo.service.WelfareService;
 import com.example.demo.util.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -19,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +36,10 @@ public class WelfareServiceImpl implements WelfareService {
     private RedisTemplate redisTemplate;
     @Resource
     private UserService userservice;
+    @Resource
+    private VipService vipservice;
+    @Resource
+    private BeanRecordService beanrecordservice;
 
     @Override
     public List<RechangeWelfare> getRechargeWelfare(User usr, int type) {
@@ -94,6 +103,85 @@ public class WelfareServiceImpl implements WelfareService {
             return Integer.parseInt(str.toString());
         }
         return 0;
+    }
+
+    @Override
+    public VipReturnDto getVipList(User usr) {
+        String userKey = "UserVip|" + usr.getId();
+        VipReturnDto returnDto = new VipReturnDto();
+        //查询累计充值
+        BigDecimal bg = beanrecordservice.queryAllBeanRecords(usr.getId());
+        returnDto.setCount(bg);
+        int nextLevel = usr.getVipLevel() + 1;
+        if (nextLevel > 11) {
+            nextLevel = 11;
+        }
+        returnDto.setNextLevel(nextLevel);
+        List<VipDto> listVip = new ArrayList<>();
+        BasePage page = new BasePage();
+        page.setPageNo(1);
+        page.setPageSize(30);
+        List<Vip> list = vipservice.getVipListByPage(page).getList();
+        for (Vip e : list) {
+            VipDto dto = new VipDto();
+            dto.setStatus("0");
+            BeanUtils.copyProperties(e, dto);
+            Object str = redisTemplate.opsForValue().get(userKey);
+            //可领取
+            if (usr.getVipLevel() >= e.getLevel()) {
+                dto.setStatus("2");
+            }
+            if (!ObjectUtils.isEmpty(str)) {
+                WelfareRedis red = JSON.parseObject(str.toString(), WelfareRedis.class);
+                red.getList().stream().forEach(re -> {
+                    //已领取
+                    if (re == e.getLevel()) {
+                        dto.setStatus("1");
+                    }
+                });
+            } else {
+                WelfareRedis red = new WelfareRedis();
+                red.setUserId(usr.getId());
+                red.setList(new ArrayList<>());
+                redisTemplate.opsForValue().set(userKey, JSON.toJSON(red));
+            }
+            //下一等级差额
+            if (nextLevel == e.getLevel()) {
+                returnDto.setNextCount(e.getThreshold().subtract(returnDto.getCount()));
+            }
+            listVip.add(dto);
+        }
+        returnDto.setList(listVip);
+        return returnDto;
+    }
+
+    @Override
+    public BigDecimal getVipWelfare(User usr, int lv) {
+        Vip vip = vipservice.getVipBylv(lv);
+        String userKey = "UserVip|" + usr.getId();
+        Object str = redisTemplate.opsForValue().get(userKey);
+        if (!ObjectUtils.isEmpty(str)) {
+            WelfareRedis red = JSON.parseObject(str.toString(), WelfareRedis.class);
+            if (red.getList().stream().anyMatch(m -> m.equals(lv))) {
+                log.error("用户：{}的vip等级为{}的奖励已经领取过，请勿重复操作！", usr.getId(), lv);
+            } else {
+                //更新余额
+                UserRewardLogs rewardLog = UserRewardLogs.builder()
+                        .bean(vip.getPacket())
+                        .type(7)//vip升级红包
+                        .nextUserId(usr.getId())
+                        .build();
+                beanrecordservice.saveRewardLogs(rewardLog);
+                //打到账户
+                usr.setBean(usr.getBean().add(vip.getPacket()));
+                userservice.updateUser(usr);
+            }
+            List<Integer> list = red.getList();
+            list.add(lv);
+            red.setList(list);
+            redisTemplate.opsForValue().set(userKey, JSON.toJSON(red));
+        }
+        return vip.getPacket();
     }
 
 
