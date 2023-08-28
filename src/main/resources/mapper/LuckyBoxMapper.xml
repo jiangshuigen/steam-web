@@ -87,7 +87,7 @@
         from box_awards
         <where>
             <if test="name !=null and name !=''">
-                and `name`= like "%"#{name}"%"
+                and `name` like "%"#{name}"%"
             </if>
             <if test="boxId>0">
                 and box_id= #{boxId}
