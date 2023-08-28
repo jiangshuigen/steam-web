@@ -3,7 +3,6 @@ package com.example.demo.web.admin;
 import com.example.demo.config.ResultData;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Box;
-import com.example.demo.entity.BoxAwards;
 import com.example.demo.service.BoxService;
 import com.example.demo.service.HypermarketService;
 import com.github.pagehelper.PageInfo;
@@ -76,20 +75,23 @@ public class BoxsController {
 
     /**
      * 获取可选择的装备列表
+     *
      * @param query
      * @return
      */
     @ApiOperation(value = "获取可选择的装备列表")
     @PostMapping("/getAwardList")
-    public ResultData<PageInfo<UUawardsDto>> getAwardList(@RequestBody BasePage query) {
+    public ResultData<PageInfo<UUawardsDto>> getAwardList(@RequestBody AwardQuery query) {
         UUawardsQuery queryVo = new UUawardsQuery();
         BeanUtils.copyProperties(query, queryVo);
         queryVo.setIsBattle(1);//对战
+        queryVo.setName(query.getName());
         return ResultData.success(hypermarketservice.getAwardList(queryVo));
     }
 
     /**
      * 新增奖品
+     *
      * @param dto
      * @return
      */

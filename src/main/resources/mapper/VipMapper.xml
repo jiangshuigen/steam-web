@@ -50,4 +50,17 @@
             id = #{id}
         </where>
     </update>
+    <select id="getVipBylv" resultType="com.example.demo.entity.Vip" parameterType="java.lang.Integer">
+         select
+        id,
+        `level`,
+        threshold,
+        rebate,
+        packet,
+        description,
+        created_at as createdAt,
+        updated_at as updatedAt from vip
+         where  `level`= #{lv}
+         limit 1
+    </select>
 </mapper>

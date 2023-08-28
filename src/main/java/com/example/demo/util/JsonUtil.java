@@ -13,10 +13,9 @@ import java.util.Random;
 public class JsonUtil {
 
     /**
-     *
      * @param jsonString 要保存的JSON串
-     * @param filePath 保存到的文件路径
-     * @param fileName  文件名称
+     * @param filePath   保存到的文件路径
+     * @param fileName   文件名称
      * @return
      */
     //保存json 文件
@@ -76,7 +75,7 @@ public class JsonUtil {
         return rannum + str;// 当前时间
     }
 
-    public static String convertStreamToString(InputStream inputStream){
+    public static String convertStreamToString(InputStream inputStream) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         StringBuilder sb = new StringBuilder();
 
@@ -98,4 +97,24 @@ public class JsonUtil {
         return sb.toString();
     }
 
+
+    public static String getJsonStr(File jsonFile) {
+        String jsonStr = "";
+        try {
+            FileReader fileReader = new FileReader(jsonFile);
+            Reader reader = new InputStreamReader(new FileInputStream(jsonFile), "utf-8");
+            int ch = 0;
+            StringBuffer sb = new StringBuffer();
+            while ((ch = reader.read()) != -1) {
+                sb.append((char) ch);
+            }
+            fileReader.close();
+            reader.close();
+            jsonStr = sb.toString();
+            return jsonStr;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

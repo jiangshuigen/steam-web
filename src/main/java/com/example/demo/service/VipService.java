@@ -11,4 +11,6 @@ public interface VipService {
     Vip getVipById(int id);
 
     int updateVip(Vip vip);
+
+    Vip getVipBylv(int lv);
 }

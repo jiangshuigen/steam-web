@@ -15,6 +15,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -306,6 +309,36 @@ public class GameBattleServiceImpl implements GameBattleService {
             JSONObject obj = new JSONObject();
             obj.put("status", "start");//开启动画
             webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
+            //盲盒对战任务
+            listUser.stream().forEach(e->{
+                try {
+                    String userKey = "UserBlindBox|Day" + e.getGameUserId();
+                    //计算失效时间
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                    String date = sdf.format(new Date());
+                    Date date2 = DateUtils.parseDate(date + " 23:59:59", "yyyy-MM-dd HH:mm:ss");
+                    Calendar calendar1 = Calendar.getInstance();
+                    calendar1.setTime(date2);
+                    Calendar calendar2 = Calendar.getInstance();
+                    calendar2.setTime(new Date());
+                    long time = calendar1.getTimeInMillis() / 1000 - calendar2.getTimeInMillis() / 1000;
+                    Object str = redisTemplate.opsForValue().get(userKey);
+                    WelfareRedis red = null;
+                    if (!ObjectUtils.isEmpty(str)) {
+                        red = JSON.parseObject(str.toString(), WelfareRedis.class);
+                        red.setCost(red.getCost() + dto.getTotalBean().intValue());
+                    } else {
+                        red = new WelfareRedis();
+                        red.setCost(dto.getTotalBean().intValue());
+                        red.setUserId(e.getGameUserId());
+                        red.setList(new ArrayList<>());
+                    }
+                    redisTemplate.opsForValue().set(userKey, JSON.toJSON(red), time, TimeUnit.SECONDS);
+                    log.info("===========充值进度增加=====================");
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+            });
             return listBattle;
         } else {
             //创建业务消息信息
