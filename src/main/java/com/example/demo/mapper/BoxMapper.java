@@ -17,4 +17,6 @@ public interface BoxMapper {
     List<Box> getIndexBoxList();
 
     List<Box> getGameArenaBoxList();
+
+    int deleteBoxById(int id);
 }
