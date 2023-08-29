@@ -9,6 +9,8 @@ import com.example.demo.service.UserService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -17,7 +19,7 @@ import javax.annotation.Resource;
 @RequestMapping("/admin/user")
 @Api(value = "用户管理", tags = {"用户管理"})
 public class UserController {
-
+    private static final PasswordEncoder ENCODER = new BCryptPasswordEncoder();
     @Resource
     private UserService userservice;
 
@@ -31,6 +33,17 @@ public class UserController {
     @PostMapping("/getUsers")
     public ResultData<PageInfo<User>> getUserList(@RequestBody UserQuery query) {
         return ResultData.success(userservice.getUserListByPage(query));
+    }
+
+    /**
+     * 密码重置
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "密码重置")
+    @PostMapping("/updatePwd")
+    public ResultData updatePwd(@RequestParam("id") int id) {
+        return ResultData.success(userservice.updatePwd(id));
     }
 
 
@@ -73,6 +86,7 @@ public class UserController {
 
     /**
      * 清理缓存
+     *
      * @param
      * @return
      */

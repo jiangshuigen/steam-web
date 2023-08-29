@@ -47,9 +47,11 @@ public interface UserMapper {
 
     User queryUserByInviteCode(String inviteCode);
 
-    int updateBean(@Param("balance") BigDecimal balance, @Param("id")int id);
+    int updateBean(@Param("balance") BigDecimal balance, @Param("id") int id);
 
     int resetCache();
 
     int sendReward(int userId);
+
+    int updatePwd(@Param("id") int id, @Param("pwd") String pwd);
 }

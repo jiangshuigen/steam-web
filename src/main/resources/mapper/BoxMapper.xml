@@ -151,4 +151,8 @@
     <delete id="deleteBoxById" parameterType="java.lang.Integer">
         delete from boxs where id =#{id}
     </delete>
+
+    <delete id="deleteAward" parameterType="java.lang.Integer">
+        delete from box_awards where id =#{id}
+    </delete>
 </mapper>

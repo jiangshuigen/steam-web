@@ -25,4 +25,6 @@ public interface BoxService {
     int saveAward(SaveAwardsDto dto);
 
     int deleteBoxById(int id);
+
+    int deleteAward(int id);
 }

@@ -51,4 +51,6 @@ public interface UserService {
     PageInfo<UserMessage> getMessageList(MessageQuery query);
 
     int batchList(int[] ids);
+
+    int updatePwd(int id);
 }

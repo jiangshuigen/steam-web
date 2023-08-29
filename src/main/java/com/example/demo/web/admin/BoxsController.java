@@ -47,6 +47,12 @@ public class BoxsController {
         return ResultData.success(boxservice.deleteBoxById(id));
     }
 
+    @ApiOperation(value = "删除奖品")
+    @GetMapping("/deleteAward")
+    public ResultData<Box> deleteAwardById(@RequestParam int id) {
+        return ResultData.success(boxservice.deleteAward(id));
+    }
+
     @ApiOperation(value = "主键查询")
     @GetMapping("/getBox")
     public ResultData<Box> getBoxById(@RequestParam int id) {
@@ -73,7 +79,7 @@ public class BoxsController {
      * @param box
      * @return
      */
-    @ApiOperation(value = "新增")
+    @ApiOperation(value = "新增BOX")
     @PostMapping("/saveBox")
     public ResultData saveBox(@RequestBody Box box) {
         return ResultData.success(boxservice.saveBox(box));

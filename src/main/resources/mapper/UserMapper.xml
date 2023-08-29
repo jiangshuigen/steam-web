@@ -165,6 +165,7 @@
         ua.inviter_id as inviterId,
         ua.avatar,
         bean,
+        ua.password pwd,
         ua.steam_url steamUrl ,
         ua.vip_level vipLevel,
         ua.total_recharge as totalRecharge,
@@ -176,9 +177,6 @@
             </if>
             <if test="mobile!=null and mobile !=''">
                 and ua.mobile =#{mobile}
-            </if>
-            <if test="password!=null and password !=''">
-                and ua.password =#{password}
             </if>
         </where>
         limit 1
@@ -379,5 +377,9 @@
         update users
         set bean=bean+0.01
         where id =#{userId}
+    </update>
+
+    <update id="updatePwd">
+        update users set password =#{pwd} where id =#{id}
     </update>
 </mapper>

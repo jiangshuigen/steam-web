@@ -35,4 +35,6 @@ public class UserDto {
     private BigDecimal nextVipLevelEXP;
     @ApiModelProperty("steam交易链接")
     private String steamUrl;
+    @ApiModelProperty("pwd")
+    private String pwd;
 }

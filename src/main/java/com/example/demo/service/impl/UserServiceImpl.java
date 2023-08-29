@@ -28,13 +28,13 @@ import org.apache.http.util.EntityUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisConnectionUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -53,7 +53,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
-
+    private final BCryptPasswordEncoder ENCODER = new BCryptPasswordEncoder();
     @Resource
     private UserMapper userMapper;
 
@@ -117,8 +117,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto userLogin(HttpServletRequest request, LoginInfo info) {
-        //用户名密码查询（密文）
         UserDto dto = userMapper.queryUserInfo(info);
+        boolean f = ENCODER.matches(info.getPassword(), dto.getPwd());
+        if (!f) {
+            return null;
+        }
         if (!ObjectUtils.isEmpty(dto)) {
             NoticeDto ms = NoticeDto.builder()
                     .userId(dto.getId())
@@ -174,6 +177,7 @@ public class UserServiceImpl implements UserService {
         if (!(code != null && code.equals(user.getCode()))) {
             return "图形验证码错误";
         }
+        user.setPassword(ENCODER.encode(user.getPassword()));
         int i = userMapper.register(user);
         return i + "";
     }
@@ -303,6 +307,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public int batchList(int[] ids) {
         return usermessagemapper.batchList(ids);
+    }
+
+    @Override
+    public int updatePwd(int id) {
+        String pwd = ENCODER.encode("123456");
+        return userMapper.updatePwd(id, pwd);
     }
 
 
