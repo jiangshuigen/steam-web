@@ -23,4 +23,6 @@ public interface BoxService {
     List<Box>  getGameArenaBoxList();
 
     int saveAward(SaveAwardsDto dto);
+
+    int deleteBoxById(int id);
 }

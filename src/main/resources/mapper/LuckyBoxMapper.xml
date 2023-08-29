@@ -356,12 +356,12 @@
                 `type` = #{type},
             </if>
             <if test="luckInterval !=null and luckInterval !=''">
-                luck_interval =#{luckInterval}
+                luck_interval =#{luckInterval},
             </if>
             <if test="luckIntervalAnchor !=null and luckIntervalAnchor !=''">
-                luck_interval_anchor =#{luckIntervalAnchor}
+                luck_interval_anchor =#{luckIntervalAnchor},
             </if>
-            <if test="isLuckyBox >0">
+            <if test="isLuckyBox != null ">
                 is_lucky_box = #{isLuckyBox},
             </if>
             <if test="bean >0">

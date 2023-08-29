@@ -147,4 +147,8 @@
           now()
         )
     </insert>
+
+    <delete id="deleteBoxById" parameterType="java.lang.Integer">
+        delete from boxs where id =#{id}
+    </delete>
 </mapper>

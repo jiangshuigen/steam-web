@@ -61,4 +61,9 @@ public class BoxServiceImpl implements BoxService {
     public int saveAward(SaveAwardsDto dto) {
         return mapper.saveAward(dto);
     }
+
+    @Override
+    public int deleteBoxById(int id) {
+        return boxmapper.deleteBoxById(id);
+    }
 }

@@ -41,6 +41,12 @@ public class BoxsController {
      * @param id
      * @return
      */
+    @ApiOperation(value = "删除BOX")
+    @GetMapping("/deleteBox")
+    public ResultData<Box> deleteBoxById(@RequestParam int id) {
+        return ResultData.success(boxservice.deleteBoxById(id));
+    }
+
     @ApiOperation(value = "主键查询")
     @GetMapping("/getBox")
     public ResultData<Box> getBoxById(@RequestParam int id) {
