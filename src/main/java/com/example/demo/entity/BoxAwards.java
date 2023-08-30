@@ -39,6 +39,8 @@ public class BoxAwards {
     private int luckOddsLeave;
     @ApiModelProperty("金豆")
     private BigDecimal bean;
+    @ApiModelProperty("最大T币")
+    private BigDecimal maxT;
     @ApiModelProperty("装备类型")
     private int type;
     @ApiModelProperty("幸运开箱 0:否 1:是")

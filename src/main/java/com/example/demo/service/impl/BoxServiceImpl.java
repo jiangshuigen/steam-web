@@ -71,4 +71,9 @@ public class BoxServiceImpl implements BoxService {
     public int deleteAward(int id) {
         return boxmapper.deleteAward(id);
     }
+
+    @Override
+    public BoxAwards getAwardsById(int id) {
+        return mapper.getBoxAwardById(id);
+    }
 }

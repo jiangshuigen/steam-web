@@ -352,6 +352,30 @@
     <update id="updateAward" parameterType="com.example.demo.entity.BoxAwards">
         update box_awards
         <set>
+            <if test="name !=null and name!=''">
+                `name` = #{name},
+            </if>
+            <if test="cover !=null and cover!=''">
+                cover = #{cover},
+            </if>
+            <if test="dura >0">
+                dura = #{dura},
+            </if>
+            <if test="lv >0">
+                lv = #{lv},
+            </if>
+            <if test="odds >0">
+                odds = #{odds},
+            </if>
+            <if test="realOdds >0">
+                real_odds = #{realOdds},
+            </if>
+            <if test="anchorOdds >0">
+                anchor_odds = #{anchorOdds},
+            </if>
+            <if test="clearLucky >0">
+                clear_lucky = #{clearLucky},
+            </if>
             <if test="type >0">
                 `type` = #{type},
             </if>
@@ -369,6 +393,9 @@
             </if>
             <if test="shopInventory >0">
                 shop_inventory = #{shopInventory},
+            </if>
+            <if test="maxT >0">
+                max_t = #{maxT},
             </if>
         </set>
         <where>

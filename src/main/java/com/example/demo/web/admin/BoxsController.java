@@ -53,10 +53,21 @@ public class BoxsController {
         return ResultData.success(boxservice.deleteAward(id));
     }
 
-    @ApiOperation(value = "主键查询")
+    @ApiOperation(value = "主键查询BOX信息")
     @GetMapping("/getBox")
     public ResultData<Box> getBoxById(@RequestParam int id) {
         return ResultData.success(boxservice.getBoxById(id));
+    }
+
+    /**
+     * 查询奖品信息
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "主键查询奖品信息")
+    @GetMapping("/getAwards")
+    public ResultData<Box> getAwardsById(@RequestParam int id) {
+        return ResultData.success(boxservice.getAwardsById(id));
     }
 
 
