@@ -111,9 +111,7 @@
             <if test="bean !=null and bean !=''">
                 bean =#{bean},
             </if>
-            <if test="isPutaway !=null and isPutaway !=''">
-                is_putaway =#{isPutaway},
-            </if>
+            is_putaway =#{isPutaway},
             updated_at =now()
         </set>
         <where>
