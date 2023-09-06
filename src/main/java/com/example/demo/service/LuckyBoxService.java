@@ -31,5 +31,5 @@ public interface LuckyBoxService {
 
     List<LuckyBoxRecord> getHistory(int awardId);
 
-    List<BoxAwards> openAward(OpenDto dto,UserDto user);
+    List<BoxAwards> openAward(OpenDto dto,UserDto user) throws Exception;
 }

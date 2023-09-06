@@ -320,7 +320,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
 
     @Override
     @Transactional
-    public List<BoxAwards> openAward(OpenDto dto, UserDto user) {
+    public List<BoxAwards> openAward(OpenDto dto, UserDto user) throws Exception {
         List<BoxAwards> returnList = new ArrayList<>();
         List<BoxRecords> listReturn = new ArrayList<>();
         BoxAwards boxawards = mapper.getBoxAwardById(dto.getAwardId());
@@ -350,6 +350,9 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         }
         //花费金额
         BigDecimal cost = boxawards.getBean().multiply(dto.getPercent().multiply(new BigDecimal(1.1))).setScale(2, BigDecimal.ROUND_DOWN);
+        if (cost.compareTo(new BigDecimal(3)) == -1) {
+            throw new Exception("金额小于3币");
+        }
         User us = userservice.getUserById(user.getId());
         BigDecimal balance = us.getBean().subtract(cost);
         //扣除金币
