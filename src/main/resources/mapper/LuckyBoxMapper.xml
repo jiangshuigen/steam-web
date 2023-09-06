@@ -297,6 +297,7 @@
             <if test="max>0">
                 and bean <![CDATA[ <=]]>  #{max}
             </if>
+            and is_lucky_box = 1
             and (luck_interval is not NULL or luck_interval_anchor is not NULL )
         </where>
         order by bean
