@@ -139,9 +139,9 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             throw new Exception("宝箱不存在");
         }
         BigDecimal cost = bx.getBean().multiply(new BigDecimal(openbox.getNumb())).setScale(2, BigDecimal.ROUND_DOWN);
-        ;
         BigDecimal balance = user.getBean().subtract(cost);
-        if (user.getBean().compareTo(cost) == -1) {
+        User us = userservice.getUserById(user.getId());
+        if (us.getBean().compareTo(cost) == -1) {
             throw new Exception("请充值");
         } else {
             //扣除金币
@@ -350,7 +350,8 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         }
         //花费金额
         BigDecimal cost = boxawards.getBean().multiply(dto.getPercent().multiply(new BigDecimal(1.1))).setScale(2, BigDecimal.ROUND_DOWN);
-        BigDecimal balance = user.getBean().subtract(cost);
+        User us = userservice.getUserById(user.getId());
+        BigDecimal balance = us.getBean().subtract(cost);
         //扣除金币
         userservice.updateBean(balance, user.getId());
         LuckyBoxRecord record = null;
@@ -440,7 +441,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         //判断是否下一轮
         if (CollectionUtils.isEmpty(listRedis)) {
             log.info("==============新一轮======清理缓存==========");
-            redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor()+ "|"  + openbox.getBoxId(), "");
+            redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + "|" + openbox.getBoxId(), "");
             for (BoxAwards ea : listAward) {
                 if (user.getAnchor().equals(1)) {
                     if (ea.getAnchorOdds() > 0) {

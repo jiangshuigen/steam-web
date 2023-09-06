@@ -77,7 +77,8 @@ public class GameBattleServiceImpl implements GameBattleService {
         us.setWorth(info.getTotalBean());
         int numb = gamebattlemapper.insertArenaUsers(us);
         //扣除费用
-        BigDecimal balance = user.getBean().subtract(total);
+        User uus = userservice.getUserById(user.getId());
+        BigDecimal balance = uus.getBean().subtract(total);
         //扣除金币
         userservice.updateBean(balance, info.getCreateUserId());
         //定时15分钟内未有用户加入则解散

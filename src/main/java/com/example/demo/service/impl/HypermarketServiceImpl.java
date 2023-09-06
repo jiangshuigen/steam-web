@@ -5,6 +5,7 @@ import com.example.demo.dto.UUawardsDto;
 import com.example.demo.dto.UUawardsQuery;
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.BoxRecords;
+import com.example.demo.entity.User;
 import com.example.demo.enumpakage.Dura;
 import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.service.BoxRecordService;
@@ -83,11 +84,12 @@ public class HypermarketServiceImpl implements HypermarketService {
                         .build();
                 reList.add(record);
             }
+            User uus = userservice.getUserById(user.getId());
             //判断余额
-            if (cost.compareTo(user.getBean()) == 1) {
+            if (cost.compareTo(uus.getBean()) == 1) {
                 throw new Exception("余额不足");
             }
-            BigDecimal balance = user.getBean().subtract(cost);
+            BigDecimal balance = uus.getBean().subtract(cost);
             //扣除金币
             userservice.updateBean(balance, user.getId());
             return boxrecordservice.saveBoxRecord(reList);
