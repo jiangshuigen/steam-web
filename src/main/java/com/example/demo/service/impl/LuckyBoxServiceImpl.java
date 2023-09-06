@@ -229,9 +229,6 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         //洗牌
         Collections.shuffle(listRedis);
         int size = openbox.getNumb();
-        if (openbox.getNumb() > listRedis.size()) {
-            size = listRedis.size();
-        }
         for (int i = 0; i < size; i++) {
             if (listReturn.size() >= openbox.getNumb()) {
                 break;
