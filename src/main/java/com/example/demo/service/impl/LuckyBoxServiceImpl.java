@@ -349,7 +349,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             total = (BigDecimal) ob;
         }
         //花费金额
-        BigDecimal cost = boxawards.getBean().multiply(dto.getPercent()).setScale(2, BigDecimal.ROUND_DOWN);
+        BigDecimal cost = boxawards.getBean().multiply(dto.getPercent().multiply(new BigDecimal(1.1))).setScale(2, BigDecimal.ROUND_DOWN);
         BigDecimal balance = user.getBean().subtract(cost);
         //扣除金币
         userservice.updateBean(balance, user.getId());
