@@ -1,4 +1,4 @@
-package com.example.demo.web.admin;
+package com.example.demo.web.web;
 
 
 import io.swagger.annotations.Api;
