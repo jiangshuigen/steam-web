@@ -4,6 +4,7 @@ import com.example.demo.config.Constant;
 import com.example.demo.dto.*;
 import com.example.demo.entity.BoxRecords;
 import com.example.demo.entity.BoxRecordsWeb;
+import com.example.demo.entity.User;
 import com.example.demo.mapper.BoxRecordMapper;
 import com.example.demo.service.BeanRecordService;
 import com.example.demo.service.BoxRecordService;
@@ -125,7 +126,8 @@ public class BoxRecordServiceImpl implements BoxRecordService {
             HttpSession session = request.getSession();
             UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
             if (!ObjectUtils.isEmpty(dto)) {
-                BigDecimal balance = dto.getBean().add(bean);
+                User us = userservice.getUserById(dto.getId());
+                BigDecimal balance = us.getBean().add(bean);
                 //返回金币
                 return userservice.updateBean(balance, dto.getId());
             }
