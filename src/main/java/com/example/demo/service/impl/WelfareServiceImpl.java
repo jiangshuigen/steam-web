@@ -172,9 +172,10 @@ public class WelfareServiceImpl implements WelfareService {
                         .nextUserId(usr.getId())
                         .build();
                 beanrecordservice.saveRewardLogs(rewardLog);
+                User us = userservice.getUserById(usr.getId());
                 //打到账户
-                usr.setBean(usr.getBean().add(vip.getPacket()));
-                userservice.updateUser(usr);
+                us.setBean(usr.getBean().add(vip.getPacket()));
+                userservice.updateUser(us);
             }
             List<Integer> list = red.getList();
             list.add(lv);
