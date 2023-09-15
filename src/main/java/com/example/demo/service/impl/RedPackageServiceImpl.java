@@ -4,6 +4,7 @@ import com.example.demo.dto.UserDto;
 import com.example.demo.entity.RedKey;
 import com.example.demo.entity.RedRecords;
 import com.example.demo.entity.Reds;
+import com.example.demo.entity.User;
 import com.example.demo.mapper.RedRecordsMapper;
 import com.example.demo.service.RedKeyService;
 import com.example.demo.service.RedPackageService;
@@ -88,6 +89,7 @@ public class RedPackageServiceImpl implements RedPackageService {
     @Override
     @Transactional
     public String snatchKeyPackage(UserDto dto, String keyCode) throws Exception {
+        User us = userservice.getUserById(dto.getId());
         RedKey redkey = redkeyservice.getRedsByKey(keyCode);
         if (ObjectUtils.isEmpty(redkey)) {
             throw new Exception("红包已经领光了");
@@ -105,7 +107,7 @@ public class RedPackageServiceImpl implements RedPackageService {
                 .build();
         //保存记录
         redrecordsmapper.saveRecords(redRecords);
-        BigDecimal balance = dto.getBean().add(redkey.getBean());
+        BigDecimal balance = us.getBean().add(redkey.getBean());
         //得到金币
         userservice.updateBean(balance, dto.getId());
         return String.valueOf(redkey.getBean());

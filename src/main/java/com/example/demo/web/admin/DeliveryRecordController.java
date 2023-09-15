@@ -4,6 +4,7 @@ import com.example.demo.config.ResultData;
 import com.example.demo.dto.*;
 import com.example.demo.entity.BoxRecords;
 import com.example.demo.entity.DeliveryRecord;
+import com.example.demo.entity.UUSaleRsponse;
 import com.example.demo.service.BoxRecordService;
 import com.example.demo.service.DeliveryRecordService;
 import com.example.demo.service.UUPService;
@@ -69,7 +70,7 @@ public class DeliveryRecordController {
      */
     @ApiOperation(value = "在售查询")
     @PostMapping("/getSellList")
-    public ResultData<List<DeliveryRecord>> getSellList(@RequestBody DeliveryRecordQuery query) {
+    public ResultData<UUSaleRsponse> getSellList(@RequestBody SellerRecordQuery query) {
         return ResultData.success(deliveryrecordservice.getSellList(query));
     }
 
