@@ -134,7 +134,7 @@ public class PayServiceImpl implements PayService {
         //幂等性校验
         BeanRecord record = beanrecordservice.queryBeanRecordsByTradeNo(cdk);
         if (!ObjectUtils.isEmpty(record) && record.getStatus() == 1) {
-            throw new Exception("CDK:{}已经使用，请使用其他CDK");
+            throw new Exception("CDK:" + cdk + "已经使用，请使用其他CDK");
         }
         int i = beanrecordservice.updateUserByTradeNo(dto, cdk);
         //修改cdk使用状态

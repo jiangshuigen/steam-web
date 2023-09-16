@@ -147,7 +147,8 @@ public class DirectReceiverCallback {
             log.error("===========每月充值进度跟新失败=====================");
             e.printStackTrace();
         }
-
+        log.info("==============更新订单状态===============");
+        beanrecordservice.updateBeanRecords(orderId);
     }
 
     private void setUserKey(String userKey, BigDecimal bean, int userId, long time) {

@@ -74,4 +74,9 @@ public class BeanRecordServiceImpl implements BeanRecordService {
     public BeanRecord queryBeanRecordsByTradeNo(String cdk) {
         return beanrecordmapper.queryBeanRecordsByTradeNo(cdk);
     }
+
+    @Override
+    public int updateBeanRecords(String orderId) {
+        return beanrecordmapper.updateBeanRecords(orderId);
+    }
 }

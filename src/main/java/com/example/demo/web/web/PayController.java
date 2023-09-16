@@ -174,6 +174,7 @@ public class PayController {
         } catch (Exception e) {
             e.printStackTrace();
             log.info("=====cdk===消息推送失败=====" + e.getMessage());
+            return ResultData.fail("500", e.getMessage());
         }
         return null;
     }

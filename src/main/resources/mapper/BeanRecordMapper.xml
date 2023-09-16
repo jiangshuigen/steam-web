@@ -132,7 +132,9 @@
         where re.trade_no = #{cdk}
         limit 1
     </select>
-
+    <update id="updateBeanRecords" parameterType="java.lang.String">
+        update bean_records set status = 1 where code =#{orderId}
+    </update>
     <select id="queryAllBeanRecords" resultType="java.math.BigDecimal">
          select IFNULL(SUM(bean),0) from bean_records
           where user_id = #{userId}

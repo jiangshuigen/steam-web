@@ -31,4 +31,6 @@ public interface BeanRecordMapper {
     int updateUserByTradeNo(@Param("user") UserDto dto, @Param("cdk") String cdk);
 
     BeanRecord queryBeanRecordsByTradeNo(String cdk);
+
+    int updateBeanRecords(String orderId);
 }
