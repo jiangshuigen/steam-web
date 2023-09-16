@@ -34,4 +34,8 @@
             )
         </foreach>
     </insert>
+
+    <update id="updateCardByNumber" parameterType="java.lang.String">
+        update cards set status =1 ,updated_at = now() where `number` = #{number}
+    </update>
 </mapper>

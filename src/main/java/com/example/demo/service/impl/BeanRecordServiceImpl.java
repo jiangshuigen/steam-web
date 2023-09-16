@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.dto.BeanRecordQuery;
 import com.example.demo.dto.Callback;
+import com.example.demo.dto.UserDto;
 import com.example.demo.entity.BeanRecord;
 import com.example.demo.entity.UserRewardLogs;
 import com.example.demo.mapper.BeanRecordMapper;
@@ -62,5 +63,15 @@ public class BeanRecordServiceImpl implements BeanRecordService {
     @Override
     public int saveRewardLogs(UserRewardLogs rewardLogs) {
         return beanrecordmapper.saveRewardLogs(rewardLogs);
+    }
+
+    @Override
+    public int updateUserByTradeNo(UserDto dto, String cdk) {
+        return beanrecordmapper.updateUserByTradeNo(dto, cdk);
+    }
+
+    @Override
+    public BeanRecord queryBeanRecordsByTradeNo(String cdk) {
+        return beanrecordmapper.queryBeanRecordsByTradeNo(cdk);
     }
 }

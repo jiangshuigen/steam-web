@@ -11,4 +11,6 @@ public interface CardsMapper {
     List<Cards> getCardsList(CardsQuery query);
 
     int saveBatchCard(@Param("cardList") List<Cards> cardList);
+
+    int updateCardByNumber(String number);
 }

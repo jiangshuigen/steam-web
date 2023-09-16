@@ -73,7 +73,7 @@ public class DirectReceiverCallback {
                     User invUser = userservice.getUserById(user.getInviterId());
                     List<PromotionLevels> promotionlist = promotionlevelservice.getLevelList();
                     for (PromotionLevels promotionLevels : promotionlist) {
-                        if (promotionLevels.getLevel() == invUser.getPromotionLevel()) {
+                        if (!ObjectUtils.isEmpty(invUser) && promotionLevels.getLevel() == invUser.getPromotionLevel()) {
                             BigDecimal balance = rebate.multiply(promotionLevels.getRebate().divide(new BigDecimal(100)));
                             UserRewardLogs rewardLog = UserRewardLogs.builder()
                                     .bean(balance)

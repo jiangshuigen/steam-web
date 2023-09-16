@@ -4,9 +4,12 @@ package com.example.demo.web.web;
 import com.alibaba.fastjson.JSON;
 import com.example.demo.config.AliPayConstant;
 import com.example.demo.config.Constant;
+import com.example.demo.config.ResultData;
 import com.example.demo.dto.AliPayOrderInfo;
 import com.example.demo.dto.Callback;
+import com.example.demo.dto.UserDto;
 import com.example.demo.entity.User;
+import com.example.demo.service.BeanRecordService;
 import com.example.demo.service.UserService;
 import com.example.demo.service.pay.PayService;
 import com.example.demo.util.Md5Utils;
@@ -25,6 +28,7 @@ import javax.imageio.ImageIO;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.util.LinkedHashMap;
 
@@ -146,5 +150,32 @@ public class PayController {
         return "fail";
     }
 
+
+    /**
+     * 通过cdk充值接口
+     *
+     * @param cdk
+     */
+    @ApiOperation(value = "CDK充值接口")
+    @PostMapping("/payCDK")
+    public ResultData<String> paybyCDK(HttpServletRequest request, @RequestParam("cdk") String cdk) {
+        try {
+            log.info("cdk is ===={}", JSON.toJSONString(cdk));
+            //获取session
+            HttpSession session = request.getSession();
+            UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
+            if (ObjectUtils.isEmpty(dto)) {
+                return ResultData.fail("403", "未登录");
+            }
+            int i = payservice.updateUserByTradeNo(dto, cdk);
+            if (i > 0) {
+                return ResultData.success("充值成功");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("=====cdk===消息推送失败=====" + e.getMessage());
+        }
+        return null;
+    }
 
 }

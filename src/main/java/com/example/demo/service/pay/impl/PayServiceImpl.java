@@ -2,12 +2,14 @@ package com.example.demo.service.pay.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.example.demo.config.AliPayConstant;
+import com.example.demo.config.Constant;
 import com.example.demo.dto.AliPayOrderInfo;
 import com.example.demo.dto.Callback;
+import com.example.demo.dto.UserDto;
 import com.example.demo.entity.BeanRecord;
 import com.example.demo.entity.User;
 import com.example.demo.service.BeanRecordService;
-import com.example.demo.service.VipService;
+import com.example.demo.service.CardService;
 import com.example.demo.service.pay.PayService;
 import com.example.demo.util.EncodeUtils;
 import com.example.demo.util.HttpUtils;
@@ -15,10 +17,12 @@ import com.example.demo.util.Md5Utils;
 import com.example.demo.util.SignUtils;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -38,6 +42,11 @@ public class PayServiceImpl implements PayService {
     private RedisTemplate redisTemplate;
     @Resource
     private BeanRecordService beanrecordservice;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+    @Autowired
+    private CardService cardservice;
 
     @Override
     public AliPayOrderInfo getOrderNumber(User usr, int count, HttpServletRequest request) {
@@ -117,6 +126,24 @@ public class PayServiceImpl implements PayService {
     @Override
     public int updateBeanRecord(Callback callback) {
         return beanrecordservice.updateBeanRecordsStatus(callback);
+    }
+
+    @Override
+    @Transactional
+    public int updateUserByTradeNo(UserDto dto, String cdk) throws Exception {
+        //幂等性校验
+        BeanRecord record = beanrecordservice.queryBeanRecordsByTradeNo(cdk);
+        if (!ObjectUtils.isEmpty(record) && record.getStatus() == 1) {
+            throw new Exception("CDK:{}已经使用，请使用其他CDK");
+        }
+        int i = beanrecordservice.updateUserByTradeNo(dto, cdk);
+        //修改cdk使用状态
+        cardservice.updateCardByNumber(cdk);
+        if (i > 0) {
+            rabbitTemplate.convertAndSend(Constant.ORDER_CALLBACK_DIRECT_EXCHANGE,
+                    Constant.ORDER_CALLBACK_DIRECT_ROUTING, record.getCode());
+        }
+        return i;
     }
 
     private String getRemoteIP(HttpServletRequest request) {

@@ -13,4 +13,6 @@ public interface CardService {
     List<String> getCodeList(int numb);
 
     int saveBatchCard(CardsDto entity);
+
+    int updateCardByNumber(String number);
 }
