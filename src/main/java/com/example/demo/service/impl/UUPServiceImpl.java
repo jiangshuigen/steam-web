@@ -157,12 +157,16 @@ public class UUPServiceImpl implements UUPService {
     public List<UUAward> getUUAwardList(String templateHashName) {
         Map<String, Object> params = this.getBaseMap();
         params.put("templateHashName", templateHashName);
+        params.put("pageSize", 10);
+        params.put("page", 1);
         String sign = this.sign(params);
         String result = OkHttpUtil.builder().url("http://gw-openapi.youpin898.com/open/v1/api/goodsQuery")
                 .addParam("sign", sign)
                 .addParam("timestamp", String.valueOf(params.get("timestamp")))
                 .addParam("appKey", appKey)
                 .addParam("templateHashName", templateHashName)
+                .addParam("pageSize", 10)
+                .addParam("page", 1)
                 .initPost(true)
                 .sync();
         UUResponse res = JSON.parseObject(result, UUResponse.class);
