@@ -7,28 +7,30 @@ import com.example.demo.entity.UUSaleRsponse;
 import com.example.demo.service.DeliveryRecordService;
 import com.example.demo.service.UUPService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
-import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 @Component
 @Slf4j
-public class ScheduledTasks {
+public class ScheduledAwardsTasks {
 
-    @Resource
+
+    @Autowired
     private UUPService uupservice;
-    @Resource
+
+    @Autowired
     private DeliveryRecordService deliveryrecordservice;
 
     /**
      * 每隔三小时更新基础数据价格
      */
-    @Scheduled(cron = "0 0 0/3 * * ? ")
+    @Scheduled(cron = "0 1-2 * * * ? *")
     public void updateAwards() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
         log.info("====开始：{}", dateFormat.format(new Date()));
