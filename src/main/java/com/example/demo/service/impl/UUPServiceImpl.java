@@ -266,6 +266,16 @@ public class UUPServiceImpl implements UUPService {
 
     }
 
+    @Override
+    public List<UUawardsDto> getAllUUAwardList() {
+        return uupmapper.queryAllUUAwardList();
+    }
+
+    @Override
+    public void updateAwardsBean(UUawardsDto uUawardsDto) {
+        uupmapper.updateAwardsBean(uUawardsDto);
+    }
+
 
     /**
      * 基础参数

@@ -21,4 +21,8 @@ public interface UUPService {
     UUResponse buyAwards(UUOrder dto);
 
     void callback(CallbackInfo info);
+
+    List<UUawardsDto> getAllUUAwardList();
+
+    void updateAwardsBean(UUawardsDto uUawardsDto);
 }

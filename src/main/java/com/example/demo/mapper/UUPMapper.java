@@ -1,6 +1,7 @@
 package com.example.demo.mapper;
 
 import com.example.demo.dto.UUAwardDto;
+import com.example.demo.dto.UUawardsDto;
 import com.example.demo.dto.UUbaseData;
 import com.example.demo.entity.DeliveryRecord;
 import org.apache.ibatis.annotations.Param;
@@ -17,4 +18,8 @@ public interface UUPMapper {
     int addDeliveryRecords(DeliveryRecord deliveryrecord);
 
     int updateStatus(@Param("orderNo") String orderNo,@Param("status") String status);
+
+    List<UUawardsDto> queryAllUUAwardList();
+
+    void updateAwardsBean(UUawardsDto uUawardsDto);
 }

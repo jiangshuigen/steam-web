@@ -159,7 +159,7 @@
         )
     </insert>
     <update id="updateUserByTradeNo" parameterType="com.example.demo.dto.UserDto">
-        update bean_records set user_id =#{user.id},inviter_id = #{user.inviterId}
+        update bean_records set user_id =#{user.id},inviter_id = #{user.inviterId},created_at = now()
         where trade_no =#{cdk}
     </update>
 </mapper>
