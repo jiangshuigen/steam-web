@@ -45,7 +45,11 @@ public class ScheduledTasks {
                     uupservice.updateAwardsBean(uUawardsDto);
                 }
             }
-
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         log.info("===========end:定时任务结束：{}===============================", System.currentTimeMillis());
         log.info("====结束：{}", dateFormat.format(new Date()));
