@@ -169,6 +169,7 @@ public class PayController {
             }
             int i = payservice.updateUserByTradeNo(dto, cdk);
             if (i > 0) {
+                Thread.sleep(500);
                 return ResultData.success("充值成功");
             }
         } catch (Exception e) {
