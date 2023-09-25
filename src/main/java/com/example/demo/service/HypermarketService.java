@@ -11,4 +11,6 @@ public interface HypermarketService {
     PageInfo<UUawardsDto> getAwardList(UUawardsQuery query);
 
     int buyAwards(HttpServletRequest request, int[] ids) throws Exception;
+
+    int reloadAwardsPrice(Integer id);
 }

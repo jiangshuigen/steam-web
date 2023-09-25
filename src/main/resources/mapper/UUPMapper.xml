@@ -106,6 +106,7 @@
         created_at as createdAt,
         updated_at as updatedAt
         from steam_items_uu
+        where is_shop = 1
     </select>
 
     <update id="updateAwardsBean" parameterType="com.example.demo.dto.UUawardsDto">
