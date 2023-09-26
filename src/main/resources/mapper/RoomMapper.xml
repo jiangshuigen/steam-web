@@ -56,12 +56,8 @@
         r.updated_at,
         IF
         (
-        DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ), '2',
-        IF ( DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ) >= DATE_FORMAT( pay_start_time, '%Y-%m-%d %H:%i:%s' ),
-        '0',
-        '1'
-        )
-        ) as status
+        DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ), '2', '1'
+        )  as status
         from rooms as r
         left join users as u on u.id = r.user_id
         <where>
