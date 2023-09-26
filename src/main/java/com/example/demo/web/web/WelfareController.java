@@ -60,7 +60,8 @@ public class WelfareController {
         if (ObjectUtils.isEmpty(usr)) {
             return ResultData.fail("403", "请登录");
         }
-        return ResultData.success(welfareservice.getWelfare(usr, id, type));
+        User us = userservice.getUserById(usr.getId());
+        return ResultData.success(welfareservice.getWelfare(us, id, type));
     }
 
 
@@ -111,7 +112,8 @@ public class WelfareController {
         if (lv > usr.getVipLevel()) {
             return ResultData.fail("403", "非法参数");
         }
-        return ResultData.success(welfareservice.getVipWelfare(usr, lv));
+        User us = userservice.getUserById(usr.getId());
+        return ResultData.success(welfareservice.getVipWelfare(us, lv));
     }
 
 }
