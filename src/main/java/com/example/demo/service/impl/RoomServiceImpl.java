@@ -86,6 +86,10 @@ public class RoomServiceImpl implements RoomService {
     public List<RoomWeb> getRoomsList(WebRoomQuery query) {
         if (!ObjectUtils.isEmpty(query) && query.getUserId() > 0) {
             List<RoomWeb> list = roomMapper.getRoomsListByUser(query.getUserId());
+            for (RoomWeb roomWeb : list) {
+                List<RoomUserDto> listUser = roomMapper.getUsersById(roomWeb.getId());
+                roomWeb.setListUser(listUser);
+            }
             return list;
         } else {
             List<RoomWeb> list = roomMapper.getRoomsList();
@@ -93,6 +97,10 @@ public class RoomServiceImpl implements RoomService {
             if (!ObjectUtils.isEmpty(query) && query.getStatus() > 0) {
                 retrunList = list.stream().filter(e -> e.getStatus() == query.getStatus()).collect(Collectors.toList());
                 return this.calculate(retrunList);
+            }
+            for (RoomWeb roomWeb : list) {
+                List<RoomUserDto> listUser = roomMapper.getUsersById(roomWeb.getId());
+                roomWeb.setListUser(listUser);
             }
             return this.calculate(list);
         }
