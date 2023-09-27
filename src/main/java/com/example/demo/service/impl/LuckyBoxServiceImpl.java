@@ -139,13 +139,13 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             throw new Exception("宝箱不存在");
         }
         BigDecimal cost = bx.getBean().multiply(new BigDecimal(openbox.getNumb())).setScale(2, BigDecimal.ROUND_DOWN);
-        BigDecimal balance = user.getBean().subtract(cost);
         User us = userservice.getUserById(user.getId());
+        BigDecimal balance = us.getBean().subtract(cost);
         if (us.getBean().compareTo(cost) == -1) {
             throw new Exception("请充值");
         } else {
             //扣除金币
-            userservice.updateBean(balance, user.getId());
+            userservice.updateBean(balance, us.getId());
         }
         List<BoxRecords> listReturn = new ArrayList<>();
         //普通开箱
