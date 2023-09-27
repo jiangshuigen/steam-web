@@ -210,11 +210,10 @@ public class WelfareServiceImpl implements WelfareService {
                         List<Integer> list = red.getList();
                         list.add(id);
                         red.setList(list);
-                        long time = DateUtils.getTime();
-                        redisTemplate.opsForValue().set(userKey, JSON.toJSON(red),time,TimeUnit.SECONDS);
+                        redisTemplate.opsForValue().set(userKey, JSON.toJSON(red));
                         Object ostr = redisTemplate.opsForValue().get("UserWelfare|Day" + usr.getId());
                         int count = 0;
-
+                        long time = DateUtils.getTime();
                         if (!ObjectUtils.isEmpty(ostr)) {
                             count = Integer.parseInt(ostr.toString());
                         }

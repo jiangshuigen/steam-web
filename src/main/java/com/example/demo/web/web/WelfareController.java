@@ -46,7 +46,7 @@ public class WelfareController {
 
 
     /**
-     * 领取福利
+     * 福利
      *
      * @param request
      * @param
