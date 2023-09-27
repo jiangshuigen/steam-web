@@ -194,6 +194,7 @@ public class WelfareServiceImpl implements WelfareService {
                 String[] reward = e.getReward().split("-");
                 Random random = new Random();
                 int number = random.nextInt(Integer.parseInt(reward[1]) - Integer.parseInt(reward[0]) + 1) + Integer.parseInt(reward[0]);
+                log.info("==========领取福利金币：{}=================================", number);
                 Object str = redisTemplate.opsForValue().get(userKey);
                 if (!ObjectUtils.isEmpty(str)) {
                     WelfareRedis red = JSON.parseObject(str.toString(), WelfareRedis.class);
@@ -205,19 +206,21 @@ public class WelfareServiceImpl implements WelfareService {
                         }
                     }
                     if (!bl) {//么有领取过
+                        log.info("==========用户领取前金币：{}=================================", usr.getBean());
                         BigDecimal balance = usr.getBean().add(new BigDecimal(number));
                         userservice.updateBean(balance, usr.getId());
+                        log.info("==========用户领取福利后金币：{}=================================", balance);
                         List<Integer> list = red.getList();
                         list.add(id);
                         red.setList(list);
-                        redisTemplate.opsForValue().set(userKey, JSON.toJSON(red));
-                        Object ostr = redisTemplate.opsForValue().get("UserWelfare|Day" + usr.getId());
-                        int count = 0;
-                        long time = DateUtils.getTime();
-                        if (!ObjectUtils.isEmpty(ostr)) {
-                            count = Integer.parseInt(ostr.toString());
-                        }
-                        redisTemplate.opsForValue().set("UserWelfare|Day" + usr.getId(), count + number, time, TimeUnit.SECONDS);
+                        Long expire = redisTemplate.getExpire(userKey, TimeUnit.SECONDS);
+                        redisTemplate.opsForValue().set(userKey, JSON.toJSON(red),expire,TimeUnit.SECONDS);
+//                        Object ostr = redisTemplate.opsForValue().get("UserWelfare|Day" + usr.getId());
+//                        int count = 0;
+//                        if (!ObjectUtils.isEmpty(ostr)) {
+//                            count = Integer.parseInt(ostr.toString());
+//                        }
+//                        redisTemplate.opsForValue().set("UserWelfare|Day" + usr.getId(), count + number, time, TimeUnit.SECONDS);
                         return number;
                     } else {
                         log.error("已经领取。重复领取====");
