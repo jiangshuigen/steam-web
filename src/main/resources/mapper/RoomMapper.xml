@@ -22,7 +22,6 @@
         <result property="type" column="type"/>
         <result property="awardsPool" column="awardsPool"/>
         <collection property="awardList" ofType="java.lang.String" resultMap="RoomAwardResultMap"/>
-        <collection property="listUser" ofType="java.lang.String" resultMap="UserResultMap"/>
     </resultMap>
     <resultMap id="UserResultMap" type="com.example.demo.dto.RoomUserDto">
         <id property="userId" column="user_id"/>
