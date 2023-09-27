@@ -87,6 +87,7 @@ public class RoomServiceImpl implements RoomService {
         if (!ObjectUtils.isEmpty(query) && query.getUserId() > 0) {
             List<RoomWeb> list = roomMapper.getRoomsListByUser(query.getUserId());
             for (RoomWeb roomWeb : list) {
+                log.info("======查询房间号为：{},房间名称{}的用户列表", roomWeb.getId(), roomWeb.getName());
                 List<RoomUserDto> listUser = roomMapper.getUsersById(roomWeb.getId());
                 roomWeb.setListUser(listUser);
             }
@@ -99,7 +100,7 @@ public class RoomServiceImpl implements RoomService {
                 return this.calculate(retrunList);
             }
             for (RoomWeb roomWeb : list) {
-                    log.info("======查询房间号为：{},房间名称{}的用户列表",roomWeb.getId(),roomWeb.getName());
+                log.info("======查询房间号为：{},房间名称{}的用户列表", roomWeb.getId(), roomWeb.getName());
                 List<RoomUserDto> listUser = roomMapper.getUsersById(roomWeb.getId());
                 roomWeb.setListUser(listUser);
             }
