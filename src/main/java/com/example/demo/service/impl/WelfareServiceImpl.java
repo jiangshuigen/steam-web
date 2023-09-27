@@ -215,12 +215,12 @@ public class WelfareServiceImpl implements WelfareService {
                         red.setList(list);
                         Long expire = redisTemplate.getExpire(userKey, TimeUnit.SECONDS);
                         redisTemplate.opsForValue().set(userKey, JSON.toJSON(red),expire,TimeUnit.SECONDS);
-//                        Object ostr = redisTemplate.opsForValue().get("UserWelfare|Day" + usr.getId());
-//                        int count = 0;
-//                        if (!ObjectUtils.isEmpty(ostr)) {
-//                            count = Integer.parseInt(ostr.toString());
-//                        }
-//                        redisTemplate.opsForValue().set("UserWelfare|Day" + usr.getId(), count + number, time, TimeUnit.SECONDS);
+                        Object ostr = redisTemplate.opsForValue().get("UserWelfare|Day" + usr.getId());
+                        int count = 0;
+                        if (!ObjectUtils.isEmpty(ostr)) {
+                            count = Integer.parseInt(ostr.toString());
+                        }
+                        redisTemplate.opsForValue().set("UserWelfare|Day" + usr.getId(), count + number, DateUtils.getTime(), TimeUnit.SECONDS);
                         return number;
                     } else {
                         log.error("已经领取。重复领取====");
