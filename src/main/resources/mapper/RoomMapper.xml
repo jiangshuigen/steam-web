@@ -148,10 +148,13 @@
         br.cover as roomAwardDura,
         br.bean as roomAwardBean
         from room_users rmu
-        inner join  rooms as r on r.id =rmu.room_id and rmu.user_id =#{userId}
+        inner join  rooms as r on r.id =rmu.room_id
         left join users as u on u.id = r.user_id
         left join room_awards rw on rw.room_id = r.id
         left join box_records br on br.id = rw.box_record_id
+        <where>
+            and rmu.user_id =#{userId}
+        </where>
         order by top,r.created_at desc
     </select>
     <select id="getRoomById" resultType="com.example.demo.entity.Room" parameterType="java.lang.Integer">

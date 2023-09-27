@@ -94,15 +94,15 @@ public class RoomServiceImpl implements RoomService {
             return list;
         } else {
             List<RoomWeb> list = roomMapper.getRoomsList();
-            List<RoomWeb> retrunList = null;
-            if (!ObjectUtils.isEmpty(query) && query.getStatus() > 0) {
-                retrunList = list.stream().filter(e -> e.getStatus() == query.getStatus()).collect(Collectors.toList());
-                return this.calculate(retrunList);
-            }
             for (RoomWeb roomWeb : list) {
                 log.info("======查询房间号为：{},房间名称{}的用户列表", roomWeb.getId(), roomWeb.getName());
                 List<RoomUserDto> listUser = roomMapper.getUsersById(roomWeb.getId());
                 roomWeb.setListUser(listUser);
+            }
+            List<RoomWeb> retrunList = null;
+            if (!ObjectUtils.isEmpty(query) && query.getStatus() > 0) {
+                retrunList = list.stream().filter(e -> e.getStatus() == query.getStatus()).collect(Collectors.toList());
+                return this.calculate(retrunList);
             }
             return this.calculate(list);
         }

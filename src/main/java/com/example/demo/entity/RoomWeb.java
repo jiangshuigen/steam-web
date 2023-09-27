@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,7 +22,7 @@ public class RoomWeb extends Room {
     private String type;
 
     @ApiModelProperty("奖品列表")
-    private List<RoomAwardWeb> awardList;
+    private List<RoomAwardWeb> awardList = new ArrayList<>();
     @ApiModelProperty("玩家列表")
-    private List<RoomUserDto> listUser;
+    private List<RoomUserDto> listUser = new ArrayList<>();
 }
