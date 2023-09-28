@@ -36,6 +36,8 @@ public class User {
     private String emailVerifiedAt;
     @ApiModelProperty("金豆")
     private BigDecimal bean;
+    @ApiModelProperty("银币")
+    private BigDecimal silver;
     @ApiModelProperty("积分")
     private BigDecimal integral;
     @ApiModelProperty("steam交易链接")

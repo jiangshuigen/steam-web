@@ -91,12 +91,12 @@ public class HypermarketServiceImpl implements HypermarketService {
             }
             User uus = userservice.getUserById(user.getId());
             //判断余额
-            if (cost.compareTo(uus.getBean()) == 1) {
-                throw new Exception("余额不足");
+            if (cost.compareTo(uus.getSilver()) == 1) {
+                throw new Exception("银币余额不足");
             }
-            BigDecimal balance = uus.getBean().subtract(cost);
+            BigDecimal balance = uus.getSilver().subtract(cost);
             //扣除金币
-            userservice.updateBean(balance, user.getId());
+            userservice.updateSilver(balance, user.getId());
             return boxrecordservice.saveBoxRecord(reList);
         }
         return 0;

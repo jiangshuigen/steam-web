@@ -54,4 +54,6 @@ public interface UserMapper {
     int sendReward(int userId);
 
     int updatePwd(@Param("id") int id, @Param("pwd") String pwd);
+
+    int updateSilver(@Param("balance") BigDecimal balance, @Param("id") int id);
 }

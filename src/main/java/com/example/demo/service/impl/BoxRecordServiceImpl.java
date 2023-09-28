@@ -127,9 +127,9 @@ public class BoxRecordServiceImpl implements BoxRecordService {
             UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
             if (!ObjectUtils.isEmpty(dto)) {
                 User us = userservice.getUserById(dto.getId());
-                BigDecimal balance = us.getBean().add(bean);
-                //返回金币
-                return userservice.updateBean(balance, dto.getId());
+                BigDecimal balance = us.getSilver().add(bean);
+                //返回银币
+                return userservice.updateSilver(balance, dto.getId());
             }
         }
         return 0;

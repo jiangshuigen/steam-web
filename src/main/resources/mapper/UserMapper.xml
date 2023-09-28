@@ -10,7 +10,7 @@
 
     <insert id="insertUser" useGeneratedKeys="true" keyProperty="id" parameterType="com.example.demo.entity.User">
         insert into t_user (username, password)
-        values(#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
+        values (#{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR})
     </insert>
 
     <insert id="batchInsertUser" useGeneratedKeys="true" keyProperty="id">
@@ -21,7 +21,8 @@
     </insert>
 
     <delete id="deleteUser" parameterType="java.lang.Integer">
-        delete from t_user
+        delete
+        from t_user
         where id = #id
     </delete>
 
@@ -52,6 +53,9 @@
             <if test="bean!=null and bean != ''">
                 bean =#{bean},
             </if>
+            <if test="silver!=null and silver != ''">
+                silver =#{silver},
+            </if>
             <if test="closeGift!=null">
                 close_gift =#{closeGift},
             </if>
@@ -69,22 +73,22 @@
     </update>
 
     <select id="selectUser" parameterType="java.lang.Integer" resultMap="userMap">
-        select * from t_user
+        select *
+        from t_user
         where id = #{id,jdbcType=INTEGER}
     </select>
 
     <select id="selectAllUser" resultMap="userMap">
-        select * from users  limit 100
+        select *
+        from users limit 100
     </select>
     <!--sdmin首页统计-->
     <select id="getDashboard" resultType="com.example.demo.entity.Dashboard">
-      select
-      (select count(1) from users ) as userCount,
-      (select sum(price) from bean_records where status = 1 and is_pay_api =1) as amount,
-      (select count(1) from box_records where status = 4) as applyCount,
-      (select 0 ) as balance
-      from
-      dual
+        select (select count(1) from users)                                              as userCount,
+               (select sum(price) from bean_records where status = 1 and is_pay_api = 1) as amount,
+               (select count(1) from box_records where status = 4)                       as applyCount,
+               (select 0)                                                                as balance
+        from dual
     </select>
     <select id="getUserListByPage" parameterType="com.example.demo.dto.UserQuery"
             resultType="com.example.demo.entity.User">
@@ -102,6 +106,7 @@
         ua.be_invite_number beInviteNumber,
         ua.email_verified_at emailVerifiedAt,
         ua.bean,
+        ua.silver,
         ua.integral,
         ua.steam_url steamUrl,
         ua.steam_id steamId,
@@ -140,20 +145,23 @@
         </where>
     </select>
     <select id="getUserInfo" parameterType="java.lang.Integer" resultType="com.example.demo.dto.UserDto">
-        select
-        ua.id,
-        ua.`name`,
-        ua.mobile,
-        ua.invite_code inviteCode,
-        ua.avatar,
-        ua.bean,
-        ua.steam_url steamUrl ,
-        ua.vip_level vipLevel,
-        anchor,
-        ua.total_recharge as totalRecharge,
-        IFNULL((select v.threshold from vip as v  where v.level = (ua.vip_level+1) limit 1),999999) as nextVipLevelEXP,
-        CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide
-         from users ua where ua.id = #{id} limit 1
+        select ua.id,
+               ua.`name`,
+               ua.mobile,
+               ua.invite_code                                                 inviteCode,
+               ua.avatar,
+               ua.bean,
+               ua.silver,
+               ua.steam_url                                                   steamUrl,
+               ua.vip_level                                                   vipLevel,
+               anchor,
+               ua.total_recharge                                           as totalRecharge,
+               IFNULL((select v.threshold
+                       from vip as v
+                       where v.level = (ua.vip_level + 1) limit 1),999999) as nextVipLevelEXP,
+               CONCAT(LEFT(ua.mobile,3), '****', RIGHT(ua.mobile,4))       AS mobileHide
+        from users ua
+        where ua.id = #{id} limit 1
     </select>
 
     <select id="queryUserInfo" resultType="com.example.demo.dto.UserDto" parameterType="com.example.demo.dto.LoginInfo">
@@ -165,6 +173,7 @@
         ua.inviter_id as inviterId,
         ua.avatar,
         bean,
+        ifnull(ua.silver,0) silver,
         ua.password pwd,
         ua.steam_url steamUrl ,
         ua.vip_level vipLevel,
@@ -182,179 +191,175 @@
         limit 1
     </select>
     <select id="getUserById" resultType="com.example.demo.entity.User" parameterType="java.lang.Integer">
-        select
-         ua.id,
-        ua.`name`,
-        ua.mobile,
-        CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide ,
-        ua.invite_code inviteCode,
-        ua.avatar,
-        ua.inviter_id inviterId,
-        (select u.`name` from users u where u.id = ua.inviter_id) as inviterName,
-        ua.be_invite_number beInviteNumber,
-        ua.email_verified_at emailVerifiedAt,
-        ua.bean,
-        ua.integral,
-        ua.steam_url steamUrl ,
-        ua.steam_id steamId,
-        ua.password,
-        ua.remember_token rememberToken,
-        ua.promotion_level promotionLevel,
-        ua.vip_level vipLevel,
-        ua.is_recharge isRecharge,
-        ua.total_recharge totalRecharge,
-        ua.close_gift closeGift,
-        ua.ban_pick_up banPickUp,
-        ua.anchor,
-        ua.new_welfare newWelfare,
-        ua.box_key_total boxKeyTotal,
-        ua.reward_new_user rewardNewUser,
-        ua.is_adult isAdult,
-        ua.real_name realName,
-        ua.id_number idNumber,
-        ua.set_invite_code_num setInviteCodeNum,
-        ua.created_at createdAt,
-        ua.updated_at updatedAt
-         from users ua where ua.id = #{id} limit 1
+        select ua.id,
+               ua.`name`,
+               ua.mobile,
+               CONCAT(LEFT(ua.mobile,3), '****', RIGHT(ua.mobile,4))     AS mobileHide,
+               ua.invite_code                                               inviteCode,
+               ua.avatar,
+               ua.inviter_id                                                inviterId,
+               (select u.`name` from users u where u.id = ua.inviter_id) as inviterName,
+               ua.be_invite_number                                          beInviteNumber,
+               ua.email_verified_at                                         emailVerifiedAt,
+               ua.bean,
+               ua.silver,
+               ua.integral,
+               ua.steam_url                                                 steamUrl,
+               ua.steam_id                                                  steamId,
+               ua.password,
+               ua.remember_token                                            rememberToken,
+               ua.promotion_level                                           promotionLevel,
+               ua.vip_level                                                 vipLevel,
+               ua.is_recharge                                               isRecharge,
+               ua.total_recharge                                            totalRecharge,
+               ua.close_gift                                                closeGift,
+               ua.ban_pick_up                                               banPickUp,
+               ua.anchor,
+               ua.new_welfare                                               newWelfare,
+               ua.box_key_total                                             boxKeyTotal,
+               ua.reward_new_user                                           rewardNewUser,
+               ua.is_adult                                                  isAdult,
+               ua.real_name                                                 realName,
+               ua.id_number                                                 idNumber,
+               ua.set_invite_code_num                                       setInviteCodeNum,
+               ua.created_at                                                createdAt,
+               ua.updated_at                                                updatedAt
+        from users ua
+        where ua.id = #{id} limit 1
     </select>
 
     <select id="getIPList" parameterType="com.example.demo.dto.LoginIpLogQuery"
             resultType="com.example.demo.dto.LoginIpLog">
-          select
-            id,
-            user_id as userId,
-            ip,
-            created_at as createdAt,
-            updated_at as updatedAt
-            from login_ip_logs
-            where user_id = #{userId}
+        select id,
+               user_id    as userId,
+               ip,
+               created_at as createdAt,
+               updated_at as updatedAt
+        from login_ip_logs
+        where user_id = #{userId}
     </select>
 
     <select id="queryUserByPhone" parameterType="java.lang.String" resultType="com.example.demo.entity.User">
-        select
-         ua.id,
-        ua.`name`,
-        ua.mobile,
-        CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide ,
-        ua.invite_code inviteCode,
-        ua.avatar,
-        ua.inviter_id inviterId,
-        ua.be_invite_number beInviteNumber,
-        ua.email_verified_at emailVerifiedAt,
-        ua.bean,
-        ua.integral,
-        ua.steam_url steamUrl ,
-        ua.steam_id steamId,
-        ua.password,
-        ua.remember_token rememberToken,
-        ua.promotion_level promotionLevel,
-        ua.vip_level vipLevel,
-        ua.is_recharge isRecharge,
-        ua.total_recharge totalRecharge,
-        ua.close_gift closeGift,
-        ua.ban_pick_up banPickUp,
-        ua.anchor,
-        ua.new_welfare newWelfare,
-        ua.box_key_total boxKeyTotal,
-        ua.reward_new_user rewardNewUser,
-        ua.is_adult isAdult,
-        ua.real_name realName,
-        ua.id_number idNumber,
-        ua.set_invite_code_num setInviteCodeNum,
-        ua.created_at createdAt,
-        ua.updated_at updatedAt
-         from users ua
-         where ua.mobile =#{mobile}
+        select ua.id,
+               ua.`name`,
+               ua.mobile,
+               CONCAT(LEFT(ua.mobile,3), '****', RIGHT(ua.mobile,4)) AS mobileHide,
+               ua.invite_code                                           inviteCode,
+               ua.avatar,
+               ua.inviter_id                                            inviterId,
+               ua.be_invite_number                                      beInviteNumber,
+               ua.email_verified_at                                     emailVerifiedAt,
+               ua.bean,
+               ua.silver,
+               ua.integral,
+               ua.steam_url                                             steamUrl,
+               ua.steam_id                                              steamId,
+               ua.password,
+               ua.remember_token                                        rememberToken,
+               ua.promotion_level                                       promotionLevel,
+               ua.vip_level                                             vipLevel,
+               ua.is_recharge                                           isRecharge,
+               ua.total_recharge                                        totalRecharge,
+               ua.close_gift                                            closeGift,
+               ua.ban_pick_up                                           banPickUp,
+               ua.anchor,
+               ua.new_welfare                                           newWelfare,
+               ua.box_key_total                                         boxKeyTotal,
+               ua.reward_new_user                                       rewardNewUser,
+               ua.is_adult                                              isAdult,
+               ua.real_name                                             realName,
+               ua.id_number                                             idNumber,
+               ua.set_invite_code_num                                   setInviteCodeNum,
+               ua.created_at                                            createdAt,
+               ua.updated_at                                            updatedAt
+        from users ua
+        where ua.mobile = #{mobile}
     </select>
     <select id="queryUserByName" parameterType="java.lang.String" resultType="com.example.demo.entity.User">
-         select
-                 ua.id,
-                ua.`name`,
-                ua.mobile,
-                CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide ,
-                ua.invite_code inviteCode,
-                ua.avatar,
-                ua.inviter_id inviterId,
-                ua.be_invite_number beInviteNumber,
-                ua.email_verified_at emailVerifiedAt,
-                ua.bean,
-                ua.integral,
-                ua.steam_url steamUrl ,
-                ua.steam_id steamId,
-                ua.password,
-                ua.remember_token rememberToken,
-                ua.promotion_level promotionLevel,
-                ua.vip_level vipLevel,
-                ua.is_recharge isRecharge,
-                ua.total_recharge totalRecharge,
-                ua.close_gift closeGift,
-                ua.ban_pick_up banPickUp,
-                ua.anchor,
-                ua.new_welfare newWelfare,
-                ua.box_key_total boxKeyTotal,
-                ua.reward_new_user rewardNewUser,
-                ua.is_adult isAdult,
-                ua.real_name realName,
-                ua.id_number idNumber,
-                ua.set_invite_code_num setInviteCodeNum,
-                ua.created_at createdAt,
-                ua.updated_at updatedAt
-                 from users ua
-                 where ua.`name`=#{name}
+        select ua.id,
+               ua.`name`,
+               ua.mobile,
+               CONCAT(LEFT(ua.mobile,3), '****', RIGHT(ua.mobile,4)) AS mobileHide,
+               ua.invite_code                                           inviteCode,
+               ua.avatar,
+               ua.inviter_id                                            inviterId,
+               ua.be_invite_number                                      beInviteNumber,
+               ua.email_verified_at                                     emailVerifiedAt,
+               ua.bean,
+               ua.silver,
+               ua.integral,
+               ua.steam_url                                             steamUrl,
+               ua.steam_id                                              steamId,
+               ua.password,
+               ua.remember_token                                        rememberToken,
+               ua.promotion_level                                       promotionLevel,
+               ua.vip_level                                             vipLevel,
+               ua.is_recharge                                           isRecharge,
+               ua.total_recharge                                        totalRecharge,
+               ua.close_gift                                            closeGift,
+               ua.ban_pick_up                                           banPickUp,
+               ua.anchor,
+               ua.new_welfare                                           newWelfare,
+               ua.box_key_total                                         boxKeyTotal,
+               ua.reward_new_user                                       rewardNewUser,
+               ua.is_adult                                              isAdult,
+               ua.real_name                                             realName,
+               ua.id_number                                             idNumber,
+               ua.set_invite_code_num                                   setInviteCodeNum,
+               ua.created_at                                            createdAt,
+               ua.updated_at                                            updatedAt
+        from users ua
+        where ua.`name` = #{name}
     </select>
     <select id="queryUserByInviteCode" parameterType="java.lang.String" resultType="com.example.demo.entity.User">
-         select
-         ua.id,
-        ua.`name`,
-        ua.mobile,
-        CONCAT(LEFT(ua.mobile,3), '****' ,RIGHT(ua.mobile,4)) AS mobileHide ,
-        ua.invite_code inviteCode,
-        ua.avatar,
-        ua.inviter_id inviterId,
-        ua.be_invite_number beInviteNumber,
-        ua.email_verified_at emailVerifiedAt,
-        ua.bean,
-        ua.integral,
-        ua.steam_url steamUrl ,
-        ua.steam_id steamId,
-        ua.password,
-        ua.remember_token rememberToken,
-        ua.promotion_level promotionLevel,
-        ua.vip_level vipLevel,
-        ua.is_recharge isRecharge,
-        ua.total_recharge totalRecharge,
-        ua.close_gift closeGift,
-        ua.ban_pick_up banPickUp,
-        ua.anchor,
-        ua.new_welfare newWelfare,
-        ua.box_key_total boxKeyTotal,
-        ua.reward_new_user rewardNewUser,
-        ua.is_adult isAdult,
-        ua.real_name realName,
-        ua.id_number idNumber,
-        ua.set_invite_code_num setInviteCodeNum,
-        ua.created_at createdAt,
-        ua.updated_at updatedAt
-         from users ua
-         where ua.invite_code=#{inviteCode}
-         limit 1
+        select ua.id,
+               ua.`name`,
+               ua.mobile,
+               CONCAT(LEFT(ua.mobile,3), '****', RIGHT(ua.mobile,4)) AS mobileHide,
+               ua.invite_code                                           inviteCode,
+               ua.avatar,
+               ua.inviter_id                                            inviterId,
+               ua.be_invite_number                                      beInviteNumber,
+               ua.email_verified_at                                     emailVerifiedAt,
+               ua.bean,
+               ua.silver,
+               ua.integral,
+               ua.steam_url                                             steamUrl,
+               ua.steam_id                                              steamId,
+               ua.password,
+               ua.remember_token                                        rememberToken,
+               ua.promotion_level                                       promotionLevel,
+               ua.vip_level                                             vipLevel,
+               ua.is_recharge                                           isRecharge,
+               ua.total_recharge                                        totalRecharge,
+               ua.close_gift                                            closeGift,
+               ua.ban_pick_up                                           banPickUp,
+               ua.anchor,
+               ua.new_welfare                                           newWelfare,
+               ua.box_key_total                                         boxKeyTotal,
+               ua.reward_new_user                                       rewardNewUser,
+               ua.is_adult                                              isAdult,
+               ua.real_name                                             realName,
+               ua.id_number                                             idNumber,
+               ua.set_invite_code_num                                   setInviteCodeNum,
+               ua.created_at                                            createdAt,
+               ua.updated_at                                            updatedAt
+        from users ua
+        where ua.invite_code = #{inviteCode} limit 1
     </select>
     <insert id="register" parameterType="com.example.demo.dto.UserRegisterDto">
-        insert into users(
-        `name`,
-        mobile,
-        invite_code,
-        inviter_id,
-        password,
-        created_at
-        )values(
-        #{name},
-        #{mobile},
-        #{inviteCode},
-        #{inviterId},
-        #{password},
-         now()
-        )
+        insert into users(`name`,
+                          mobile,
+                          invite_code,
+                          inviter_id,
+                          password,
+                          created_at)
+        values (#{name},
+                #{mobile},
+                #{inviteCode},
+                #{inviterId},
+                #{password},
+                now())
     </insert>
 
     <update id="updateBean">
@@ -366,20 +371,32 @@
             id = #{id}
         </where>
     </update>
+    <update id="updateSilver">
+        update users
+        <set>
+            silver = #{balance}
+        </set>
+        <where>
+            id = #{id}
+        </where>
+    </update>
+
     <update id="resetCache">
-          update box_awards
-          set real_odds_leave=real_odds,
-              anchor_odds_leave= anchor_odds,
-              luck_odds_leave=luck_odds
-              where 1=1
+        update box_awards
+        set real_odds_leave=real_odds,
+            anchor_odds_leave= anchor_odds,
+            luck_odds_leave=luck_odds
+        where 1 = 1
     </update>
     <update id="sendReward" parameterType="java.lang.Integer">
         update users
-        set bean=bean+0.01
-        where id =#{userId}
+        set bean=bean + 0.01
+        where id = #{userId}
     </update>
 
     <update id="updatePwd">
-        update users set password =#{pwd} where id =#{id}
+        update users
+        set password =#{pwd}
+        where id = #{id}
     </update>
 </mapper>

@@ -53,4 +53,8 @@ public interface UserService {
     int batchList(int[] ids);
 
     int updatePwd(int id);
+
+    int updateSilver(BigDecimal balance, int id);
+
+    int exchangeCron(int id, ExchangeDto exchangeDto) throws Exception;
 }

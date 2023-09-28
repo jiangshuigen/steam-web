@@ -7,9 +7,9 @@ import com.example.demo.config.Constant;
 import com.example.demo.config.ResultData;
 import com.example.demo.dto.AliPayOrderInfo;
 import com.example.demo.dto.Callback;
+import com.example.demo.dto.ExchangeDto;
 import com.example.demo.dto.UserDto;
 import com.example.demo.entity.User;
-import com.example.demo.service.BeanRecordService;
 import com.example.demo.service.UserService;
 import com.example.demo.service.pay.PayService;
 import com.example.demo.util.Md5Utils;
@@ -179,5 +179,30 @@ public class PayController {
         }
         return null;
     }
+
+
+    /**
+     * 金币和银币相互转化 1
+     *
+     * @param request
+     * @return
+     */
+    @ApiOperation(value = "金币/银币转化")
+    @PostMapping("/exchangeCron")
+    public ResultData<String> exchangeCron(HttpServletRequest request, @RequestBody ExchangeDto exchangeDto) {
+        try {
+            //获取session
+            HttpSession session = request.getSession();
+            UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
+            if (ObjectUtils.isEmpty(dto)) {
+                return ResultData.fail("403", "未登录");
+            }
+            return ResultData.success(userservice.exchangeCron(dto.getId(),exchangeDto));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultData.fail("500", e.getMessage());
+        }
+    }
+
 
 }

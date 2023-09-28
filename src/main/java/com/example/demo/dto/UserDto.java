@@ -29,6 +29,8 @@ public class UserDto {
     private int anchor;
     @ApiModelProperty("金豆")
     private BigDecimal bean;
+    @ApiModelProperty("银币")
+    private BigDecimal silver;
     @ApiModelProperty("总充值（统计）")
     private BigDecimal totalRecharge;
     @ApiModelProperty("下一级VIP经验")

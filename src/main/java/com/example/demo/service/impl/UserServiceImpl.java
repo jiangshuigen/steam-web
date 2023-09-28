@@ -315,5 +315,32 @@ public class UserServiceImpl implements UserService {
         return userMapper.updatePwd(id, pwd);
     }
 
+    @Override
+    public int updateSilver(BigDecimal balance, int id) {
+        return userMapper.updateSilver(balance, id);
+    }
+
+    @Override
+    public int exchangeCron(int id, ExchangeDto exchangeDto) throws Exception {
+        User user = userMapper.getUserById(id);
+        if (!ObjectUtils.isEmpty(exchangeDto) && exchangeDto.getType() == 1) {
+            //判断余额
+            if (exchangeDto.getCount().compareTo(user.getBean()) == 1) {
+                throw new Exception("金币余额不足");
+            }
+            //金币转银币
+            user.setBean(user.getBean().subtract(exchangeDto.getCount()));
+            user.setSilver(user.getSilver().add(exchangeDto.getCount()));
+        } else if (!ObjectUtils.isEmpty(exchangeDto) && exchangeDto.getType() == 2) {
+            //银币转金币
+            if (exchangeDto.getCount().compareTo(user.getSilver()) == 1) {
+                throw new Exception("银币余额不足");
+            }
+            user.setBean(user.getBean().add(exchangeDto.getCount()));
+            user.setSilver(user.getSilver().subtract(exchangeDto.getCount()));
+        }
+        return userMapper.updateUser(user);
+    }
+
 
 }
