@@ -3,6 +3,7 @@ package com.example.demo.mapper;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Dashboard;
 import com.example.demo.entity.User;
+import com.example.demo.entity.UserExchangeDetail;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -56,4 +57,6 @@ public interface UserMapper {
     int updatePwd(@Param("id") int id, @Param("pwd") String pwd);
 
     int updateSilver(@Param("balance") BigDecimal balance, @Param("id") int id);
+
+    int exchangeDetail(UserExchangeDetail detail);
 }

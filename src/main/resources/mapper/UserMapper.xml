@@ -399,4 +399,14 @@
         set password =#{pwd}
         where id = #{id}
     </update>
+    <insert id="exchangeDetail" parameterType="com.example.demo.entity.UserExchangeDetail">
+        insert into user_exchange_detail(`type`,
+                                         user_id,
+                                         bean,
+                                         create_time)
+        values (#{type},
+                #{userId},
+                #{bean},
+                now())
+    </insert>
 </mapper>

@@ -5,6 +5,7 @@ import com.example.demo.config.Constant;
 import com.example.demo.dto.*;
 import com.example.demo.entity.BoxAwards;
 import com.example.demo.entity.User;
+import com.example.demo.entity.UserExchangeDetail;
 import com.example.demo.entity.UserMessage;
 import com.example.demo.mapper.LuckyBoxMapper;
 import com.example.demo.mapper.UserMapper;
@@ -36,6 +37,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
@@ -321,6 +323,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public int exchangeCron(int id, ExchangeDto exchangeDto) throws Exception {
         User user = userMapper.getUserById(id);
         if (!ObjectUtils.isEmpty(exchangeDto) && exchangeDto.getType() == 1) {
@@ -339,6 +342,12 @@ public class UserServiceImpl implements UserService {
             user.setBean(user.getBean().add(exchangeDto.getCount()));
             user.setSilver(user.getSilver().subtract(exchangeDto.getCount()));
         }
+        //保存转化记录
+        UserExchangeDetail detail =new UserExchangeDetail();
+        detail.setUserId(id);
+        detail.setBean(exchangeDto.getCount());
+        detail.setType(exchangeDto.getType());
+        userMapper.exchangeDetail(detail);
         return userMapper.updateUser(user);
     }
 
