@@ -9,6 +9,7 @@ import com.example.demo.service.BoxRecordService;
 import com.example.demo.service.BoxService;
 import com.example.demo.service.LuckyBoxService;
 import com.example.demo.service.UserService;
+import com.example.demo.util.DateUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.netty.util.internal.StringUtil;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -205,24 +207,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         } else if (boxNumb == end) {
             //幸运区间极限值 必中
             for (BoxAwards listLuckyward : listLuckyWards) {
-                BoxRecords record = BoxRecords.builder()
-                        .getUserId(user.getId())
-                        .userId(user.getId())
-                        .boxId(openbox.getBoxId())
-                        .boxName(bx.getName())
-                        .boxBean(bx.getBean())
-                        .boxAwardId(listLuckyward.getId())
-                        .name(listLuckyward.getName())
-                        .hashName(listLuckyward.getHashName())
-                        .cover(listLuckyward.getCover())
-                        .dura(listLuckyward.getDura())
-                        .lv(listLuckyward.getLv())
-                        .bean(listLuckyward.getBean())
-                        .maxT(new BigDecimal(0))
-                        .code(this.getCode())
-                        .uuid(UUID.randomUUID().toString())
-                        .type(1)
-                        .build();
+                BoxRecords record = BoxRecords.builder().getUserId(user.getId()).userId(user.getId()).boxId(openbox.getBoxId()).boxName(bx.getName()).boxBean(bx.getBean()).boxAwardId(listLuckyward.getId()).name(listLuckyward.getName()).hashName(listLuckyward.getHashName()).cover(listLuckyward.getCover()).dura(listLuckyward.getDura()).lv(listLuckyward.getLv()).bean(listLuckyward.getBean()).maxT(new BigDecimal(0)).code(this.getCode()).uuid(UUID.randomUUID().toString()).type(1).build();
                 listReturn.add(record);
             }
         }
@@ -233,24 +218,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             if (listReturn.size() >= openbox.getNumb()) {
                 break;
             }
-            BoxRecords record = BoxRecords.builder()
-                    .getUserId(user.getId())
-                    .userId(user.getId())
-                    .boxId(openbox.getBoxId())
-                    .boxName(bx.getName())
-                    .boxBean(bx.getBean())
-                    .boxAwardId(listRedis.get(0).getId())
-                    .name(listRedis.get(0).getName())
-                    .hashName(listRedis.get(0).getHashName())
-                    .cover(listRedis.get(0).getCover())
-                    .dura(listRedis.get(0).getDura())
-                    .lv(listRedis.get(0).getLv())
-                    .bean(listRedis.get(0).getBean())
-                    .maxT(new BigDecimal(0))
-                    .code(this.getCode())
-                    .uuid(UUID.randomUUID().toString())
-                    .type(1)
-                    .build();
+            BoxRecords record = BoxRecords.builder().getUserId(user.getId()).userId(user.getId()).boxId(openbox.getBoxId()).boxName(bx.getName()).boxBean(bx.getBean()).boxAwardId(listRedis.get(0).getId()).name(listRedis.get(0).getName()).hashName(listRedis.get(0).getHashName()).cover(listRedis.get(0).getCover()).dura(listRedis.get(0).getDura()).lv(listRedis.get(0).getLv()).bean(listRedis.get(0).getBean()).maxT(new BigDecimal(0)).code(this.getCode()).uuid(UUID.randomUUID().toString()).type(1).build();
             listReturn.add(record);
             //减库存
             AwardCountDto awardcountdto = new AwardCountDto();
@@ -301,6 +269,28 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + openbox.getBoxId(), openbox.getNumb());
         } else {
             redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + openbox.getBoxId(), boxNumb);
+        }
+        //盲盒每日奖励
+        try {
+            //计算失效时间
+            String userKey = "UserRecharge|MH" + user.getId();
+            long time = DateUtils.getTime();
+            Object str = redisTemplate.opsForValue().get(userKey);
+            WelfareRedis red = null;
+            if (!ObjectUtils.isEmpty(str)) {
+                red = JSON.parseObject(str.toString(), WelfareRedis.class);
+                red.setCost(red.getCost() + cost.intValue());
+            } else {
+                red = new WelfareRedis();
+                red.setCost(cost.intValue());
+                red.setUserId(user.getId());
+                red.setList(new ArrayList<>());
+            }
+            redisTemplate.opsForValue().set(userKey, JSON.toJSON(red), time, TimeUnit.SECONDS);
+            log.error("===========每日盲盒消费进度更新：本次消费{}=====================", cost);
+        } catch (Exception e) {
+            log.error("===========每日盲盒消费进度更新失败=====================");
+            e.printStackTrace();
         }
         return listReturn;
     }
@@ -363,24 +353,8 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             log.info("++++++++++" + dto.getAwardId() + "++的剩余额度是0 中奖++++++++++++++++++++++++++++");
             returnList.add(boxawards);
             //添加记录
-            record = LuckyBoxRecord.builder()
-                    .userId(user.getId())
-                    .boxBean(cost)
-                    .percent(dto.getPercent())
-                    .awardId(dto.getAwardId())
-                    .targetName(boxawards.getName())
-                    .targetCover(boxawards.getCover())
-                    .awardDura(boxawards.getDura())
-                    .awardLv(boxawards.getLv())
-                    .targetValue(boxawards.getBean())//目标价值
-                    .getAwardId(boxawards.getId())
-                    .obtainName(boxawards.getName())
-                    .obtainHashName(boxawards.getHashName())
-                    .obtainCover(boxawards.getCover())
-                    .getAwardDura(boxawards.getDura())
-                    .getAwardLv(boxawards.getLv())
-                    .obtainValue(boxawards.getBean())
-                    .build();
+            record = LuckyBoxRecord.builder().userId(user.getId()).boxBean(cost).percent(dto.getPercent()).awardId(dto.getAwardId()).targetName(boxawards.getName()).targetCover(boxawards.getCover()).awardDura(boxawards.getDura()).awardLv(boxawards.getLv()).targetValue(boxawards.getBean())//目标价值
+                    .getAwardId(boxawards.getId()).obtainName(boxawards.getName()).obtainHashName(boxawards.getHashName()).obtainCover(boxawards.getCover()).getAwardDura(boxawards.getDura()).getAwardLv(boxawards.getLv()).obtainValue(boxawards.getBean()).build();
             //中奖后额度复位
             redisTemplate.delete("LUCKBOX|" + user.getAnchor() + "|" + dto.getAwardId());
         } else {
@@ -396,44 +370,11 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             BoxAwards leaveDto = mapper.getBoxAwardById(id);
             returnList.add(leaveDto);
             //添加记录
-            record = LuckyBoxRecord.builder()
-                    .userId(user.getId())
-                    .boxBean(cost)
-                    .percent(dto.getPercent())
-                    .awardId(dto.getAwardId())
-                    .targetName(boxawards.getName())
-                    .targetCover(boxawards.getCover())
-                    .awardDura(boxawards.getDura())
-                    .awardLv(boxawards.getLv())
-                    .targetValue(boxawards.getBean())//目标价值
-                    .getAwardId(leaveDto.getId())
-                    .obtainName(leaveDto.getName())
-                    .obtainCover(leaveDto.getCover())
-                    .getAwardDura(leaveDto.getDura())
-                    .getAwardLv(leaveDto.getLv())
-                    .obtainHashName(leaveDto.getHashName())
-                    .obtainValue(leaveDto.getBean())
-                    .build();
+            record = LuckyBoxRecord.builder().userId(user.getId()).boxBean(cost).percent(dto.getPercent()).awardId(dto.getAwardId()).targetName(boxawards.getName()).targetCover(boxawards.getCover()).awardDura(boxawards.getDura()).awardLv(boxawards.getLv()).targetValue(boxawards.getBean())//目标价值
+                    .getAwardId(leaveDto.getId()).obtainName(leaveDto.getName()).obtainCover(leaveDto.getCover()).getAwardDura(leaveDto.getDura()).getAwardLv(leaveDto.getLv()).obtainHashName(leaveDto.getHashName()).obtainValue(leaveDto.getBean()).build();
         }
         int i = luckyboxrecordmapper.saveRecord(record);
-        BoxRecords bxrecord = BoxRecords.builder()
-                .getUserId(user.getId())
-                .userId(user.getId())
-                .boxId(0)
-                .boxName("幸运开箱")
-                .boxBean(cost)
-                .boxAwardId(record.getAwardId())
-                .name(record.getObtainName())
-                .hashName(record.getObtainHashName())
-                .cover(record.getObtainCover())
-                .dura(record.getGetAwardDura())
-                .lv(record.getAwardLv())
-                .bean(record.getObtainValue())
-                .maxT(new BigDecimal(0))
-                .code(this.getCode())
-                .uuid(UUID.randomUUID().toString())
-                .type(4)
-                .build();
+        BoxRecords bxrecord = BoxRecords.builder().getUserId(user.getId()).userId(user.getId()).boxId(0).boxName("幸运开箱").boxBean(cost).boxAwardId(record.getAwardId()).name(record.getObtainName()).hashName(record.getObtainHashName()).cover(record.getObtainCover()).dura(record.getGetAwardDura()).lv(record.getAwardLv()).bean(record.getObtainValue()).maxT(new BigDecimal(0)).code(this.getCode()).uuid(UUID.randomUUID().toString()).type(4).build();
         listReturn.add(bxrecord);
         //保存开箱记录
         boxrecordservice.saveBoxRecord(listReturn);
