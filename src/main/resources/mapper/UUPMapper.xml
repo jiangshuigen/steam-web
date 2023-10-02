@@ -110,6 +110,6 @@
     </select>
 
     <update id="updateAwardsBean" parameterType="com.example.demo.dto.UUawardsDto">
-        update steam_items_uu set bean =#{bean} where id =#{id}
+        update steam_items_uu set bean =#{bean} ,updated_at = now() where id =#{id}
     </update>
 </mapper>
