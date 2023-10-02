@@ -96,7 +96,7 @@
             order by re.created_at desc
             limit 21
     </select>
-    <insert id="saveBoxRecord" parameterType="com.example.demo.entity.BoxRecords">
+    <insert id="saveBoxRecord" parameterType="com.example.demo.entity.BoxRecords" useGeneratedKeys="true" keyProperty="id" >
         insert into box_records(
         get_user_id,
         user_id,
