@@ -32,7 +32,7 @@ public class ScheduledAwardsTasks {
     /**
      * 每隔三小时更新基础数据价格
      */
-    @Scheduled(cron = "0 0 0-2 * * ?")
+    @Scheduled(cron = "0 0 0/2 * * ?")
     public void updateAwards() {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
         log.info("====开始：{}", dateFormat.format(new Date()));
