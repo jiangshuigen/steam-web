@@ -1,11 +1,14 @@
 package com.example.demo.entity;
 
+import com.example.demo.dto.RoomUserDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class Room {
@@ -47,4 +50,6 @@ public class Room {
     private Date updatedAt;
     @ApiModelProperty("房间类型 官方-1 主播-2")
     private String type;
+    @ApiModelProperty("玩家列表")
+    private List<RoomUserDto> listUser = new ArrayList<>();
 }

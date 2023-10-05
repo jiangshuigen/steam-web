@@ -42,6 +42,11 @@ public class RoomServiceImpl implements RoomService {
     public PageInfo<Room> getRoomsListByPage(RoomQuery query) {
         PageHelper.startPage(query.getPageNo(), query.getPageSize());
         List<Room> list = roomMapper.getRoomsListByPage(query);
+        for (Room room : list) {
+            //查询房间玩家
+            List<RoomUserDto> listUser = roomMapper.getUsersById(room.getId());
+            room.setListUser(listUser);
+        }
         PageInfo<Room> listInfo = new PageInfo<>(list);
         return listInfo;
     }

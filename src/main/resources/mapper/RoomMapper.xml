@@ -52,8 +52,8 @@
         r.is_give as isGive ,
         r.me_inviter as meInviter,
         r.top,
-        r.created_at,
-        r.updated_at,
+        r.created_at createdAt,
+        r.updated_at updatedAt,
         IF
         (
         DATE_FORMAT( end_time, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( now( ), '%Y-%m-%d %H:%i:%s' ), '2', '1'

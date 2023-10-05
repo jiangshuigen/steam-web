@@ -1,7 +1,6 @@
 package com.example.demo.entity;
 
 import com.example.demo.dto.RoomAwardWeb;
-import com.example.demo.dto.RoomUserDto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -23,6 +22,5 @@ public class RoomWeb extends Room {
 
     @ApiModelProperty("奖品列表")
     private List<RoomAwardWeb> awardList = new ArrayList<>();
-    @ApiModelProperty("玩家列表")
-    private List<RoomUserDto> listUser = new ArrayList<>();
+
 }
