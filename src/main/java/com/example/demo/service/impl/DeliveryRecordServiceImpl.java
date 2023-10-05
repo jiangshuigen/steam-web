@@ -56,6 +56,7 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
                 .addParam("templateHashName", query.getTemplateHashName())
                 .initPost(true)
                 .sync();
+        log.info("query result is {} ===============", result);
         UUResponse res = JSON.parseObject(result, UUResponse.class);
         if (res.getCode() == 0) {
             UUSaleRsponse resp = JSON.parseObject(JSON.toJSONString(res.getData()), UUSaleRsponse.class);
@@ -65,7 +66,6 @@ public class DeliveryRecordServiceImpl implements DeliveryRecordService {
         }
         return null;
     }
-
 
 
     /**
