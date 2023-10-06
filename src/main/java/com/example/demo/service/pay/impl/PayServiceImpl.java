@@ -11,7 +11,6 @@ import com.example.demo.entity.User;
 import com.example.demo.service.BeanRecordService;
 import com.example.demo.service.CardService;
 import com.example.demo.service.pay.PayService;
-import com.example.demo.util.EncodeUtils;
 import com.example.demo.util.HttpUtils;
 import com.example.demo.util.Md5Utils;
 import com.example.demo.util.SignUtils;
@@ -75,35 +74,31 @@ public class PayServiceImpl implements PayService {
         /**
          * value替换为所需要的值，此处仅作示例
          */
-        map.put("app_key", AliPayConstant.APP_KEY);
-        map.put("api_domain", AliPayConstant.API_DOMAIN);
-        map.put("goods_id", "805");
-        map.put("goods_num", "1");
-        map.put("order_id", orderNum);
-        map.put("is_mobile", "1");
-        map.put("key", AliPayConstant.APP_SECRET);
+        map.put("money", String.valueOf(count));
+        map.put("name", "平台充值");
+        map.put("notify_url", AliPayConstant.NOTIFY_URL);
+        map.put("out_trade_no", orderNum);
+        map.put("pid", AliPayConstant.APP_KEY);
+        map.put("return_url", AliPayConstant.RETURN_URL);
+        map.put("sitename", AliPayConstant.APP_SECRET);
+        map.put("type", AliPayConstant.PAY_TYPE_AILIPAY);
         String preSignContent = SignUtils.getPreSignContent(map);
-        log.info("文档比对   = app_key=app_key&api_domain=api_domain&goods_id=goods_id&goods_num=goods_num&order_id=order_id&is_mobile=is_mobile&key=key");
+        map.put("sign_type", "MD5");
+        map.put("return_type", "json");
         log.info("preSignContent = {}", preSignContent);
         String md5 = null;
         try {
-            md5 = Md5Utils.md5(preSignContent);
+            md5 = Md5Utils.md5(preSignContent + AliPayConstant.APP_SECRET);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        map.put("contact", usr.getMobile());
-        map.put("callback_url", callbackUrl);
-        map.put("ip_address", this.getRemoteIP(request));
-        map.put("pay_type", "0");
         map.put("sign", md5);
-        map.put("discount_price", String.valueOf(count * 100));
-
         // 3、发送请求
         String result = HttpUtils.sendPost(AliPayConstant.PAY_URL, map);
         log.info("result is {}", result);
         AliPayOrderInfo res = JSON.parseObject(result, AliPayOrderInfo.class);
         //4、处理订单
-        if (AliPayConstant.SUCCESS_STATUS == res.getResults().getStatus()) {
+        if (AliPayConstant.SUCCESS_STATUS == res.getCode()) {
             //业务：创建订单记录 -状态未支付
             BeanRecord record = new BeanRecord();
             record.setUserId(usr.getId());
@@ -118,7 +113,7 @@ public class PayServiceImpl implements PayService {
             record.setIsPayApi(1);
             int i = beanrecordservice.insertBeanReacord(record);
         } else {
-            log.error("错误信息：{}", EncodeUtils.decodeUnicode(res.getResults().getError()));
+            log.error("错误信息：{}", res.getMsg());
         }
         return res;
     }

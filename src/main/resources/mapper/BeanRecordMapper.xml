@@ -89,10 +89,10 @@
 
     <update id="updateBeanRecordsStatus" parameterType="com.example.demo.dto.Callback">
           update bean_records
-          set trade_no =  #{order_id},
+          set trade_no =  #{trade_no},
           status =1 ,
           updated_at = now()
-          where code = #{api_order_id}
+          where code = #{out_trade_no}
     </update>
     <select id="queryBeanRecordsByCode" resultType="com.example.demo.entity.BeanRecord">
           select

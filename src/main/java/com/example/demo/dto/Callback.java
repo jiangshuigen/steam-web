@@ -5,17 +5,21 @@ import lombok.Data;
 @Data
 public class Callback {
 
-    private String api_order_id;
+    private int pid;
 
-    private int mch_id;
+    private String trade_no;
 
-    private String order_id;
+    private String out_trade_no;
 
-    private String pay_type;
+    private String type;
 
-    private String success_at;
+    private String name;
 
-    private int total_amount;
+    private String money;
+
+    private String trade_status;
 
     private String sign;
+
+    private String sign_type;
 }

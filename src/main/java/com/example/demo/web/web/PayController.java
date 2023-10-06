@@ -64,7 +64,7 @@ public class PayController {
             return payservice.getOrderNumber(usr, count, request);
         } else {
             AliPayOrderInfo info = new AliPayOrderInfo();
-            info.setErrMsg("请登录");
+            info.setMsg("请登录");
             return info;
         }
     }
@@ -83,26 +83,36 @@ public class PayController {
         /**
          * value替换为所需要的值，此处仅作示例
          */
-        map.put("api_order_id", callback.getApi_order_id());
-        map.put("mch_id", String.valueOf(callback.getMch_id()));
-        map.put("order_id", callback.getOrder_id());
-        map.put("pay_type", callback.getPay_type());
-        map.put("success_at", callback.getSuccess_at());
-        map.put("total_amount", String.valueOf(callback.getTotal_amount()));
+        map.put("money", String.valueOf(callback.getMoney()));
+        map.put("name", "平台充值");
+        map.put("out_trade_no", callback.getOut_trade_no());
+        map.put("pid", AliPayConstant.APP_KEY);
+        map.put("trade_no", callback.getTrade_no());
+        map.put("trade_status", callback.getTrade_status());
+        map.put("type", AliPayConstant.PAY_TYPE_AILIPAY);
+        String preSignContent = SignUtils.getPreSignContent(map);
+        map.put("sign_type", "MD5");
+        map.put("return_type", "json");
+        log.info("preSignContent = {}", preSignContent);
+        String sgin = null;
+        try {
+            sgin = Md5Utils.md5(preSignContent + AliPayConstant.APP_SECRET);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        map.put("sign", sgin);
         map.put("key", AliPayConstant.APP_SECRET);
         //获取用户信息
         log.info("Callback info is {}", JSON.toJSONString(callback));
         try {
-            String preSignContent = SignUtils.getPreSignContent(map);
-            String sgin = Md5Utils.md5(preSignContent);
             //校验
             if (sgin.equals(callback.getSign())) {
                 log.info("==============签名校验通过==============================");
                 //修改状态
                 payservice.updateBeanRecord(callback);
                 try {
-                    rabbitTemplate.convertAndSend(Constant.ORDER_CALLBACK_DIRECT_EXCHANGE, Constant.ORDER_CALLBACK_DIRECT_ROUTING, callback.getApi_order_id());
-                    log.info("send message is ===={}", JSON.toJSONString(callback.getApi_order_id()));
+                    rabbitTemplate.convertAndSend(Constant.ORDER_CALLBACK_DIRECT_EXCHANGE, Constant.ORDER_CALLBACK_DIRECT_ROUTING, callback.getOut_trade_no());
+                    log.info("send message is ===={}", JSON.toJSONString(callback.getOut_trade_no()));
                 } catch (Exception e) {
                     e.printStackTrace();
                     log.info("=====callback===消息推送失败=====" + e.getMessage());
