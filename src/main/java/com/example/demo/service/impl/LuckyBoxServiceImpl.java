@@ -331,6 +331,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             int max = Integer.parseInt(listLucky.get(1));
             int radom = (int) (min + Math.random() * (max - min + 1));
             double rate = radom / min;
+            log.info("================rate：{}======", rate);
             total = boxawards.getBean().multiply(new BigDecimal(rate).setScale(2, BigDecimal.ROUND_DOWN));
             log.info("++++++++++" + dto.getAwardId() + "++的额度是：" + total + "++++++++++++++++++++++++++++");
         } else {
