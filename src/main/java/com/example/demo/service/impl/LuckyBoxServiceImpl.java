@@ -158,6 +158,11 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         String listStr = (String) redisTemplate.opsForValue().get("BoxNumb-" + openbox.getBoxId() + "|" + user.getAnchor());
         if (StringUtil.isNullOrEmpty(listStr)) {
             this.nextTime(listAward, listRedis, openbox, user);
+            //判断是否设置奖品数量
+            if(StringUtil.isNullOrEmpty(listStr)){
+                log.error("================奖品投放数量0====================");
+                throw new Exception("奖品投放数量0");
+            }
         } else {
             listRedis = JSON.parseArray(listStr, BoxAwards.class);
         }
