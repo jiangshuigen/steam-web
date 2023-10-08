@@ -14,6 +14,7 @@
         <result property="updatedAt" column="updated_at"/>
         <result property="userName" column="userName"/>
         <result property="avatar" column="avatar"/>
+        <result property="anchor" column="anchor"/>
         <collection property="listBox" ofType="com.example.demo.dto.GameArenasBoxDto" select="selectBoxs" column="id">
             <result property="boxId" column="boxId"/>
             <result property="boxName" column="boxName"/>
@@ -103,7 +104,8 @@
                 ga.created_at ,
                 ga.updated_at ,
                 u.name as userName,
-                u.avatar as avatar
+                u.avatar as avatar,
+                u.anchor as anchor,
     </sql>
     <select id="getBattleList" resultMap="GameResultMap" parameterType="com.example.demo.dto.BasePage">
         <include refid="Base_Column_List"></include>
@@ -149,7 +151,8 @@
         ga.created_at ,
         ga.updated_at ,
         u.name as userName,
-        u.avatar as avatar
+        u.avatar as avatar,
+        u.anchor as anchor
         from game_award_records gar
         inner join game_arenas ga on ga.id = gar.game_arena_id and ga.status=2
         left join users u on u.id = ga.create_user_id

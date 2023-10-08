@@ -100,8 +100,6 @@ public class PayController {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        map.put("sign", sgin);
-        map.put("key", AliPayConstant.APP_SECRET);
         //获取用户信息
         log.info("Callback info is {}", JSON.toJSONString(callback));
         try {

@@ -45,5 +45,6 @@ public class GameArenasDto {
     private List<BoxRecords> recordList;
     @ApiModelProperty("胜利获得")
     private BigDecimal winnerBean;
-
+    @ApiModelProperty("是否主播 0：否 1：是")
+    private Integer anchor;
 }
