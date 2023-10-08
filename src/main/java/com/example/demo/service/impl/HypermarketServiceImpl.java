@@ -112,8 +112,9 @@ public class HypermarketServiceImpl implements HypermarketService {
             if (!ObjectUtils.isEmpty(res)) {
                 if (res.getSalecommodityresponse().getMinSellPrice() != null &&
                         res.getSalecommodityresponse().getMinSellPrice().compareTo(uUawardsDto.getBean()) != 0) {
-                    log.info("======id为：{}=====价格：{} 手动同步更新为：{}===============================", uUawardsDto.getId(), uUawardsDto.getBean(), res.getSalecommodityresponse().getMinSellPrice());
-                    uUawardsDto.setBean(res.getSalecommodityresponse().getMinSellPrice());
+                    BigDecimal cron = res.getSalecommodityresponse().getMinSellPrice().multiply(new BigDecimal(1.03));
+                    log.info("======id为：{}=====价格：{} 手动同步更新为：{}===============================", uUawardsDto.getId(), uUawardsDto.getBean(), cron);
+                    uUawardsDto.setBean(cron);
                     uupservice.updateAwardsBean(uUawardsDto);
                 }
             }
