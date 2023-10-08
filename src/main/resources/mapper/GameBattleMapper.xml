@@ -105,7 +105,7 @@
                 ga.updated_at ,
                 u.name as userName,
                 u.avatar as avatar,
-                u.anchor as anchor,
+                u.anchor as anchor
     </sql>
     <select id="getBattleList" resultMap="GameResultMap" parameterType="com.example.demo.dto.BasePage">
         <include refid="Base_Column_List"></include>
