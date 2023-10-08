@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/back")
+@RequestMapping("/web/back")
 @Api(value = "回调接口", tags = {"优品回调"})
 @Slf4j
 public class UUbackController {
