@@ -110,10 +110,10 @@ public class HypermarketServiceImpl implements HypermarketService {
             query.setTemplateHashName(uUawardsDto.getMarketHashName());
             UUSaleRsponse res = deliveryrecordservice.getSellList(query);
             if (!ObjectUtils.isEmpty(res)) {
-                if (res.getSalecommodityresponse().getReferencePrice() != null &&
-                        res.getSalecommodityresponse().getReferencePrice().compareTo(uUawardsDto.getBean()) != 0) {
-                    log.info("======id为：{}=====价格：{} 手动同步更新为：{}===============================", uUawardsDto.getId(), uUawardsDto.getBean(), res.getSalecommodityresponse().getReferencePrice());
-                    uUawardsDto.setBean(res.getSalecommodityresponse().getReferencePrice());
+                if (res.getSalecommodityresponse().getMinSellPrice() != null &&
+                        res.getSalecommodityresponse().getMinSellPrice().compareTo(uUawardsDto.getBean()) != 0) {
+                    log.info("======id为：{}=====价格：{} 手动同步更新为：{}===============================", uUawardsDto.getId(), uUawardsDto.getBean(), res.getSalecommodityresponse().getMinSellPrice());
+                    uUawardsDto.setBean(res.getSalecommodityresponse().getMinSellPrice());
                     uupservice.updateAwardsBean(uUawardsDto);
                 }
             }
