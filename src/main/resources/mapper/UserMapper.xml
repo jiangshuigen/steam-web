@@ -53,7 +53,7 @@
             <if test="bean!=null and bean != ''">
                 bean =#{bean},
             </if>
-            <if test="silver!=null and silver != ''">
+            <if test="silver!=null">
                 silver =#{silver},
             </if>
             <if test="closeGift!=null">
