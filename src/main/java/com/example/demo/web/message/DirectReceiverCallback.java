@@ -47,7 +47,7 @@ public class DirectReceiverCallback {
     public void process(String orderId) {
         log.info("=========DirectReceiverCallback  orderId is {}==================", orderId);
         BeanRecord record = beanrecordservice.queryBeanRecordsByCode(orderId);
-        if (record.getStatus() != 1) {
+        if (record.getStatus() == 1) {
             log.info("=====order status is pay ： ======{}", record.getStatus() == 1);
             return;
         }

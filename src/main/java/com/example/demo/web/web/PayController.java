@@ -112,7 +112,7 @@ public class PayController {
             if (sgin.equals(callback.getSign())) {
                 log.info("==============签名校验通过==============================");
                 //修改状态
-                payservice.updateBeanRecord(callback);
+//                payservice.updateBeanRecord(callback);
                 try {
                     rabbitTemplate.convertAndSend(Constant.ORDER_CALLBACK_DIRECT_EXCHANGE, Constant.ORDER_CALLBACK_DIRECT_ROUTING, callback.getOut_trade_no());
                     log.info("send message is ===={}", JSON.toJSONString(callback.getOut_trade_no()));
