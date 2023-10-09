@@ -78,7 +78,7 @@ public class PayController {
      */
     @ApiOperation(value = "成功回调")
     @PostMapping("/callback")
-    public String callback(@RequestBody Callback callback) {
+    public String callback( Callback callback) {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         /**
          * value替换为所需要的值，此处仅作示例
