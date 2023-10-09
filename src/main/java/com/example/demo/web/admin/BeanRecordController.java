@@ -30,4 +30,16 @@ public class BeanRecordController {
     public ResultData<PageInfo<BeanRecord>> getBeanRecordList(@RequestBody BeanRecordQuery query) {
         return ResultData.success(beanrecordservice.getBeanRecordList(query));
     }
+
+
+    /**
+     * 查询订单状态
+     * @param orderNo
+     * @return
+     */
+    @ApiOperation(value = "查询订单信息")
+    @GetMapping("/getOrderInfo")
+    public ResultData<BeanRecord> getOrderInfo(@RequestParam String orderNo) {
+        return ResultData.success(beanrecordservice.getOrderInfo(orderNo));
+    }
 }

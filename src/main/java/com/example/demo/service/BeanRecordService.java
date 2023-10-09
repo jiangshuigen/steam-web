@@ -33,4 +33,6 @@ public interface BeanRecordService {
     BeanRecord queryBeanRecordsByTradeNo(String cdk);
 
     int updateBeanRecords(String orderId);
+
+    BeanRecord getOrderInfo(String orderNo);
 }

@@ -79,4 +79,9 @@ public class BeanRecordServiceImpl implements BeanRecordService {
     public int updateBeanRecords(String orderId) {
         return beanrecordmapper.updateBeanRecords(orderId);
     }
+
+    @Override
+    public BeanRecord getOrderInfo(String orderNo) {
+        return beanrecordmapper.queryBeanRecordsByCode(orderNo);
+    }
 }
