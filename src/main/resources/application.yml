@@ -21,13 +21,13 @@ spring:
 #    lazy-initialization: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://47.97.5.36:3306/timoskins0410?characterEncoding=utf8&serverTimezone=GMT
+    url: jdbc:mysql://m8skins.cn:3306/timoskins0410?characterEncoding=utf8&serverTimezone=GMT
     username: root
     password: THKJ0429@Root
     type: com.alibaba.druid.pool.DruidDataSource
    #rabbitmq
   rabbitmq:
-    host: 47.97.5.36
+    host: m8skins.cn
     port: 5673
     username: admin
     password: THKJ0429@Root
@@ -40,7 +40,7 @@ spring:
       max-request-size: 100MB
   #redis
   redis:
-    host: 47.97.5.36
+    host: m8skins.cn
     port: 16379
     password: THKJ0429@Root
 
@@ -60,7 +60,7 @@ logging:
     level:
       com.example.demo.mapper: DEBUG
 upload:
-  url: "http://47.97.5.36:8089/upload"
+  url: "http://m8skins.cn:8089/upload"
 
 callback:
-  url: "http://47.97.5.36:8088/web/pay/callback"
+  url: "http://4m8skins.cn:8088/web/pay/callback"
