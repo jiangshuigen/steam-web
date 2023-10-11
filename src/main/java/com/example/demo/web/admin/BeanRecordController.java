@@ -30,4 +30,6 @@ public class BeanRecordController {
     public ResultData<PageInfo<BeanRecord>> getBeanRecordList(@RequestBody BeanRecordQuery query) {
         return ResultData.success(beanrecordservice.getBeanRecordList(query));
     }
+
+
 }

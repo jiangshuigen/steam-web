@@ -9,7 +9,9 @@ import com.example.demo.dto.AliPayOrderInfo;
 import com.example.demo.dto.Callback;
 import com.example.demo.dto.ExchangeDto;
 import com.example.demo.dto.UserDto;
+import com.example.demo.entity.BeanRecord;
 import com.example.demo.entity.User;
+import com.example.demo.service.BeanRecordService;
 import com.example.demo.service.UserService;
 import com.example.demo.service.pay.PayService;
 import com.example.demo.util.Md5Utils;
@@ -46,6 +48,9 @@ public class PayController {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    @Resource
+    private BeanRecordService beanrecordservice;
+
     /**
      * 创建订单
      *
@@ -78,7 +83,7 @@ public class PayController {
      */
     @ApiOperation(value = "成功回调")
     @PostMapping("/callback")
-    public String callback(@RequestBody Callback callback) {
+    public String callback(Callback callback) {
         LinkedHashMap<String, String> map = new LinkedHashMap<>();
         /**
          * value替换为所需要的值，此处仅作示例
@@ -107,7 +112,7 @@ public class PayController {
             if (sgin.equals(callback.getSign())) {
                 log.info("==============签名校验通过==============================");
                 //修改状态
-                payservice.updateBeanRecord(callback);
+//                payservice.updateBeanRecord(callback);
                 try {
                     rabbitTemplate.convertAndSend(Constant.ORDER_CALLBACK_DIRECT_EXCHANGE, Constant.ORDER_CALLBACK_DIRECT_ROUTING, callback.getOut_trade_no());
                     log.info("send message is ===={}", JSON.toJSONString(callback.getOut_trade_no()));
@@ -205,7 +210,7 @@ public class PayController {
             if (ObjectUtils.isEmpty(dto)) {
                 return ResultData.fail("403", "未登录");
             }
-            return ResultData.success(userservice.exchangeCron(dto.getId(),exchangeDto));
+            return ResultData.success(userservice.exchangeCron(dto.getId(), exchangeDto));
         } catch (Exception e) {
             e.printStackTrace();
             return ResultData.fail("500", e.getMessage());
@@ -213,4 +218,15 @@ public class PayController {
     }
 
 
+    /**
+     * 查询订单状态
+     *
+     * @param orderNo
+     * @return
+     */
+    @ApiOperation(value = "查询订单信息")
+    @GetMapping("/getOrderInfo")
+    public ResultData<BeanRecord> getOrderInfo(@RequestParam String orderNo) {
+        return ResultData.success(beanrecordservice.getOrderInfo(orderNo));
+    }
 }
