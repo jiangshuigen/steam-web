@@ -21,18 +21,16 @@ spring:
 #    lazy-initialization: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://8.218.127.126:3306/timoskins0410?characterEncoding=utf8&serverTimezone=GMT
+    url: jdbc:mysql://47.97.5.36:3306/timoskins0410?characterEncoding=utf8&serverTimezone=GMT
     username: root
     password: THKJ0429@Root
     type: com.alibaba.druid.pool.DruidDataSource
    #rabbitmq
   rabbitmq:
-    host: 8.218.127.126
-    port: 5672
+    host: 47.97.5.36
+    port: 5673
     username: admin
     password: THKJ0429@Root
-    connection-timeout: 0
-
 
   #图片上传
   servlet:
@@ -42,10 +40,9 @@ spring:
       max-request-size: 100MB
   #redis
   redis:
-    host: m8skins.cn
+    host: 47.97.5.36
     port: 16379
-#    password: THKJ0429@Root
-    Auth: THKJ0429@Root
+    password: THKJ0429@Root
 
   application:
     name: steam-web
