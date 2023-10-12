@@ -1,7 +1,7 @@
 
 
 server:
-  port: 8088
+  port: 80
 
   tomcat.uri-encoding: utf-8
   servlet:
@@ -28,7 +28,7 @@ spring:
    #rabbitmq
   rabbitmq:
     host: m8skins.cn
-    port: 5673
+    port: 5672
     username: admin
     password: THKJ0429@Root
 
@@ -40,7 +40,7 @@ spring:
       max-request-size: 100MB
   #redis
   redis:
-    host: m8skins.cn
+    host: 47.97.5.36
     port: 16379
     password: THKJ0429@Root
 
