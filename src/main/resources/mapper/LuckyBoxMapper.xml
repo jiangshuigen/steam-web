@@ -368,14 +368,14 @@
             <if test="odds >0">
                 odds = #{odds},
             </if>
-            <if test="realOdds >0">
+            <if test="realOdds !=null">
                 real_odds = #{realOdds},
             </if>
             <if test="luckOdds !=null">
                 luck_odds = #{luckOdds},
             </if>
 
-            <if test="anchorOdds >0">
+            <if test="anchorOdds !=nukk">
                 anchor_odds = #{anchorOdds},
             </if>
             <if test="clearLucky >0">
