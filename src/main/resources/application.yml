@@ -60,7 +60,7 @@ logging:
     level:
       com.example.demo.mapper: DEBUG
 upload:
-  url: "http://m8skins.cn:8089/upload"
+  url: "http://47.97.5.36:8089/upload"
 
 callback:
   url: "http://4m8skins.cn:8088/web/pay/callback"
