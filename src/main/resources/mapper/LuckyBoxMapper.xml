@@ -371,6 +371,10 @@
             <if test="realOdds >0">
                 real_odds = #{realOdds},
             </if>
+            <if test="luckOdds !=null">
+                luck_odds = #{luckOdds},
+            </if>
+
             <if test="anchorOdds >0">
                 anchor_odds = #{anchorOdds},
             </if>
