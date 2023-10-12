@@ -375,7 +375,7 @@
                 luck_odds = #{luckOdds},
             </if>
 
-            <if test="anchorOdds !=nukk">
+            <if test="anchorOdds !=null">
                 anchor_odds = #{anchorOdds},
             </if>
             <if test="clearLucky >0">
