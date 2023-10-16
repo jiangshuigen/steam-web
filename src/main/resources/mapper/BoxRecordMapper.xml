@@ -67,7 +67,7 @@
         re.created_at as createdAt
         from box_records re
         left join users u on re.get_user_id = u.id
-            order by re.bean, re.created_at desc
+            order by re.created_at desc
             limit #{numb}
     </select>
     <select id="getRecordHistory" resultType="com.example.demo.entity.BoxRecords" parameterType="java.lang.Integer">
