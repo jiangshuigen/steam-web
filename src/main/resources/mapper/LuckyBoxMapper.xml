@@ -349,6 +349,7 @@
         updated_at as updatedAt
         from box_awards
         where box_id =#{boxId}
+        order by bean desc
     </select>
     <update id="updateAward" parameterType="com.example.demo.entity.BoxAwards">
         update box_awards
