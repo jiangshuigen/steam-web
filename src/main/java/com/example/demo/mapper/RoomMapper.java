@@ -44,4 +44,6 @@ public interface RoomMapper {
     int updateBatchPackage(@Param("listRoomAwardDto") List<RoomAwardDto> listRoomAwardDto);
 
     int updateRoomGive(@Param("roomId") int roomId);
+
+    int updateAwardsUser(RoomAward roomaward);
 }

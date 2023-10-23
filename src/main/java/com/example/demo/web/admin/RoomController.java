@@ -72,6 +72,17 @@ public class RoomController {
 
 
     /**
+     * 指定用户
+     * @param roomaward
+     * @return
+     */
+    @ApiOperation(value = "指定用户")
+    @PostMapping("/updateUser")
+    public ResultData updateAwardsUser(@RequestBody RoomAward roomaward) {
+        return ResultData.success(roomservice.updateAwardsUser(roomaward));
+    }
+
+    /**
      * 删除
      *
      * @param id

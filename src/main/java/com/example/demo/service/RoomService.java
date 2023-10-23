@@ -34,4 +34,5 @@ public interface RoomService {
 
     int endRoom(int i);
 
+    int updateAwardsUser(RoomAward roomaward);
 }

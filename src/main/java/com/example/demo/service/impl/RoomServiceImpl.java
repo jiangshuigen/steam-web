@@ -236,6 +236,11 @@ public class RoomServiceImpl implements RoomService {
         return 0;
     }
 
+    @Override
+    public int updateAwardsUser(RoomAward roomaward) {
+        return roomMapper.updateAwardsUser(roomaward);
+    }
+
 
     private List<RoomWeb> calculate(List<RoomWeb> list) {
         list.stream().forEach(el -> {
