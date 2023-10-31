@@ -187,7 +187,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             boxNumb = openbox.getNumb();
         }
         //判断是否设置奖品数量
-        if(total<=0){
+        if (total <= 0) {
             log.error("================奖品投放数量0====================");
             throw new Exception("奖品投放数量0");
         }
@@ -231,25 +231,41 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                 if (listRedis.get(0).getIsLuckyBox() == 1) {
                     awardcountdto.setType(1);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
-                    awardcountdto.setNumb(countRedis - 1);
-                    redisTemplate.opsForValue().set("BoxNumb|1|" + listRedis.get(0).getId() + "|", countRedis - 1);
+                    int realNumb = countRedis - 1;
+                    if (realNumb < 0) {
+                        realNumb = listRedis.get(0).getLuckOdds() ;
+                    }
+                    awardcountdto.setNumb(realNumb);
+                    redisTemplate.opsForValue().set("BoxNumb|1|" + listRedis.get(0).getId() + "|", realNumb);
                 } else {
                     awardcountdto.setType(4);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|4|" + listRedis.get(0).getId() + "|");
-                    awardcountdto.setNumb(countRedis - 1);
-                    redisTemplate.opsForValue().set("BoxNumb|4|" + listRedis.get(0).getId() + "|", countRedis - 1);
+                    int realNumb = countRedis - 1;
+                    if (realNumb < 0) {
+                        realNumb = listRedis.get(0).getAnchorOdds();
+                    }
+                    awardcountdto.setNumb(realNumb);
+                    redisTemplate.opsForValue().set("BoxNumb|4|" + listRedis.get(0).getId() + "|", realNumb);
                 }
             } else {
                 if (listRedis.get(0).getIsLuckyBox() == 1) {
                     awardcountdto.setType(2);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
-                    awardcountdto.setNumb(countRedis - 1);
-                    redisTemplate.opsForValue().set("BoxNumb|1|" + listRedis.get(0).getId() + "|", countRedis - 1);
+                    int realNumb = countRedis - 1;
+                    if (realNumb < 0) {
+                        realNumb = listRedis.get(0).getLuckOdds() ;
+                    }
+                    awardcountdto.setNumb(realNumb);
+                    redisTemplate.opsForValue().set("BoxNumb|1|" + listRedis.get(0).getId() + "|", realNumb);
                 } else {
                     awardcountdto.setType(3);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|3|" + listRedis.get(0).getId() + "|");
-                    awardcountdto.setNumb(countRedis - 1);
-                    redisTemplate.opsForValue().set("BoxNumb|3|" + listRedis.get(0).getId() + "|", countRedis - 1);
+                    int realNumb = countRedis - 1;
+                    if (realNumb < 0) {
+                        realNumb = listRedis.get(0).getRealOdds() ;
+                    }
+                    awardcountdto.setNumb(realNumb);
+                    redisTemplate.opsForValue().set("BoxNumb|3|" + listRedis.get(0).getId() + "|", realNumb);
                 }
             }
             try {
