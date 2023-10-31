@@ -60,7 +60,7 @@ public class User {
     private Integer anchor;
     @ApiModelProperty("注册时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date created_at;
+    private Date createdAt;
 
     @ApiModelProperty("总充值（真实）")
     private BigDecimal truePay;
