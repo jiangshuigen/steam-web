@@ -173,7 +173,8 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             listRedis = JSON.parseArray(listStr, BoxAwards.class);
         }
         //开箱计数器
-        Object ob = redisTemplate.opsForValue().get("BoxNumb-" + "|" + user.getAnchor() + openbox.getBoxId());
+        Object ob = redisTemplate.opsForValue().get("BoxNumb-" + "|" + user.getAnchor() + "|" + openbox.getBoxId());
+        log.info("================宝箱id为：{}的计数器值是：{}====================", openbox.getBoxId(), ob);
         int total = 0;
         for (BoxAwards ea : listAward) {
             if (user.getAnchor().equals(1)) {
@@ -186,6 +187,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                 }
             }
         }
+        log.info("================宝箱id为：{}的奖品总数是：{}====================", openbox.getBoxId(), total);
         int boxNumb = 0;
         if (!ObjectUtils.isEmpty(ob)) {
             boxNumb = (int) ob + openbox.getNumb();
@@ -439,6 +441,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     }
                 }
             }
+
             return true;
         }
         return false;
