@@ -201,14 +201,17 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         for (BoxAwards boxAwards : listAward) {
             if (boxAwards.getIsLuckyBox() == 1) {
                 for (int i = 0; i < boxAwards.getLuckOdds(); i++) {
+                    log.info("================添加幸运物品{}====================", i + 1);
                     listLuckyWards.add(boxAwards);
                 }
             }
         }
         //在幸运区间内添加到list
         if (boxNumb >= begin && boxNumb < end) {
+            log.info("================幸运区间之内，添加幸运奖品：{}====================", JSON.toJSON(listLuckyWards));
             listRedis.addAll(listLuckyWards);
         } else if (boxNumb == end) {
+            log.info("================幸运区间100%中奖，添加幸运奖品：{}====================", JSON.toJSON(listLuckyWards));
             //幸运区间极限值 必中
             for (BoxAwards listLuckyward : listLuckyWards) {
                 BoxRecords record = BoxRecords.builder().getUserId(user.getId()).userId(user.getId()).boxId(openbox.getBoxId()).boxName(bx.getName()).boxBean(bx.getBean()).boxAwardId(listLuckyward.getId()).name(listLuckyward.getName()).hashName(listLuckyward.getHashName()).cover(listLuckyward.getCover()).dura(listLuckyward.getDura()).lv(listLuckyward.getLv()).bean(listLuckyward.getBean()).maxT(new BigDecimal(0)).code(this.getCode()).uuid(UUID.randomUUID().toString()).type(1).build();
@@ -217,6 +220,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         }
         //洗牌
         Collections.shuffle(listRedis);
+        log.info("================listRedis：{}====================", JSON.toJSON(listRedis));
         int size = openbox.getNumb();
         for (int i = 0; i < size; i++) {
             if (listReturn.size() >= openbox.getNumb()) {
