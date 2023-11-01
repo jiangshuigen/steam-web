@@ -111,6 +111,17 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
 
     @Override
     public int updateAward(BoxAwards award) {
+        try {
+            //1主播幸运
+            redisTemplate.opsForValue().set("BoxNumb|1|" + award.getId() + "|", award.getLuckOddsLeave());
+            //3普通
+            redisTemplate.opsForValue().set("BoxNumb|3|" + award.getId() + "|", award.getRealOddsLeave());
+            //4主播
+            redisTemplate.opsForValue().set("BoxNumb|4|" + award.getId() + "|", award.getAnchorOddsLeave());
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("===更新缓存失败=====");
+        }
         return mapper.updateAward(award);
     }
 
