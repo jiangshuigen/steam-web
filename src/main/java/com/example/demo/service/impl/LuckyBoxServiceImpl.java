@@ -303,9 +303,9 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         boxrecordservice.saveBoxRecord(listReturn);
         log.info("箱子id======" + openbox.getBoxId() + "已开箱数目=======" + boxNumb);
         if (ObjectUtils.isEmpty(ob)) {
-            redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + openbox.getBoxId(), openbox.getNumb());
+            redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + "|" + openbox.getBoxId(), openbox.getNumb());
         } else {
-            redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + openbox.getBoxId(), boxNumb);
+            redisTemplate.opsForValue().set("BoxNumb-" + "|" + user.getAnchor() + "|" + openbox.getBoxId(), boxNumb);
         }
         //盲盒每日奖励
         try {
