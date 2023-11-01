@@ -307,7 +307,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                 red.setList(new ArrayList<>());
             }
             redisTemplate.opsForValue().set(userKey, JSON.toJSON(red), time, TimeUnit.SECONDS);
-            log.error("===========每日盲盒消费进度更新：本次消费{}=====================", cost);
+            log.info("===========每日盲盒消费进度更新：本次消费{}=====================", cost);
         } catch (Exception e) {
             log.error("===========每日盲盒消费进度更新失败=====================");
             e.printStackTrace();
