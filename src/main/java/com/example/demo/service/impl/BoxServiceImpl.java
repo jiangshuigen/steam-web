@@ -83,7 +83,7 @@ public class BoxServiceImpl implements BoxService {
             redisTemplate.opsForValue().set("BoxNumb-" + dto.getBoxId() + "|" + 0, reds);
             redisTemplate.opsForValue().set("BoxNumb-" + dto.getBoxId() + "|" + 1, reds);
             //库存
-            list.stream().forEach(e->{
+            list.stream().forEach(e -> {
                 //1主播幸运
                 redisTemplate.opsForValue().set("BoxNumb|1|" + e.getId() + "|", e.getLuckOdds());
                 //3普通
@@ -103,7 +103,11 @@ public class BoxServiceImpl implements BoxService {
 
     @Override
     public int deleteAward(int id) {
-        return boxmapper.deleteAward(id);
+        int i = boxmapper.deleteAward(id);
+        if (i > 0) {
+            userservice.resetCache();
+        }
+        return i;
     }
 
     @Override
