@@ -82,6 +82,16 @@ public class BoxServiceImpl implements BoxService {
             String reds = JSON.toJSONString(list);
             redisTemplate.opsForValue().set("BoxNumb-" + dto.getBoxId() + "|" + 0, reds);
             redisTemplate.opsForValue().set("BoxNumb-" + dto.getBoxId() + "|" + 1, reds);
+            //库存
+            list.stream().forEach(e->{
+                //1主播幸运
+                redisTemplate.opsForValue().set("BoxNumb|1|" + e.getId() + "|", e.getLuckOdds());
+                //3普通
+                redisTemplate.opsForValue().set("BoxNumb|3|" + e.getId() + "|", e.getRealOdds());
+                //4主播
+                redisTemplate.opsForValue().set("BoxNumb|4|" + e.getId() + "|", e.getAnchorOdds());
+            });
+
         }
         return i;
     }
