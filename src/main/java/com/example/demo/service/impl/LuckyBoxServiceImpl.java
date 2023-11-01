@@ -250,7 +250,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
                     if (realNumb <= 0) {
-                        realNumb = listRedis.get(0).getLuckOdds() - 1;
+                        realNumb = listRedis.get(0).getLuckOdds();
                     }
                     awardcountdto.setNumb(realNumb);
                     redisTemplate.opsForValue().set("BoxNumb|1|" + listRedis.get(0).getId() + "|", realNumb);
@@ -259,7 +259,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|4|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
                     if (realNumb <= 0) {
-                        realNumb = listRedis.get(0).getAnchorOdds() - 1;
+                        realNumb = listRedis.get(0).getAnchorOdds();
                     }
                     awardcountdto.setNumb(realNumb);
                     redisTemplate.opsForValue().set("BoxNumb|4|" + listRedis.get(0).getId() + "|", realNumb);
@@ -270,7 +270,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
                     if (realNumb <= 0) {
-                        realNumb = listRedis.get(0).getLuckOdds() - 1;
+                        realNumb = listRedis.get(0).getLuckOdds();
                     }
                     awardcountdto.setNumb(realNumb);
                     redisTemplate.opsForValue().set("BoxNumb|1|" + listRedis.get(0).getId() + "|", realNumb);
@@ -279,7 +279,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|3|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
                     if (realNumb <= 0) {
-                        realNumb = listRedis.get(0).getRealOdds() - 1;
+                        realNumb = listRedis.get(0).getRealOdds();
                     }
                     awardcountdto.setNumb(realNumb);
                     redisTemplate.opsForValue().set("BoxNumb|3|" + listRedis.get(0).getId() + "|", realNumb);
