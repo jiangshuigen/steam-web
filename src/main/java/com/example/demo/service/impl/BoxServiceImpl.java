@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.example.demo.dto.BoxQuery;
 import com.example.demo.dto.SaveAwardsDto;
 import com.example.demo.entity.Box;
@@ -10,6 +11,8 @@ import com.example.demo.service.BoxService;
 import com.example.demo.service.UserService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -24,6 +27,10 @@ public class BoxServiceImpl implements BoxService {
     private LuckyBoxMapper mapper;
     @Resource
     private UserService userservice;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Resource
+    private LuckyBoxMapper luckyboxmapper;
 
     @Override
     public PageInfo<Box> getBoxList(BoxQuery query) {
@@ -68,7 +75,15 @@ public class BoxServiceImpl implements BoxService {
 
     @Override
     public int saveAward(SaveAwardsDto dto) {
-        return mapper.saveAward(dto);
+        int i = mapper.saveAward(dto);
+        if (i > 0) {
+            //添加成功更新redis
+            List<BoxAwards> list = luckyboxmapper.getIndexBoxList(dto.getBoxId());
+            String reds = JSON.toJSONString(list);
+            redisTemplate.opsForValue().set("BoxNumb-" + dto.getBoxId() + "|" + 0, reds);
+            redisTemplate.opsForValue().set("BoxNumb-" + dto.getBoxId() + "|" + 1, reds);
+        }
+        return i;
     }
 
     @Override
