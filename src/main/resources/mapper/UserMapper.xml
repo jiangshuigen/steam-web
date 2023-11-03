@@ -65,6 +65,9 @@
             <if test="anchor!=null">
                 anchor =#{anchor},
             </if>
+            <if test="truePay!=null">
+                total_recharge =#{truePay},
+            </if>
             <if test="vipLevel>0">
                 vip_level =#{vipLevel},
             </if>

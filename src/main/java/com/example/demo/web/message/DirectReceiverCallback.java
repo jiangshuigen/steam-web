@@ -104,6 +104,7 @@ public class DirectReceiverCallback {
             }
         }
         user.setVipLevel(lv);
+        user.setTruePay(bg);
         user.setBean(user.getBean().add(record.getBean()).add(rebate));
         userservice.updateUser(user);
         log.info("===========充值到账=====================");
