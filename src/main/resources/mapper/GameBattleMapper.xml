@@ -299,10 +299,10 @@
             </if>
         </where>
         <if test="type == 1">
-            order by rk.lost_bean desc
+            order by rk.expend desc
         </if>
         <if test="type == 2">
-            order by rk.win desc
+            order by rk.win_rate desc
         </if>
         limit #{size}
     </select>
