@@ -190,9 +190,15 @@ public class GameBattleServiceImpl implements GameBattleService {
                 for (GameArenasBoxDto gameArenasBoxDto : dto.getListBox()) {
                     //获取宝箱下的武器列表
                     List<BoxAwards> listAward = mapper.getIndexBoxList(gameArenasBoxDto.getBoxId());
-                    //                    //洗牌
-                    Collections.shuffle(listAward);
+                    List<BoxAwards> listAwardRoll = new ArrayList<>();
                     for (BoxAwards boxAwards : listAward) {
+                        for (int i = 0; i < boxAwards.getRealOdds(); i++){
+                            listAwardRoll.add(boxAwards);
+                        }
+                    }
+                    //洗牌
+                    Collections.shuffle(listAwardRoll);
+                    for (BoxAwards boxAwards : listAwardRoll) {
                         BigDecimal beanCount = battleDto.getBean() == null ? boxAwards.getBean() : battleDto.getBean().add(boxAwards.getBean());
                         battleDto.setBean(beanCount);
                         BoxRecords record = BoxRecords.builder()
@@ -311,7 +317,7 @@ public class GameBattleServiceImpl implements GameBattleService {
             obj.put("status", "start");//开启动画
             webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
             //盲盒对战任务
-            listUser.stream().forEach(e->{
+            listUser.stream().forEach(e -> {
                 try {
                     String userKey = "UserBlindBox|Day" + e.getGameUserId();
                     //计算失效时间
