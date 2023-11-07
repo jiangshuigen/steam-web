@@ -348,7 +348,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                 //对战记录
                 try {
                     //计算失效时间
-                    String userKey = "UserRecharge|DZ" + user.getId();
+                    String userKey = "UserRecharge|DZ" + e.getGameUserId();
                     long time = com.example.demo.util.DateUtils.getTime();
                     Object str = redisTemplate.opsForValue().get(userKey);
                     WelfareRedis red = null;
@@ -358,7 +358,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                     } else {
                         red = new WelfareRedis();
                         red.setCost(dto.getTotalBean().intValue());
-                        red.setUserId(user.getId());
+                        red.setUserId(e.getGameUserId());
                         red.setList(new ArrayList<>());
                     }
                     redisTemplate.opsForValue().set(userKey, JSON.toJSON(red), time, TimeUnit.SECONDS);
