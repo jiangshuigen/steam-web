@@ -190,7 +190,8 @@
                 ga.created_at ,
                 ga.updated_at ,
                 u.name as userName,
-                u.avatar as avatar
+                u.avatar as avatar,
+                u.anchor as anchor
            from  game_arenas ga
            left join users u on u.id = ga.create_user_id
            where ga.id = #{id}
