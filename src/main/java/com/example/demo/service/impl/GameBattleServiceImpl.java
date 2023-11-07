@@ -345,6 +345,28 @@ public class GameBattleServiceImpl implements GameBattleService {
                 } catch (ParseException e1) {
                     e1.printStackTrace();
                 }
+                //对战记录
+                try {
+                    //计算失效时间
+                    String userKey = "UserRecharge|DZ" + user.getId();
+                    long time = com.example.demo.util.DateUtils.getTime();
+                    Object str = redisTemplate.opsForValue().get(userKey);
+                    WelfareRedis red = null;
+                    if (!ObjectUtils.isEmpty(str)) {
+                        red = JSON.parseObject(str.toString(), WelfareRedis.class);
+                        red.setCost(red.getCost() + dto.getTotalBean().intValue());
+                    } else {
+                        red = new WelfareRedis();
+                        red.setCost(dto.getTotalBean().intValue());
+                        red.setUserId(user.getId());
+                        red.setList(new ArrayList<>());
+                    }
+                    redisTemplate.opsForValue().set(userKey, JSON.toJSON(red), time, TimeUnit.SECONDS);
+                    log.info("===========对战消费进度更新：本次消费{}=====================", dto.getTotalBean().intValue());
+                } catch (Exception exception) {
+                    log.error("===========对战消费进度更新失败=====================");
+                    exception.printStackTrace();
+                }
             });
             return listBattle;
         } else {

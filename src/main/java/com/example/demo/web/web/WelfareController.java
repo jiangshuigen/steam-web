@@ -33,7 +33,7 @@ public class WelfareController {
      * @param request
      * @return
      */
-    @ApiOperation(value = "福利:1-充值福利 2-每月累充 3-盲盒任务")
+    @ApiOperation(value = "福利:1-充值福利 2-每月累充 3-盲盒任务 4-对战任务")
     @GetMapping("/getRechargeWelfare")
     public ResultData<List<RechangeWelfare>> getRechargeWelfare(HttpServletRequest request, @RequestParam int type) {
         //验证登录

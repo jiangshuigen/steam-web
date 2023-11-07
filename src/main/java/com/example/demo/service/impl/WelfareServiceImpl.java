@@ -52,6 +52,9 @@ public class WelfareServiceImpl implements WelfareService {
         } else if (type == 3) {
             String userKey = "UserRecharge|MH" + usr.getId();
             return this.getListLucky("/welfare/welfare_mh.json", userKey);
+        } else if (type == 4) {
+            String userKey = "UserRecharge|DZ" + usr.getId();
+            return this.getListLucky("/welfare/welfare_dz.json", userKey);
         }
         return null;
     }
@@ -92,6 +95,9 @@ public class WelfareServiceImpl implements WelfareService {
         } else if (type == 3) {
             String userKey = "UserRecharge|MH" + usr.getId();
             rewardCount = this.getReawardById(usr, id, "/welfare/welfare_mh.json", userKey);
+        } else if (type == 4) {
+            String userKey = "UserRecharge|DZ" + usr.getId();
+            rewardCount = this.getReawardById(usr, id, "/welfare/welfare_dz.json", userKey);
         }
         return rewardCount;
     }
