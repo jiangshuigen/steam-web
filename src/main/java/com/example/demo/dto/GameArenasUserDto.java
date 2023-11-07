@@ -19,6 +19,8 @@ public class GameArenasUserDto {
     private BigDecimal gameBean;
     @ApiModelProperty("roll得金币")
     private BigDecimal rollBean;
+    @ApiModelProperty("座位号")
+    private int seat;
     @ApiModelProperty("抽到的物品")
     private List<BoxRecords> recordList;
 

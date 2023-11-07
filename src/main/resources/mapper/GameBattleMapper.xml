@@ -24,6 +24,7 @@
         <collection property="listUser" ofType="com.example.demo.dto.GameArenasUserDto" select="selectUsers"
                     column="id">
             <id property="gameUserId" column="gameUserId"/>
+            <result property="seat" column="seat"/>
             <result property="gameUserName" column="gameUserName"/>
             <result property="gameAvatar" column="gameAvatar"/>
             <result property="gameBean" column="gameBean"/>
@@ -131,12 +132,14 @@
     <select id="selectUsers" resultMap="UserResultMap" parameterType="java.lang.Integer">
         select
         guu.id as gameUserId,
+        guu.seat as seat,
         guu.name as gameUserName,
         guu.avatar as gameAvatar,
         guu.bean as gameBean
        from  game_arena_users gu
         inner join users guu on guu.id = gu.user_id
         where gu.game_arena_id = #{id}
+        order by guu.seat
     </select>
     <select id="getMyBattleList" resultMap="GameResultMap" parameterType="com.example.demo.dto.BattleQuery">
         select
