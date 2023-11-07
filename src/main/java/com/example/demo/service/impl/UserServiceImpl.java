@@ -1,7 +1,9 @@
 package com.example.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.demo.config.Constant;
+import com.example.demo.config.SubmailConstant;
 import com.example.demo.dto.*;
 import com.example.demo.entity.BoxAwards;
 import com.example.demo.entity.User;
@@ -14,16 +16,23 @@ import com.example.demo.message.NoticeDto;
 import com.example.demo.service.UserService;
 import com.example.demo.util.CheckSumBuilder;
 import com.example.demo.util.CodeUtils;
+import com.example.demo.util.Md5Utils;
+import com.example.demo.util.OkHttpUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.gson.Gson;
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -46,10 +55,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -343,7 +349,7 @@ public class UserServiceImpl implements UserService {
             user.setSilver(user.getSilver().subtract(exchangeDto.getCount()));
         }
         //保存转化记录
-        UserExchangeDetail detail =new UserExchangeDetail();
+        UserExchangeDetail detail = new UserExchangeDetail();
         detail.setUserId(id);
         detail.setBean(exchangeDto.getCount());
         detail.setType(exchangeDto.getType());
@@ -351,5 +357,67 @@ public class UserServiceImpl implements UserService {
         return userMapper.updateUser(user);
     }
 
+    @Override
+    public String sendCodeSubmail(String phone) {
+        String sgin = "";
+        Random random = new Random();
+        //
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            char randomChar = SubmailConstant.CHARACTERS.charAt(random.nextInt(SubmailConstant.CHARACTERS.length()));
+            stringBuilder.append(randomChar);
+        }
+        String captcha = stringBuilder.toString();
+        TimeStampResp timestamp = JSON.parseObject(OkHttpUtil.builder().url(SubmailConstant.TIMESTAMP_URL).initGet().sync(), TimeStampResp.class);
+        try {
+            sgin = Md5Utils.md5(SubmailConstant.APPID + SubmailConstant.APP_KEY
+                    + "appid=" + SubmailConstant.APPID + "&project=" + SubmailConstant.TEMPLATE + "&sign_version=2&sign_type=md5&to=" + phone + "&timestamp=" + timestamp.getTimestamp()
+                    + SubmailConstant.APPID + SubmailConstant.APP_KEY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JSONObject vars = new JSONObject();
+        vars.put("code", captcha);
+        vars.put("time", "2分钟");
+        String result = OkHttpUtil.builder().url(SubmailConstant.URL)
+                .addParam("appid", SubmailConstant.APPID)
+                .addParam("to", phone)
+                .addParam("project", SubmailConstant.TEMPLATE)
+                .addParam("vars", vars)
+//                .addParam("sign_version", "2")
+//                .addParam("sign_type", "md5")
+//                .addParam("timestamp", timestamp.getTimestamp())
+//                .addParam("signature", sgin)
+                .addParam("signature", SubmailConstant.APP_KEY)
+                .initPost(true)
+                .sync();
+        log.info("query result is {} ===============", result);
+        MessageResponse res = JSON.parseObject(result, MessageResponse.class);
+        if (SubmailConstant.SUCCESS.equals(res.getStatus())) {
+            redisTemplate.opsForValue().set(phone, captcha, 120, TimeUnit.SECONDS);
+        } else {
+            log.error("sendMessage error data is =======" + JSON.toJSONString(res));
+        }
+        return null;
+    }
 
+    //获取时间戳
+    private static String getTimestamp() {
+        CloseableHttpClient closeableHttpClient = HttpClientBuilder.create().build();
+        HttpGet httpget = new HttpGet(SubmailConstant.TIMESTAMP_URL);
+        try {
+            HttpResponse response = closeableHttpClient.execute(httpget);
+            HttpEntity httpEntity = response.getEntity();
+            String jsonStr = EntityUtils.toString(httpEntity, "UTF-8");
+            if (jsonStr != null) {
+                JSONObject json = JSONObject.parseObject(jsonStr);
+                return json.getString("timestamp");
+            }
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
