@@ -132,14 +132,14 @@
     <select id="selectUsers" resultMap="UserResultMap" parameterType="java.lang.Integer">
         select
         guu.id as gameUserId,
-        guu.seat as seat,
+        gu.seat as seat,
         guu.name as gameUserName,
         guu.avatar as gameAvatar,
         guu.bean as gameBean
        from  game_arena_users gu
         inner join users guu on guu.id = gu.user_id
         where gu.game_arena_id = #{id}
-        order by guu.seat
+        order by gu.seat
     </select>
     <select id="getMyBattleList" resultMap="GameResultMap" parameterType="com.example.demo.dto.BattleQuery">
         select
