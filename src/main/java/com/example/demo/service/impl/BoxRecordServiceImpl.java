@@ -77,6 +77,10 @@ public class BoxRecordServiceImpl implements BoxRecordService {
         if (sumNumb.compareTo(new BigDecimal(30)) == -1) {
             throw new Exception("需要累计充值达到30元才可以提货哦！");
         }
+        User user = userservice.getUserById(userId);
+        if(user.getBanPickUp()==1){
+            throw new Exception("此账号禁用提货！");
+        }
         return boxrecordmapper.getPackage(ids);
     }
 
