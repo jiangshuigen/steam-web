@@ -35,4 +35,6 @@ public interface BeanRecordService {
     int updateBeanRecords(String orderId);
 
     BeanRecord getOrderInfo(String orderNo);
+
+    BigDecimal queryPromotionAllBeanRecords(int inviterId);
 }

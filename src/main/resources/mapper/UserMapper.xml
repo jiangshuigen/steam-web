@@ -71,6 +71,9 @@
             <if test="vipLevel>0">
                 vip_level =#{vipLevel},
             </if>
+            <if test="promotionLevel>0">
+                promotion_level =#{promotionLevel},
+            </if>
         </set>
         where id = #{id}
     </update>

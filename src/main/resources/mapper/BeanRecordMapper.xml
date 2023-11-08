@@ -140,7 +140,13 @@
           where user_id = #{userId}
           and status =1
     </select>
-
+    <select id="queryPromotionAllBeanRecords" resultType="java.math.BigDecimal">
+        select IFNULL(SUM(bean),0)
+        from bean_records re
+        left join users u on u.id = re.user_id
+        where u.inviter_id = #{inviterId}
+          and re.status =1
+    </select>
     <insert id="saveRewardLogs" parameterType="com.example.demo.entity.UserRewardLogs">
         insert into user_reward_logs(
         user_id,
