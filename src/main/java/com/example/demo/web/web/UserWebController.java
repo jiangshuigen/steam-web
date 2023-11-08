@@ -172,7 +172,7 @@ public class UserWebController {
     @ApiOperation(value = "发送短信")
     @GetMapping("/sendCode")
     public ResultData sendCode(@RequestParam String phone) {
-        return ResultData.success(userservice.sendCode(phone));
+        return ResultData.success(userservice.sendCodeSubmail(phone));
     }
 
     /**

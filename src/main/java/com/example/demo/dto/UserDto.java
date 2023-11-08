@@ -21,6 +21,8 @@ public class UserDto {
     private String inviteCode;
     @ApiModelProperty("邀请人员id")
     private int inviterId;
+    @ApiModelProperty("上级邀请码")
+    private String parentInviteCode;
     @ApiModelProperty("头像")
     private String avatar;
     @ApiModelProperty("VIP等级")

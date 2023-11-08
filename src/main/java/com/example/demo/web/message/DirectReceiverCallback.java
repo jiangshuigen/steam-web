@@ -43,7 +43,7 @@ public class DirectReceiverCallback {
     private RedisTemplate redisTemplate;
 
     @RabbitHandler(isDefault = true)
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void process(String orderId) {
         log.info("=========DirectReceiverCallback  orderId is {}==================", orderId);
         BeanRecord record = beanrecordservice.queryBeanRecordsByCode(orderId);
@@ -74,7 +74,7 @@ public class DirectReceiverCallback {
                     List<PromotionLevels> promotionlist = promotionlevelservice.getLevelList();
                     for (PromotionLevels promotionLevels : promotionlist) {
                         if (!ObjectUtils.isEmpty(invUser) && promotionLevels.getLevel() == invUser.getPromotionLevel()) {
-                            BigDecimal balance = rebate.multiply(promotionLevels.getRebate().divide(new BigDecimal(100)));
+                            BigDecimal balance = record.getBean().multiply(promotionLevels.getRebate().divide(new BigDecimal(100)));
                             UserRewardLogs rewardLog = UserRewardLogs.builder()
                                     .bean(balance)
                                     .type(2)//下级充值奖励
@@ -83,9 +83,21 @@ public class DirectReceiverCallback {
                                     .chargeBean(rebate)
                                     .build();
                             beanrecordservice.saveRewardLogs(rewardLog);
+                            //推广等级变更
+                            BigDecimal allcount = beanrecordservice.queryPromotionAllBeanRecords(user.getInviterId());
+                            List<PromotionLevels> InfoList = promotionlist.stream().sorted(Comparator.comparing(PromotionLevels::getLevel).reversed()).collect(Collectors.toList());
+                            log.info("InfoList is {}", JSON.toJSON(InfoList));
+                            for (PromotionLevels promotionlevels : InfoList) {
+                                if (allcount.compareTo(promotionlevels.getInviteTotal()) > 0) {
+                                    log.info("============下级累计充值金额：{}=======", allcount);
+                                    //修改用户推广等级
+                                    invUser.setPromotionLevel(promotionlevels.getLevel());
+                                    break;
+                                }
+                            }
                             //打到账户
                             invUser.setBean(invUser.getBean().add(balance));
-                            userservice.updateUser(user);
+                            userservice.updateUser(invUser);
                         }
                     }
                 }
@@ -108,6 +120,7 @@ public class DirectReceiverCallback {
         user.setBean(user.getBean().add(record.getBean()).add(rebate));
         userservice.updateUser(user);
         log.info("===========充值到账=====================");
+
         try {
             //计算失效时间
             Date date1 = new Date();

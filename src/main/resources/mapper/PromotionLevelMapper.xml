@@ -86,10 +86,10 @@
         left join users u on u.id =re.next_user_id
         where re.user_id =#{userId}
         <if test="begin!=null">
-            DATE_FORMAT( created_at, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ >=]]> DATE_FORMAT( #{begin}, '%Y-%m-%d %H:%i:%s' )
+           and  DATE_FORMAT( re.created_at, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ >=]]> DATE_FORMAT( #{begin}, '%Y-%m-%d %H:%i:%s' )
         </if>
         <if test="end!=null">
-            DATE_FORMAT( created_at, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( #{end}, '%Y-%m-%d %H:%i:%s' )
+           and  DATE_FORMAT( re.created_at, '%Y-%m-%d %H:%i:%s' )  <![CDATA[ <=]]> DATE_FORMAT( #{end}, '%Y-%m-%d %H:%i:%s' )
         </if>
         GROUP BY re.bean,re.user_id
         order by re.created_at

@@ -33,4 +33,6 @@ public interface BeanRecordMapper {
     BeanRecord queryBeanRecordsByTradeNo(String cdk);
 
     int updateBeanRecords(String orderId);
+
+    BigDecimal queryPromotionAllBeanRecords(int inviterId);
 }

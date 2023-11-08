@@ -5,7 +5,6 @@ import com.example.demo.dto.DeliveryRecordQuery;
 import com.example.demo.dto.SellerRecordQuery;
 import com.example.demo.dto.UUResponse;
 import com.example.demo.entity.DeliveryRecord;
-import com.example.demo.entity.UUAward;
 import com.example.demo.entity.UUSaleRsponse;
 import com.example.demo.mapper.DeliveryRecordMapper;
 import com.example.demo.service.DeliveryRecordService;

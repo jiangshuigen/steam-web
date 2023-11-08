@@ -84,4 +84,9 @@ public class BeanRecordServiceImpl implements BeanRecordService {
     public BeanRecord getOrderInfo(String orderNo) {
         return beanrecordmapper.queryBeanRecordsByCode(orderNo);
     }
+
+    @Override
+    public BigDecimal queryPromotionAllBeanRecords(int inviterId) {
+        return beanrecordmapper.queryPromotionAllBeanRecords(inviterId);
+    }
 }

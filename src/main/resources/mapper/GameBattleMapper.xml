@@ -24,6 +24,7 @@
         <collection property="listUser" ofType="com.example.demo.dto.GameArenasUserDto" select="selectUsers"
                     column="id">
             <id property="gameUserId" column="gameUserId"/>
+            <result property="seat" column="seat"/>
             <result property="gameUserName" column="gameUserName"/>
             <result property="gameAvatar" column="gameAvatar"/>
             <result property="gameBean" column="gameBean"/>
@@ -131,12 +132,14 @@
     <select id="selectUsers" resultMap="UserResultMap" parameterType="java.lang.Integer">
         select
         guu.id as gameUserId,
+        gu.seat as seat,
         guu.name as gameUserName,
         guu.avatar as gameAvatar,
         guu.bean as gameBean
        from  game_arena_users gu
         inner join users guu on guu.id = gu.user_id
         where gu.game_arena_id = #{id}
+        order by gu.seat
     </select>
     <select id="getMyBattleList" resultMap="GameResultMap" parameterType="com.example.demo.dto.BattleQuery">
         select
@@ -187,7 +190,8 @@
                 ga.created_at ,
                 ga.updated_at ,
                 u.name as userName,
-                u.avatar as avatar
+                u.avatar as avatar,
+                u.anchor as anchor
            from  game_arenas ga
            left join users u on u.id = ga.create_user_id
            where ga.id = #{id}
@@ -299,10 +303,10 @@
             </if>
         </where>
         <if test="type == 1">
-            order by rk.lost_bean desc
+            order by rk.expend desc
         </if>
         <if test="type == 2">
-            order by rk.win desc
+            order by rk.win_rate desc
         </if>
         limit #{size}
     </select>
@@ -325,10 +329,10 @@
         left join users u on u.id = rk.user_id
         where rk.`date` = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY),'%Y-%m-%d')
         <if test="type == 1">
-            order by rk.lost_bean desc
+            order by rk.expend desc
         </if>
         <if test="type == 2">
-            order by rk.win desc
+            order by rk.win_rate desc
         </if>
         limit 1
     </select>

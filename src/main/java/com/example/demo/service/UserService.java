@@ -57,4 +57,6 @@ public interface UserService {
     int updateSilver(BigDecimal balance, int id);
 
     int exchangeCron(int id, ExchangeDto exchangeDto) throws Exception;
+
+    String sendCodeSubmail(String phone);
 }

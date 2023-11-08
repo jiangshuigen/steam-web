@@ -190,9 +190,15 @@ public class GameBattleServiceImpl implements GameBattleService {
                 for (GameArenasBoxDto gameArenasBoxDto : dto.getListBox()) {
                     //获取宝箱下的武器列表
                     List<BoxAwards> listAward = mapper.getIndexBoxList(gameArenasBoxDto.getBoxId());
-                    //                    //洗牌
-                    Collections.shuffle(listAward);
+                    List<BoxAwards> listAwardRoll = new ArrayList<>();
                     for (BoxAwards boxAwards : listAward) {
+                        for (int i = 0; i < boxAwards.getRealOdds(); i++){
+                            listAwardRoll.add(boxAwards);
+                        }
+                    }
+                    //洗牌
+                    Collections.shuffle(listAwardRoll);
+                    for (BoxAwards boxAwards : listAwardRoll) {
                         BigDecimal beanCount = battleDto.getBean() == null ? boxAwards.getBean() : battleDto.getBean().add(boxAwards.getBean());
                         battleDto.setBean(beanCount);
                         BoxRecords record = BoxRecords.builder()
@@ -340,6 +346,28 @@ public class GameBattleServiceImpl implements GameBattleService {
                     log.info("===========充值进度增加=====================");
                 } catch (ParseException e1) {
                     e1.printStackTrace();
+                }
+                //对战记录
+                try {
+                    //计算失效时间
+                    String userKey = "UserRecharge|DZ" + e.getGameUserId();
+                    long time = com.example.demo.util.DateUtils.getTime();
+                    Object str = redisTemplate.opsForValue().get(userKey);
+                    WelfareRedis red = null;
+                    if (!ObjectUtils.isEmpty(str)) {
+                        red = JSON.parseObject(str.toString(), WelfareRedis.class);
+                        red.setCost(red.getCost() + dto.getTotalBean().intValue());
+                    } else {
+                        red = new WelfareRedis();
+                        red.setCost(dto.getTotalBean().intValue());
+                        red.setUserId(e.getGameUserId());
+                        red.setList(new ArrayList<>());
+                    }
+                    redisTemplate.opsForValue().set(userKey, JSON.toJSON(red), time, TimeUnit.SECONDS);
+                    log.info("===========对战消费进度更新：本次消费{}=====================", dto.getTotalBean().intValue());
+                } catch (Exception exception) {
+                    log.error("===========对战消费进度更新失败=====================");
+                    exception.printStackTrace();
                 }
             });
             return listBattle;
