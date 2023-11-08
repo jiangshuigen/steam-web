@@ -152,6 +152,8 @@
                ua.`name`,
                ua.mobile,
                ua.invite_code                                                 inviteCode,
+               ua.inviter_id as inviterId,
+                (select invite_code from  users u2 where u2.id = ua.inviter_id limit 1)as parentInviteCode,
                ua.avatar,
                ua.bean,
                ua.silver,
