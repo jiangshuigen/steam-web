@@ -186,7 +186,9 @@ public class UserServiceImpl implements UserService {
             return "图形验证码错误";
         }
         user.setPassword(ENCODER.encode(user.getPassword()));
-
+        Random random = new Random();
+        int number = random.nextInt(6) + 5;
+        user.setBean(number);
         int i = userMapper.register(user);
         return i + "";
     }
