@@ -43,7 +43,7 @@ public class DirectReceiverCallback {
     private RedisTemplate redisTemplate;
 
     @RabbitHandler(isDefault = true)
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void process(String orderId) {
         log.info("=========DirectReceiverCallback  orderId is {}==================", orderId);
         BeanRecord record = beanrecordservice.queryBeanRecordsByCode(orderId);
@@ -74,7 +74,7 @@ public class DirectReceiverCallback {
                     List<PromotionLevels> promotionlist = promotionlevelservice.getLevelList();
                     for (PromotionLevels promotionLevels : promotionlist) {
                         if (!ObjectUtils.isEmpty(invUser) && promotionLevels.getLevel() == invUser.getPromotionLevel()) {
-                            BigDecimal balance = rebate.multiply(promotionLevels.getRebate().divide(new BigDecimal(100)));
+                            BigDecimal balance = record.getBean().multiply(promotionLevels.getRebate().divide(new BigDecimal(100)));
                             UserRewardLogs rewardLog = UserRewardLogs.builder()
                                     .bean(balance)
                                     .type(2)//下级充值奖励
