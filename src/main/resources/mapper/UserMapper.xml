@@ -356,12 +356,14 @@
                           invite_code,
                           inviter_id,
                           password,
+                          bean,
                           created_at)
         values (#{name},
                 #{mobile},
                 #{inviteCode},
                 #{inviterId},
                 #{password},
+                #{bean},
                 now())
     </insert>
 

@@ -214,6 +214,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                                 .type(1)
                                 .build();
                         listReturn.add(record);
+                        log.info("=======listReturn is : {}", JSON.toJSON(listReturn));
                         listUserAWards.add(record);
                         GameAwardRecords rd = GameAwardRecords.builder()
                                 .gameArenaId(id)
@@ -256,6 +257,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                     }
                 });
             }
+            log.info("saveBoxRecord is {}", JSON.toJSON(listReturn));
             boxrecordservice.saveBoxRecord(listReturn);
             log.info("record 记录列表记录数目:" + gameawardrecords.size());
             gamebattlemapper.saveGameAwardRecords(gameawardrecords);
@@ -311,7 +313,7 @@ public class GameBattleServiceImpl implements GameBattleService {
             obj.put("status", "start");//开启动画
             webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
             //盲盒对战任务
-            listUser.stream().forEach(e->{
+            listUser.stream().forEach(e -> {
                 try {
                     String userKey = "UserBlindBox|Day" + e.getGameUserId();
                     //计算失效时间

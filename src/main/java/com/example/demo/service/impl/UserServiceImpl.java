@@ -180,6 +180,7 @@ public class UserServiceImpl implements UserService {
             return "图形验证码错误";
         }
         user.setPassword(ENCODER.encode(user.getPassword()));
+
         int i = userMapper.register(user);
         return i + "";
     }
