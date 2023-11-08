@@ -3,6 +3,8 @@ package com.example.demo.dto;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 public class UserRegisterDto {
     @ApiModelProperty("用户名")
@@ -19,4 +21,7 @@ public class UserRegisterDto {
     private String code;
     @ApiModelProperty("短信验证码")
     private String mobileCode;
+
+    @ApiModelProperty("随机奖励")
+    private BigDecimal bean;
 }
