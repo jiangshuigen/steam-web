@@ -86,6 +86,7 @@ public class DirectReceiverCallback {
                             //推广等级变更
                             BigDecimal allcount = beanrecordservice.queryPromotionAllBeanRecords(user.getInviterId());
                             List<PromotionLevels> InfoList = promotionlist.stream().sorted(Comparator.comparing(PromotionLevels::getLevel).reversed()).collect(Collectors.toList());
+                            log.info("InfoList is {}", JSON.toJSON(InfoList));
                             for (PromotionLevels promotionlevels : InfoList) {
                                 if (allcount.compareTo(promotionlevels.getInviteTotal()) > 0) {
                                     log.info("============下级累计充值金额：{}=======", allcount);
