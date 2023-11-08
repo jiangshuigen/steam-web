@@ -97,7 +97,7 @@ public class DirectReceiverCallback {
                             }
                             //打到账户
                             invUser.setBean(invUser.getBean().add(balance));
-                            userservice.updateUser(user);
+                            userservice.updateUser(invUser);
                         }
                     }
                 }
