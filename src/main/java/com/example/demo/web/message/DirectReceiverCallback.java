@@ -106,6 +106,12 @@ public class DirectReceiverCallback {
         }
         //查询累计充值
         BigDecimal bg = beanrecordservice.queryAllBeanRecords(record.getUserId());
+        //第一次充值》100 奖励15
+        if (bg.compareTo(new BigDecimal(0)) == 0) {
+            if (record.getBean().compareTo(new BigDecimal(100)) == 1) {
+                user.setBean(user.getBean().add(new BigDecimal(15)));
+            }
+        }
         List<Vip> InfoList = list.stream().sorted(Comparator.comparing(Vip::getLevel).reversed()).collect(Collectors.toList());
         int lv = 0;
         for (Vip vip : InfoList) {
