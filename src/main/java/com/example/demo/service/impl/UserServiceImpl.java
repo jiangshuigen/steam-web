@@ -188,7 +188,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(ENCODER.encode(user.getPassword()));
         Random random = new Random();
         int number = random.nextInt(6) + 5;
-        user.setBean(number);
+        user.setBean(new BigDecimal(number));
         int i = userMapper.register(user);
         return i + "";
     }
