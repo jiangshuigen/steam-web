@@ -124,6 +124,9 @@ public class DirectReceiverCallback {
         user.setVipLevel(lv);
         user.setTruePay(bg);
         user.setBean(user.getBean().add(record.getBean()).add(rebate));
+        if(record.getBean().compareTo(new BigDecimal(29.99))==1){
+            user.setBanPickUp(0);
+        }
         userservice.updateUser(user);
         log.info("===========充值到账=====================");
 
