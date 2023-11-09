@@ -13,6 +13,10 @@ public class UserUpdateDto {
     private String name;
     @ApiModelProperty("头像")
     private String avatar;
+    @ApiModelProperty("邀请码")
+    private String inviteCode;
+    @ApiModelProperty("邀请人员id")
+    private int inviterId;
     @ApiModelProperty("steam交易链接")
     private String steamUrl;
 }

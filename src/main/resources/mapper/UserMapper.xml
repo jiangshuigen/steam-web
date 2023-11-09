@@ -35,6 +35,9 @@
             <if test="avatar!=null">
                 avatar =#{avatar},
             </if>
+            <if test="inviterId>0">
+                inviter_id =#{inviterId},
+            </if>
             <if test="steamUrl!=null and steamUrl!=''">
                 steam_url =#{steamUrl},
             </if>
