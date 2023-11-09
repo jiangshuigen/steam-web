@@ -108,7 +108,7 @@ public class DirectReceiverCallback {
         BigDecimal bg = beanrecordservice.queryAllBeanRecords(record.getUserId());
         //第一次充值》100 奖励15
         if (bg.compareTo(new BigDecimal(0)) == 0) {
-            if (record.getBean().compareTo(new BigDecimal(100)) == 1) {
+            if (record.getBean().compareTo(new BigDecimal(99.99)) == 1) {
                 user.setBean(user.getBean().add(new BigDecimal(15)));
             }
         }
