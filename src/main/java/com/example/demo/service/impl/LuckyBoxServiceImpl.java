@@ -249,7 +249,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     awardcountdto.setType(1);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
-                    if (realNumb <= 0) {
+                    if (realNumb <= 0 && listRedis.size() == 1) {
                         realNumb = listRedis.get(0).getLuckOdds();
                     }
                     awardcountdto.setNumb(realNumb);
@@ -258,7 +258,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     awardcountdto.setType(4);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|4|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
-                    if (realNumb <= 0) {
+                    if (realNumb <= 0 && listRedis.size() == 1) {
                         realNumb = listRedis.get(0).getAnchorOdds();
                     }
                     awardcountdto.setNumb(realNumb);
@@ -269,7 +269,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     awardcountdto.setType(2);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
-                    if (realNumb <= 0) {
+                    if (realNumb <= 0 && listRedis.size() == 1) {
                         realNumb = listRedis.get(0).getLuckOdds();
                     }
                     awardcountdto.setNumb(realNumb);
@@ -278,7 +278,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     awardcountdto.setType(3);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|3|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
-                    if (realNumb <= 0) {
+                    if (realNumb <= 0 && listRedis.size() == 1) {
                         realNumb = listRedis.get(0).getRealOdds();
                     }
                     awardcountdto.setNumb(realNumb);
