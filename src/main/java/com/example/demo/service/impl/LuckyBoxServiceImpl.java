@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.mapper.LuckyBoxMapper;
@@ -299,7 +300,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                 ob = boxNumb;
             }
         }
-        String reds = JSON.toJSONString(listRedis);
+        String reds = JSON.toJSONString(listRedis, SerializerFeature.DisableCircularReferenceDetect);
         redisTemplate.opsForValue().set("BoxNumb-" + openbox.getBoxId() + "|" + user.getAnchor(), reds);
         //保存开箱记录
         boxrecordservice.saveBoxRecord(listReturn);
