@@ -248,7 +248,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
             AwardCountDto awardcountdto = new AwardCountDto();
             awardcountdto.setId(listRedis.get(0).getId());
             if (user.getAnchor().equals(1)) {
-                if (listRedis.get(0).getIsLuckyBox() == 1) {
+                if (listRedis.get(0).getClearLucky() == 1) {
                     awardcountdto.setType(1);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
@@ -268,7 +268,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     redisTemplate.opsForValue().set("BoxNumb|4|" + listRedis.get(0).getId() + "|", realNumb);
                 }
             } else {
-                if (listRedis.get(0).getIsLuckyBox() == 1) {
+                if (listRedis.get(0).getClearLucky() == 1) {
                     awardcountdto.setType(2);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
