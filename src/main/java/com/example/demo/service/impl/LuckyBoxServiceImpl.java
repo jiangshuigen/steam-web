@@ -189,11 +189,13 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
         }
         log.info("================宝箱id为：{}的奖品总数是：{}====================", openbox.getBoxId(), total);
         int boxNumb = 0;
+        boolean bl = false;
         if (!ObjectUtils.isEmpty(ob)) {
             boxNumb = (int) ob + openbox.getNumb();
             //再次判断是否开启下一论
             if (boxNumb > total) {
                 //
+                bl = true;
                 boxNumb = boxNumb - total;
             }
         } else {
@@ -249,7 +251,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     awardcountdto.setType(1);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
-                    if (realNumb <= 0 && listRedis.size() == 1) {
+                    if (realNumb <= 0 && bl) {
                         realNumb = listRedis.get(0).getLuckOdds();
                     }
                     awardcountdto.setNumb(realNumb);
@@ -258,7 +260,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     awardcountdto.setType(4);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|4|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
-                    if (realNumb <= 0 && listRedis.size() == 1) {
+                    if (realNumb <= 0 && bl) {
                         realNumb = listRedis.get(0).getAnchorOdds();
                     }
                     awardcountdto.setNumb(realNumb);
@@ -269,7 +271,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     awardcountdto.setType(2);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|1|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
-                    if (realNumb <= 0 && listRedis.size() == 1) {
+                    if (realNumb <= 0 && bl) {
                         realNumb = listRedis.get(0).getLuckOdds();
                     }
                     awardcountdto.setNumb(realNumb);
@@ -278,7 +280,7 @@ public class LuckyBoxServiceImpl implements LuckyBoxService {
                     awardcountdto.setType(3);
                     int countRedis = (int) redisTemplate.opsForValue().get("BoxNumb|3|" + listRedis.get(0).getId() + "|");
                     int realNumb = countRedis - 1;
-                    if (realNumb <= 0 && listRedis.size() == 1) {
+                    if (realNumb <= 0 && bl) {
                         realNumb = listRedis.get(0).getRealOdds();
                     }
                     awardcountdto.setNumb(realNumb);
