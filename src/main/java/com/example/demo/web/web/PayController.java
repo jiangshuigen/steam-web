@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 
 @RestController
@@ -210,7 +211,12 @@ public class PayController {
             if (ObjectUtils.isEmpty(dto)) {
                 return ResultData.fail("403", "未登录");
             }
-            return ResultData.success(userservice.exchangeCron(dto.getId(), exchangeDto));
+            if (exchangeDto.getCount().compareTo(new BigDecimal(0)) == 1) {
+                return ResultData.success(userservice.exchangeCron(dto.getId(), exchangeDto));
+            } else {
+                return ResultData.fail("500", "参数错误");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             return ResultData.fail("500", e.getMessage());
