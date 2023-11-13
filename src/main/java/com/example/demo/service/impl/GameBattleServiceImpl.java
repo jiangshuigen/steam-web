@@ -52,12 +52,18 @@ public class GameBattleServiceImpl implements GameBattleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int createEvent(GameArenasSaveDto info, UserDto user) {
+    public int createEvent(GameArenasSaveDto info, UserDto user) throws Exception {
+        User uus = userservice.getUserById(user.getId());
         //计算金额
         BigDecimal total = new BigDecimal(0);
         for (Integer id : info.getListBox()) {
             total = total.add(gamebattlemapper.getTotalBean(id));
         }
+        //判断余额
+        if (total.compareTo(uus.getBean()) == 1) {
+            throw new Exception("余额不足");
+        }
+
         info.setTotalBean(total);
         int i = gamebattlemapper.createEvent(info);
         if (i > 0) {
@@ -77,7 +83,7 @@ public class GameBattleServiceImpl implements GameBattleService {
         us.setWorth(info.getTotalBean());
         int numb = gamebattlemapper.insertArenaUsers(us);
         //扣除费用
-        User uus = userservice.getUserById(user.getId());
+
         BigDecimal balance = uus.getBean().subtract(total);
         //扣除金币
         userservice.updateBean(balance, info.getCreateUserId());

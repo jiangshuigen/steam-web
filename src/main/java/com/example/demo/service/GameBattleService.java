@@ -7,7 +7,7 @@ import com.github.pagehelper.PageInfo;
 import java.util.List;
 
 public interface GameBattleService {
-    int createEvent(GameArenasSaveDto info,UserDto dto);
+    int createEvent(GameArenasSaveDto info,UserDto dto)throws Exception ;
 
     PageInfo<GameArenasDto> getEventList(BattleWebQuery base);
 

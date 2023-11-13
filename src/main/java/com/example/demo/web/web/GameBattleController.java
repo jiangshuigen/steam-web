@@ -77,13 +77,18 @@ public class GameBattleController {
     @PostMapping("/createEvent")
     public ResultData createEvent(HttpServletRequest request, @RequestBody GameArenasSaveDto info) {
         //获取session
-        HttpSession session = request.getSession();
-        UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
-        if (ObjectUtils.isEmpty(dto)) {
-            return ResultData.fail("403", "未登录");
+        try {
+            HttpSession session = request.getSession();
+            UserDto dto = (UserDto) session.getAttribute(Constant.USER_INFO);
+            if (ObjectUtils.isEmpty(dto)) {
+                return ResultData.fail("403", "未登录");
+            }
+            info.setCreateUserId(dto.getId());
+            return ResultData.success(gamebattleservice.createEvent(info, dto));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultData.fail("500", e.getMessage());
         }
-        info.setCreateUserId(dto.getId());
-        return ResultData.success(gamebattleservice.createEvent(info, dto));
     }
 
 
