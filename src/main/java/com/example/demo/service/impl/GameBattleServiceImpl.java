@@ -51,7 +51,7 @@ public class GameBattleServiceImpl implements GameBattleService {
     private WebSocket webSocket;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int createEvent(GameArenasSaveDto info, UserDto user) {
         //计算金额
         BigDecimal total = new BigDecimal(0);
@@ -175,6 +175,12 @@ public class GameBattleServiceImpl implements GameBattleService {
             usDto.setGameUserName(user.getName());
             listUser.add(usDto);
             gamebattlemapper.insertArenaUsers(us);
+            //扣除费用
+            User uus = userservice.getUserById(user.getId());
+            BigDecimal balance = uus.getBean().subtract(dto.getTotalBean());
+            //扣除金币
+            userservice.updateBean(balance, user.getId());
+
         }
         if (dto.getUserNum() == numb) {
             //所有玩家roll的列表记录
