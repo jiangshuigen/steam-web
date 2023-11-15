@@ -351,12 +351,13 @@
         re.lv,
         re.bean,
         gar.award_id as  boxAwardId,
-        re.created_at as createdAt
+        re.created_at as createdAt,
+        (select uu.id from game_arena_users uu where uu.game_arena_id =718 and uu.user_id = gar.user_id) as sortId
         from game_award_records gar
         left join box_awards re on gar.award_id = re.id
         left join users u on gar.user_id = u.id
         where gar.game_arena_id = #{id}
-        order by gar.created_at
+        order by sortId
     </select>
 
     <update id="updateUserWin" parameterType="java.lang.Integer">
