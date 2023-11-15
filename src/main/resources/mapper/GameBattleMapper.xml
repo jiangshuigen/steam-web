@@ -354,10 +354,9 @@
         re.created_at as createdAt
         from game_award_records gar
         left join box_awards re on gar.award_id = re.id
-        left join game_arena_users auser on auser.game_arena_id = gar.game_arena_id
-        left join users u on auser.user_id = u.id
+        left join users u on gar.user_id = u.id
         where gar.game_arena_id = #{id}
-        order by auser.created_at
+        order by gar.created_at
     </select>
 
     <update id="updateUserWin" parameterType="java.lang.Integer">
