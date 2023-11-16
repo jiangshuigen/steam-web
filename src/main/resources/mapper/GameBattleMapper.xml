@@ -128,6 +128,7 @@
         from game_arena_box ab
         inner join boxs bx on ab.box_id = bx.id
         where ab.game_arena_id = #{id}
+        order by bx.id
     </select>
     <select id="selectUsers" resultMap="UserResultMap" parameterType="java.lang.Integer">
         select
@@ -352,12 +353,13 @@
         re.bean,
         gar.award_id as  boxAwardId,
         re.created_at as createdAt,
-        (select uu.id from game_arena_users uu where uu.game_arena_id =#{id} and uu.user_id = gar.user_id) as sortId
+        (select uu.id from game_arena_users uu where uu.game_arena_id =#{id} and uu.user_id = gar.user_id) as sortId,
+        (select bx.box_id from box_awards bx where bx.id =gar.award_id) as boxId
         from game_award_records gar
         left join box_awards re on gar.award_id = re.id
         left join users u on gar.user_id = u.id
         where gar.game_arena_id = #{id}
-        order by sortId
+        order by sortId , boxId
     </select>
 
     <update id="updateUserWin" parameterType="java.lang.Integer">
