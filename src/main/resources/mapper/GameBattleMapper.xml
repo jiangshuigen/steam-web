@@ -297,10 +297,13 @@
         left join users u on u.id = rk.user_id
         <where>
             <if test="dateType>0 and dateType==1">
-                rk.`date` = DATE_FORMAT(now(),'%Y-%m-%d')
+              and rk.`date` = DATE_FORMAT(now(),'%Y-%m-%d')
             </if>
             <if test="dateType>0 and dateType==2">
-                rk.`date` = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY),'%Y-%m-%d')
+               and rk.`date` = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY),'%Y-%m-%d')
+            </if>
+            <if test="type == 2">
+                and rk.total>=5
             </if>
         </where>
         <if test="type == 1">
@@ -329,6 +332,9 @@
         from game_ranking rk
         left join users u on u.id = rk.user_id
         where rk.`date` = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 DAY),'%Y-%m-%d')
+        <if test="type == 2">
+            and rk.total>=5
+        </if>
         <if test="type == 1">
             order by rk.expend desc
         </if>
