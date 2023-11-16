@@ -19,6 +19,8 @@ public class GameRankingDto {
     private BigDecimal winRate;
     @ApiModelProperty("昨日之星盈亏")
     private BigDecimal lostBean;
+    @ApiModelProperty("支出")
+    private BigDecimal expend;
     @ApiModelProperty("排行榜")
     private List<GameRanking> rankingList;
 }
