@@ -98,7 +98,7 @@ public class WebSocket {
         Session session = sessionPool.get(userId);
         if (session != null&&session.isOpen()) {
             try {
-                log.info("【websocket消息】 单点消息:"+message);
+                    log.info("【websocket消息】 单点消息:"+message);
                 session.getAsyncRemote().sendText(message);
             } catch (Exception e) {
                 e.printStackTrace();
