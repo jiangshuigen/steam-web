@@ -15,7 +15,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 @ServerEndpoint("/websocket/{userId}")  // 接口路径 ws://localhost:8088/webSocket/userId;
 public class WebSocket {
 
-    //与某个客户端的连接会话，需要通过它来给客户端发送数据
+    //与某个客户端的连接会话，需要通过它来给客户端发送数据1
     private Session session;
     /**
      * 用户ID
