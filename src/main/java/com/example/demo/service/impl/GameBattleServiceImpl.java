@@ -11,6 +11,7 @@ import com.example.demo.service.GameBattleService;
 import com.example.demo.service.UserService;
 import com.example.demo.util.CodeUtils;
 import com.example.demo.web.web.WebSocket;
+import com.example.demo.web.web.WebSocketService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import io.netty.util.internal.StringUtil;
@@ -49,6 +50,8 @@ public class GameBattleServiceImpl implements GameBattleService {
     private RedisTemplate redisTemplate;
     @Resource
     private WebSocket webSocket;
+    @Resource
+    private WebSocketService websocketservice;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -330,6 +333,7 @@ public class GameBattleServiceImpl implements GameBattleService {
             JSONObject obj = new JSONObject();
             obj.put("status", "start");//开启动画
             webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
+            websocketservice.sendOneMessage(String.valueOf(id), obj.toJSONString());
             //盲盒对战任务
             listUser.stream().forEach(e -> {
                 try {
@@ -388,6 +392,7 @@ public class GameBattleServiceImpl implements GameBattleService {
             JSONObject obj = new JSONObject();
             obj.put("status", "join");//人员加入
             webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
+            websocketservice.sendOneMessage(String.valueOf(id), obj.toJSONString());
         }
         return null;
     }
