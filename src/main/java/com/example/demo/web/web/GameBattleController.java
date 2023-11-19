@@ -56,7 +56,7 @@ public class GameBattleController {
     }
 
     /**
-     *
+     *  
      * @param id
      * @return
      */
