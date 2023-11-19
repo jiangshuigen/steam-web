@@ -25,5 +25,5 @@ public interface GameBattleService {
 
     int endBattle(int i);
 
-    Object getGameArenasSession(int id);
+    Object getGameArenasSession(String id);
 }

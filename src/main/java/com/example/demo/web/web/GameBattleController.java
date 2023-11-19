@@ -62,7 +62,7 @@ public class GameBattleController {
      */
     @ApiOperation(value = "开始ws")
     @GetMapping("/getGameArenasSession")
-    public ResultData<GameArenasDto> getGameArenasSession(@RequestParam("id") int id) {
+    public ResultData<GameArenasDto> getGameArenasSession(@RequestParam("id") String id) {
         return ResultData.success(gamebattleservice.getGameArenasSession(id));
     }
 

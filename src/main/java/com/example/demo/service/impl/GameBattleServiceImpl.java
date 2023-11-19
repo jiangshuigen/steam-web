@@ -331,25 +331,25 @@ public class GameBattleServiceImpl implements GameBattleService {
             redisTemplate.delete("BATTLE|" + id);
 //            websocketservice.sendOneMessage(String.valueOf(id), obj.toJSONString());
             //socket
-            //创建业务消息信息
-            JSONObject obj = new JSONObject();
-            obj.put("status", "start");//开启动画
-            webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
+//            //创建业务消息信息
+//            JSONObject obj = new JSONObject();
+//            obj.put("status", "start");//开启动画
+//            webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
 
             //盲盒对战任务
             listUser.stream().forEach(e -> {
 
-//                //socket
-//                try {
-//                    log.info("==========ws消息发送==============");
-//                    //创建业务消息信息
-//                    JSONObject obj = new JSONObject();
-//                    obj.put("status", "start");//开启动画
-//                    webSocket.sendOneMessage(String.valueOf(e.getGameUserId()), obj.toJSONString());
-//                    log.info("==========ws消息发送结束==============");
-//                } catch (Exception e1) {
-//                    e1.printStackTrace();
-//                }
+                //socket
+                try {
+                    log.info("==========ws消息发送==============");
+                    //创建业务消息信息
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", "start");//开启动画
+                    webSocket.sendOneMessage(String.valueOf(e.getGameUserId())+String.valueOf(id), obj.toJSONString());
+                    log.info("==========ws消息发送结束==============");
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
 
                 try {
                     String userKey = "UserBlindBox|Day" + e.getGameUserId();
@@ -404,16 +404,16 @@ public class GameBattleServiceImpl implements GameBattleService {
             return listBattle;
         } else {
             log.info("=================人员加入========={}", listUser.size());
-//            listUser.stream().forEach(e -> {
-//                //创建业务消息信息
-//                JSONObject obj = new JSONObject();
-//                obj.put("status", "join");//人员加入
-//                webSocket.sendOneMessage(String.valueOf(e.getGameUserId()), obj.toJSONString());
-//            });
+            listUser.stream().forEach(e -> {
+                //创建业务消息信息
+                JSONObject obj = new JSONObject();
+                obj.put("status", "join");//人员加入
+                webSocket.sendOneMessage(String.valueOf(e.getGameUserId())+String.valueOf(id), obj.toJSONString());
+            });
             //创建业务消息信息
-            JSONObject obj = new JSONObject();
-            obj.put("status", "join");//人员加入
-            webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
+//            JSONObject obj = new JSONObject();
+//            obj.put("status", "join");//人员加入
+//            webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
         }
         return null;
     }
@@ -474,11 +474,11 @@ public class GameBattleServiceImpl implements GameBattleService {
     }
 
     @Override
-    public Object getGameArenasSession(int id) {
+    public Object getGameArenasSession(String id) {
         //创建业务消息信息
         JSONObject obj = new JSONObject();
         obj.put("status", "join");//人员加入
-        webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
+        webSocket.sendOneMessage(id, obj.toJSONString());
         log.info("================id:{}创建房间=====================================", id);
         return null;
     }
