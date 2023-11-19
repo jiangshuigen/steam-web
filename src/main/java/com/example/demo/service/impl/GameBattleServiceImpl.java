@@ -396,6 +396,7 @@ public class GameBattleServiceImpl implements GameBattleService {
             });
             return listBattle;
         } else {
+            log.info("=================人员加入========={}",listUser.size());
             listUser.stream().forEach(e -> {
                 //创建业务消息信息
                 JSONObject obj = new JSONObject();
