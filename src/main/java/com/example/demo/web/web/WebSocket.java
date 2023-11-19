@@ -96,9 +96,10 @@ public class WebSocket {
 
     // 此为单点消息
     public void sendOneMessage(String userId, String message) {
+        log.info("==========sendOneMessage==============userId:{}",userId);
         Session session = sessionPool.get(userId);
         if (session != null&&session.isOpen()) {
-            log.info("==========ws消息发送==============");
+            log.info("==========ws消息发送成功==============");
             try {
                 log.info("【websocket消息】 单点消息:"+message);
                 session.getAsyncRemote().sendText(message);
