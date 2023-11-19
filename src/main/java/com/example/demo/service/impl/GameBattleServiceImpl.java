@@ -93,11 +93,6 @@ public class GameBattleServiceImpl implements GameBattleService {
         //定时15分钟内未有用户加入则解散
         long tim = 15 * 60;
         redisTemplate.opsForValue().set("BATTLE|" + info.getId(), info.getId(), tim, TimeUnit.SECONDS);
-        //创建业务消息信息
-        JSONObject obj = new JSONObject();
-        obj.put("status", "join");//人员加入
-        webSocket.sendOneMessage(String.valueOf(info.getId()), obj.toJSONString());
-        log.info("================id:{}创建房间=====================================",info.getId());
         return info.getId();
     }
 
@@ -408,7 +403,7 @@ public class GameBattleServiceImpl implements GameBattleService {
             });
             return listBattle;
         } else {
-            log.info("=================人员加入========={}",listUser.size());
+            log.info("=================人员加入========={}", listUser.size());
 //            listUser.stream().forEach(e -> {
 //                //创建业务消息信息
 //                JSONObject obj = new JSONObject();
@@ -476,6 +471,16 @@ public class GameBattleServiceImpl implements GameBattleService {
         //释放锁
         redisTemplate.delete("BATTLE|" + battleId + ".lock");
         return 0;
+    }
+
+    @Override
+    public Object getGameArenasSession(int id) {
+        //创建业务消息信息
+        JSONObject obj = new JSONObject();
+        obj.put("status", "join");//人员加入
+        webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
+        log.info("================id:{}创建房间=====================================", id);
+        return null;
     }
 
 
