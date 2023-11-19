@@ -41,6 +41,7 @@ public class WebSocket {
             sessionPool.put(userId, session);
             log.info("【websocket消息】有新的连接，总数为:"+webSockets.size());
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -97,12 +98,14 @@ public class WebSocket {
     public void sendOneMessage(String userId, String message) {
         Session session = sessionPool.get(userId);
         if (session != null&&session.isOpen()) {
+            log.info("==========ws消息发送==============");
             try {
-                    log.info("【websocket消息】 单点消息:"+message);
+                log.info("【websocket消息】 单点消息:"+message);
                 session.getAsyncRemote().sendText(message);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            log.info("==========ws消息发送结束==============");
         }
     }
 

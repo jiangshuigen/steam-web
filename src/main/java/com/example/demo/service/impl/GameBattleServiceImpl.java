@@ -207,7 +207,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                     List<BoxAwards> listAward = mapper.getIndexBoxList(gameArenasBoxDto.getBoxId());
                     List<BoxAwards> listAwardRoll = new ArrayList<>();
                     for (BoxAwards boxAwards : listAward) {
-                        for (int i = 0; i < boxAwards.getRealOdds(); i++){
+                        for (int i = 0; i < boxAwards.getRealOdds(); i++) {
                             listAwardRoll.add(boxAwards);
                         }
                     }
@@ -328,14 +328,22 @@ public class GameBattleServiceImpl implements GameBattleService {
             });
             //去除监听
             redisTemplate.delete("BATTLE|" + id);
-            //socket
-            //创建业务消息信息
-            JSONObject obj = new JSONObject();
-            obj.put("status", "start");//开启动画
-            webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
-            websocketservice.sendOneMessage(String.valueOf(id), obj.toJSONString());
+//            websocketservice.sendOneMessage(String.valueOf(id), obj.toJSONString());
             //盲盒对战任务
             listUser.stream().forEach(e -> {
+
+                //socket
+                try {
+                    log.info("==========ws消息发送==============");
+                    //创建业务消息信息
+                    JSONObject obj = new JSONObject();
+                    obj.put("status", "start");//开启动画
+                    webSocket.sendOneMessage(String.valueOf(e.getGameUserId()), obj.toJSONString());
+                    log.info("==========ws消息发送结束==============");
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                }
+
                 try {
                     String userKey = "UserBlindBox|Day" + e.getGameUserId();
                     //计算失效时间
@@ -388,11 +396,12 @@ public class GameBattleServiceImpl implements GameBattleService {
             });
             return listBattle;
         } else {
-            //创建业务消息信息
-            JSONObject obj = new JSONObject();
-            obj.put("status", "join");//人员加入
-            webSocket.sendOneMessage(String.valueOf(id), obj.toJSONString());
-            websocketservice.sendOneMessage(String.valueOf(id), obj.toJSONString());
+            listUser.stream().forEach(e -> {
+                //创建业务消息信息
+                JSONObject obj = new JSONObject();
+                obj.put("status", "join");//人员加入
+                webSocket.sendOneMessage(String.valueOf(e.getGameUserId()), obj.toJSONString());
+            });
         }
         return null;
     }
