@@ -56,6 +56,17 @@ public class GameBattleController {
     }
 
     /**
+     *
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "开始ws")
+    @GetMapping("/getGameArenasSession")
+    public ResultData<GameArenasDto> getGameArenasSession(@RequestParam("id") int id) {
+        return ResultData.success(gamebattleservice.getGameArenasSession(id));
+    }
+
+    /**
      * 查询可选择宝箱列表
      *
      * @return

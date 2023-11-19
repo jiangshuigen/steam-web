@@ -24,4 +24,6 @@ public interface GameBattleService {
     int socket(int userId);
 
     int endBattle(int i);
+
+    Object getGameArenasSession(int id);
 }
