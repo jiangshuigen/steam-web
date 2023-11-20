@@ -116,7 +116,7 @@
 
 	<!-- 生产环境 -->
 	<springProfile name="pro">
-		<root level="INFO">
+		<root level="DEBUG">
 			<appender-ref ref="STDOUT" />
 			<appender-ref ref="INFO_FILE" />
 			<appender-ref ref="ERROR_FILE" />
