@@ -53,6 +53,7 @@ spring:
     jackson:
       default-property-inclusion: non_null
 
+
 mybatis:
   mapper-locations: classpath:mapper/*Mapper.xml
   type-aliases-package: com.example.demo.entity.entity
