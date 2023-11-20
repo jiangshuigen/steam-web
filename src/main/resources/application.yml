@@ -59,7 +59,7 @@ mybatis:
   type-aliases-package: com.example.demo.entity.entity
 logging:
     level:
-      com.example.demo.mapper: DEBUG
+      com.example.demo.mapper: info
 upload:
   url: "http://47.97.5.36:8089/upload"
 
