@@ -154,6 +154,14 @@ public class GameBattleServiceImpl implements GameBattleService {
         if (dto.getStatus() == 2) {
             throw new Exception("活动已经结束");
         }
+        log.info("====user is {} dto is {}====", user.getAnchor(), dto.getAnchor());
+        if (user.getAnchor() != dto.getAnchor()) {
+            if (user.getAnchor() == 0) {
+                throw new Exception("普通用户不能加入主播对战房间");
+            } else {
+                throw new Exception("主播用户不能加入用户对战房间");
+            }
+        }
         //人员列表
         List<GameArenasUserDto> listUser = dto.getListUser();
         //判断余额
@@ -345,7 +353,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                     //创建业务消息信息
                     JSONObject obj = new JSONObject();
                     obj.put("status", "start");//开启动画
-                    webSocket.sendOneMessage(String.valueOf(e.getGameUserId())+String.valueOf(id), obj.toJSONString());
+                    webSocket.sendOneMessage(String.valueOf(e.getGameUserId()) + String.valueOf(id), obj.toJSONString());
                     log.info("==========ws消息发送结束==============");
                 } catch (Exception e1) {
                     e1.printStackTrace();
@@ -408,7 +416,7 @@ public class GameBattleServiceImpl implements GameBattleService {
                 //创建业务消息信息
                 JSONObject obj = new JSONObject();
                 obj.put("status", "join");//人员加入
-                webSocket.sendOneMessage(String.valueOf(e.getGameUserId())+String.valueOf(id), obj.toJSONString());
+                webSocket.sendOneMessage(String.valueOf(e.getGameUserId()) + String.valueOf(id), obj.toJSONString());
             });
             //创建业务消息信息
 //            JSONObject obj = new JSONObject();
