@@ -117,7 +117,7 @@
                  left join users u on u.id = ra.get_user_id
                  left join box_records br on br.id = ra.box_record_id
         where ra.room_id = #{roomId}
-        order by ra.created_at desc
+        order by br.bean,ra.created_at desc
     </select>
     <select id="getRoomsListByUser" resultMap="RoomResultMap" parameterType="java.lang.Integer">
         select
