@@ -183,6 +183,7 @@
         ua.invite_code inviteCode,
         ua.inviter_id as inviterId,
         ua.avatar,
+        ua.anchor,
         bean,
         ifnull(ua.silver,0) silver,
         ua.password pwd,
