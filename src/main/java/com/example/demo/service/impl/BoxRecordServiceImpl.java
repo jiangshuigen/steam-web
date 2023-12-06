@@ -78,7 +78,7 @@ public class BoxRecordServiceImpl implements BoxRecordService {
             throw new Exception("需要累计充值达到30元才可以提货哦！");
         }
         User user = userservice.getUserById(userId);
-        if(user.getBanPickUp()==1){
+        if (user.getBanPickUp() == 1) {
             throw new Exception("此账号禁用提货！");
         }
         return boxrecordmapper.getPackage(ids);
@@ -121,7 +121,16 @@ public class BoxRecordServiceImpl implements BoxRecordService {
 
     @Override
     @Transactional
-    public int exchange(HttpServletRequest request, int[] ids) {
+    public int exchange(HttpServletRequest request, int[] ids) throws Exception{
+        /**
+         * 添加兑换时多开校验
+         */
+        for (int id : ids) {
+            BoxRecords record = boxrecordmapper.getRecordById(id);
+            if (record.getStatus() != 0) {
+                throw new Exception("id 为："+id+"的奖品已经兑换或者兑换中！");
+            }
+        }
         int i = boxrecordmapper.exchange(ids);
         if (i > 0) {
             //查询记录列表

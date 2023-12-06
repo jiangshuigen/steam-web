@@ -32,5 +32,5 @@ public interface BoxRecordService {
 
     List<BoxRecords> getRecordList(int numb);
 
-    int exchange(HttpServletRequest request, int[] ids);
+    int exchange(HttpServletRequest request, int[] ids)throws Exception;
 }
