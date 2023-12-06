@@ -215,7 +215,13 @@ public class UserWebController {
         if (ObjectUtils.isEmpty(dto)) {
             return ResultData.fail("403", "未登录");
         }
-        return ResultData.success(boxrecordservice.exchange(request, ids));
+        try {
+            return ResultData.success(boxrecordservice.exchange(request, ids));
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("兑换错误=======" + e.getMessage());
+            return ResultData.fail("500", e.getMessage());
+        }
     }
 
     /**
