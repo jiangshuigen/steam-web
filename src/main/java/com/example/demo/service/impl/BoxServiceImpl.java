@@ -48,18 +48,12 @@ public class BoxServiceImpl implements BoxService {
     @Override
     public int updateBox(Box box) {
         int i = boxmapper.updateBox(box);
-        if (i > 0) {
-            userservice.resetCache();
-        }
         return i;
     }
 
     @Override
     public int saveBox(Box box) {
         int i = boxmapper.saveBox(box);
-        if (i > 0) {
-            userservice.resetCache();
-        }
         return i;
     }
 
@@ -104,9 +98,6 @@ public class BoxServiceImpl implements BoxService {
     @Override
     public int deleteAward(int id) {
         int i = boxmapper.deleteAward(id);
-        if (i > 0) {
-            userservice.resetCache();
-        }
         return i;
     }
 
